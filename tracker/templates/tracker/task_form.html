@@ -1,6 +1,6 @@
 {% extends 'tracker/base.html' %}
 {% block content %}
-<h2>{{ form.instance.pk|yesno:"Edit Task,New Task" }}</h2>
+<h1>{{ form.instance.pk|yesno:"Edit Task,New Task" }}</h1>
 <form method="POST">
   {% csrf_token %}
   {{ form.as_p }}

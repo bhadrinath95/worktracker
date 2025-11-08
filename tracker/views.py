@@ -40,6 +40,13 @@ def task_delete(request, pk):
         return redirect('task_list')
     return render(request, 'tracker/task_confirm_delete.html', {'task': task})
 
+def mark_task_complete(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    task.status = 'Completed'
+    task.completed_date = timezone.now()
+    task.save()
+    return redirect('task_list') 
+
 def update_list(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     updates = task.updates.order_by('-date')

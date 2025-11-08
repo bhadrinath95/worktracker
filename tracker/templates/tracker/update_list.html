@@ -1,6 +1,6 @@
 {% extends 'tracker/base.html' %}
 {% block content %}
-<h2>Updates for {{ task.name }}</h2>
+<h1>Updates for {{ task.name }}</h1>
 <form method="POST">
   {% csrf_token %}
   {{ form.as_p }}

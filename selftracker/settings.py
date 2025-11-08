@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-1^zci@uf2dfok^=ftc%!e3uf@-i5hz8y-%=ugb7rok!qqf&j9j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['bhadritracker.pythonanywhere.com', '127.0.0.1']
 
 
 # Application definition
@@ -117,7 +117,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static", 
+    BASE_DIR / "static",
 ]
 
 # Default primary key field type
