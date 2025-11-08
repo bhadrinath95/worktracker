@@ -8,7 +8,7 @@ class TaskForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
-            'task_type': forms.Select(attrs={'class': 'form-control'}),
+            'task_type': forms.Select(attrs={'class': 'form-control', 'required': True}),
             'target_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
         }
 

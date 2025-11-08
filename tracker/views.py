@@ -1,12 +1,23 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from .models import Task, Update
+from .models import Task, Update, TaskType
 from .forms import TaskForm, UpdateForm
 from django.db.models import F
 
 def task_list(request):
-    tasks = Task.objects.exclude(status='Completed').order_by(F('target_date').asc(nulls_last=True), 'updated_date', 'name')
-    return render(request, 'tracker/task_list.html', {'tasks': tasks})
+    task_type_id = request.GET.get('task_type') 
+    tasks = Task.objects.exclude(status='Completed')
+
+    if task_type_id:
+        tasks = tasks.filter(task_type_id=task_type_id)
+
+    tasks = tasks.order_by(F('target_date').asc(nulls_last=True), 'updated_date', 'name')
+    task_types = TaskType.objects.all()
+    return render(request, 'tracker/task_list.html', {
+        'tasks': tasks,
+        'task_types': task_types,
+        'selected_type': int(task_type_id) if task_type_id else None,
+    })
 
 def task_history(request):
     tasks = Task.objects.filter(status='Completed').order_by('-completed_date')
