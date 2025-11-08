@@ -1,0 +1,9 @@
+{% extends 'tracker/base.html' %}
+{% block content %}
+<h3>Delete "{{ task.name }}"?</h3>
+<form method="POST">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Yes, Delete</button>
+  <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

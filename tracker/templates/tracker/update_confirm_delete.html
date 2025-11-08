@@ -1,0 +1,13 @@
+{% extends 'tracker/base.html' %}
+{% block content %}
+<h3>Delete this update?</h3>
+<p><strong>Task:</strong> {{ update.task.name }}</p>
+<p><strong>Description:</strong> {{ update.description }}</p>
+<p><strong>Date:</strong> {{ update.date|date:"d-m-Y" }}</p>
+
+<form method="POST">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Yes, Delete</button>
+  <a href="{% url 'update_list' update.task.id %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

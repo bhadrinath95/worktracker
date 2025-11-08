@@ -1,0 +1,95 @@
+{% extends 'tracker/base.html' %}
+{% block style %}
+  <style>
+    .media-container {
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .prayer-block {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+    }
+    .prayer-block h5 {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .prayer-text {
+      white-space: pre-line;
+      margin-top: 0.5rem;
+      line-height: 1.6;
+    }
+    @media (max-width: 576px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      .prayer-block {
+        padding: 0.75rem;
+      }
+    }
+  </style>
+{% endblock %}
+{% block content %}
+
+  <h1>Prayer</h1>
+
+  <div class="media-container">
+    <video controls>
+      <source src="https://raw.githubusercontent.com/tenctech10c/Videos/main/Prayer.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <div class="prayer-block">
+    <h5>Vinayagar</h5>
+    <div class="prayer-text">
+      Gajananam Bhuta Ganadhi Sevitam Kapittha Jambu Palasara Bhaksitam
+      Uma Sutam Shoka Vinasha Karanam Namami Vignesvara Pada Pankajam
+    </div>
+  </div>
+
+  <div class="prayer-block">
+    <h5>Murugar</h5>
+    <div class="prayer-text">
+      உருவாய் அருவாய், உளதாய் இலதாய்
+      மருவாய் மலராய் மணியாய் ஒளியாய்க்
+      கருவாய் உயிராய்க் கதியாய் விதியாய்க்
+      குருவாய் வருவாய் அருள்வாய் குகனே
+    </div>
+  </div>
+
+  <div class="prayer-block">
+    <h5>Guru</h5>
+    <div class="prayer-text">
+      Guru Brahma Guru Vishnu Guru Devo Maheshwaraha
+      Guru Saakshaat Para Brahma Tasmai Sri Gurave Namaha
+    </div>
+  </div>
+
+  <div class="prayer-block">
+    <h5>Saraswati</h5>
+    <div class="prayer-text">
+      Sarasvati Namastubhyam Varade Kamarupini
+      Vidyarambham Karisyami Siddhirbhavatume Sada
+    </div>
+  </div>
+
+  <div class="prayer-block">
+    <h5>Sivan</h5>
+    <div class="prayer-text">
+      Om Tryambakam Yajamahe Sugandhim Pushtivardhanam
+      Urva Ruka Miva Bandhanan Mrityor Mukshiya Maamritat
+    </div>
+  </div>
+
+{% endblock %}
