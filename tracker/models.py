@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
+import os
 
 class TaskType(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -50,3 +51,27 @@ class LifePrinciple(models.Model):
 
     def __str__(self):
         return self.principle
+
+class Document(models.Model):
+    update = models.ForeignKey('Update', on_delete=models.CASCADE, related_name='documents')
+    filename = models.CharField(max_length=255)
+    fileurl = models.CharField(max_length=255)
+    filetype = models.CharField(max_length=50, editable=False)
+
+    def save(self, *args, **kwargs):
+        ext = os.path.splitext(self.fileurl)[1].lower()
+        if ext in ['.pdf']:
+            self.filetype = 'pdf'
+        elif ext in ['.jpg', '.jpeg', '.png', '.gif']:
+            self.filetype = 'image'
+        elif ext in ['.mp4', '.mov', '.avi', '.mkv']:
+            self.filetype = 'video'
+        else:
+            self.filetype = 'other'
+        super().save(*args, **kwargs)
+
+    def github_url(self):
+        return f"https://raw.githubusercontent.com/tenctech10c/Document/main/{self.fileurl}"
+
+    def __str__(self):
+        return self.filename

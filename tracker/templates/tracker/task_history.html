@@ -12,7 +12,7 @@
   {% for task in tasks %}
   <tr>
     <td>{{ task.name }}</td>
-    <td>{{ task.completed_date|date:"Y-m-d" }}</td>
+    <td>{{ task.completed_date|date:"d-m-Y" }}</td>
     <td>
       <a href="{% url 'update_list' task.id %}" class="btn btn-sm btn-info">View Updates</a>
       <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>

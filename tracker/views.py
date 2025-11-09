@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from .models import Task, Update, TaskType, LifePrinciple
-from .forms import TaskForm, UpdateForm
+from .models import Task, Update, TaskType, LifePrinciple, Document
+from .forms import TaskForm, UpdateForm, DocumentFormSet
 from django.db.models import F
+from django.http import Http404
 
 def task_list(request):
     task_type_id = request.GET.get('task_type') 
@@ -61,27 +62,62 @@ def mark_task_complete(request, pk):
 def update_list(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     updates = task.updates.order_by('-date')
+
     if request.method == 'POST':
         form = UpdateForm(request.POST)
-        if form.is_valid():
+        formset = DocumentFormSet(request.POST, queryset=Document.objects.none())
+        if form.is_valid() and formset.is_valid():
             update = form.save(commit=False)
             update.task = task
             update.save()
+
+            for doc_form in formset:
+                if doc_form.cleaned_data and not doc_form.cleaned_data.get('DELETE', False):
+                    doc = doc_form.save(commit=False)
+                    doc.update = update
+                    doc.save()
             return redirect('update_list', task_id=task_id)
     else:
         form = UpdateForm()
-    return render(request, 'tracker/update_list.html', {'task': task, 'updates': updates, 'form': form})
+        formset = DocumentFormSet(queryset=Document.objects.none())
+
+    return render(request, 'tracker/update_list.html', {
+        'task': task,
+        'updates': updates,
+        'form': form,
+        'formset': formset,
+    })
 
 def update_edit(request, pk):
     update = get_object_or_404(Update, pk=pk)
+    task = update.task
+
     if request.method == 'POST':
         form = UpdateForm(request.POST, instance=update)
-        if form.is_valid():
+        formset = DocumentFormSet(request.POST, queryset=update.documents.all())
+
+        if form.is_valid() and formset.is_valid():
             form.save()
-            return redirect('update_list', task_id=update.task.id)
+            # Handle document updates
+            for doc_form in formset:
+                if doc_form.cleaned_data:
+                    if doc_form.cleaned_data.get('DELETE'):
+                        if doc_form.instance.pk:
+                            doc_form.instance.delete()
+                    else:
+                        doc = doc_form.save(commit=False)
+                        doc.update = update
+                        doc.save()
+            return redirect('update_list', task_id=task.id)
     else:
         form = UpdateForm(instance=update)
-    return render(request, 'tracker/update_form.html', {'form': form, 'update': update})
+        formset = DocumentFormSet(queryset=update.documents.all())
+
+    return render(request, 'tracker/update_form.html', {
+        'form': form,
+        'formset': formset,
+        'update': update,
+    })
 
 
 def update_delete(request, pk):
@@ -98,3 +134,12 @@ def prayer(request):
 def quotes(request):
     principles = LifePrinciple.objects.all().order_by('principle')
     return render(request, 'tracker/quotes.html', {'principles': principles})
+
+def document_view(request, pk):
+    doc = get_object_or_404(Document, pk=pk)
+    github_url = doc.github_url()
+
+    return render(request, 'tracker/document_view.html', {
+        'doc': doc,
+        'github_url': github_url,
+    })

@@ -1,5 +1,7 @@
+# forms.py
 from django import forms
-from .models import Task, Update
+from django.forms import modelformset_factory
+from .models import Task, Update, Document
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -20,3 +22,14 @@ class UpdateForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ['filename', 'fileurl']
+        widgets = {
+            'filename': forms.TextInput(attrs={'class': 'form-control'}),
+            'fileurl': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+DocumentFormSet = modelformset_factory(Document, form=DocumentForm, extra=1, can_delete=True)

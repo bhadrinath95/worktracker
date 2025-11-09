@@ -12,5 +12,6 @@ urlpatterns = [
     path('update/<int:pk>/delete/', views.update_delete, name='update_delete'),
     path('history/', views.task_history, name='task_history'),
     path('prayer/', views.prayer, name='prayer'),
-    path('quotes/', views.quotes, name='quotes')
+    path('quotes/', views.quotes, name='quotes'),
+    path('document/<int:pk>/', views.document_view, name='document_view'),
 ]

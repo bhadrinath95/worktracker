@@ -1,23 +1,65 @@
 {% extends 'tracker/base.html' %}
 {% block content %}
 <h1>Updates for {{ task.name }}</h1>
+
 <form method="POST">
   {% csrf_token %}
   {{ form.as_p }}
+
+  <h4>Attach Documents</h4>
+  <div id="formset">
+    {{ formset.management_form }}
+    {% for form in formset %}
+      <div class="card mb-2 p-2">
+        {{ form.as_p }}
+      </div>
+    {% endfor %}
+  </div>
+
+  <button type="button" class="btn btn-secondary mb-2" id="add-more">Add Another Document</button>
+  <br>
   <button type="submit" class="btn btn-success">Add Update</button>
 </form>
 
 <hr>
 <ul class="list-group mt-3">
   {% for u in updates %}
-  <li class="list-group-item d-flex justify-content-between align-items-start">
+  <li class="list-group-item">
     <div>
-      <strong>{{ u.date|date:"d-m-Y" }}</strong><br>
-      {{ u.description }}
-    </div>
-    <div>
-      <a href="{% url 'update_edit' u.id %}" class="btn btn-sm btn-warning me-1">Edit</a>
-      <a href="{% url 'update_delete' u.id %}" class="btn btn-sm btn-danger">Delete</a>
+      <strong>{{ u.date|date:"d-m-Y" }}</strong>
+      <div class="float-end">
+        <a href="{% url 'update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+        <a href="{% url 'update_delete' u.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      </div>
+      <br>
+      {{ u.description|linebreaks }}
+
+      {% if u.documents.all %}
+      <div class="mt-2 d-flex flex-wrap gap-2">
+        {% for doc in u.documents.all %}
+          {% if doc.filetype == 'pdf' %}
+            <a href="{% url 'document_view' doc.id %}" class="btn btn-outline-danger d-flex align-items-center">
+              <i class="bi bi-file-earmark-pdf-fill me-2"></i> {{ doc.filename }}
+            </a>
+
+          {% elif doc.filetype == 'image' %}
+            <a href="{% url 'document_view' doc.id %}">
+              <img src="{{ doc.github_url }}" alt="{{ doc.filename }}" style="max-width:100px; border-radius:5px;">
+            </a>
+
+          {% elif doc.filetype == 'video' %}
+            <a href="{% url 'document_view' doc.id %}" class="btn btn-outline-dark d-flex align-items-center">
+              <i class="bi bi-camera-video-fill me-2"></i> {{ doc.filename }}
+            </a>
+
+          {% else %}
+            <a href="{% url 'document_view' doc.id %}" class="btn btn-outline-secondary d-flex align-items-center">
+              <i class="bi bi-file-earmark-fill me-2"></i> {{ doc.filename }}
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
   </li>
   {% empty %}
@@ -25,6 +67,27 @@
   {% endfor %}
 </ul>
 
+<script>
+document.getElementById('add-more').addEventListener('click', function() {
+    const formsetDiv = document.getElementById('formset');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+    const currentCount = parseInt(totalForms.value);
+    const newForm = formsetDiv.querySelector('.card').cloneNode(true);
 
-</ul>
+    // Clear previous values
+    newForm.querySelectorAll('input').forEach(input => {
+        input.value = '';
+    });
+
+    // Update form index names and IDs (important!)
+    newForm.innerHTML = newForm.innerHTML.replace(/form-(\d+)-/g, `form-${currentCount}-`);
+
+    // Append to formset
+    formsetDiv.appendChild(newForm);
+
+    // Increment management form count
+    totalForms.value = currentCount + 1;
+});
+</script>
+
 {% endblock %}
