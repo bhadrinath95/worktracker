@@ -1,71 +1,97 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.views import View
+from django.views.generic import (
+    ListView, CreateView, UpdateView, DeleteView
+)
+from django.urls import reverse_lazy, reverse
+from django.db.models import F
+
 from .models import Task, Update, TaskType, LifePrinciple, Document
 from .forms import TaskForm, UpdateForm, DocumentFormSet
-from django.db.models import F
-from django.http import Http404
 
-def task_list(request):
-    task_type_id = request.GET.get('task_type') 
-    tasks = Task.objects.exclude(status='Completed')
 
-    if task_type_id:
-        tasks = tasks.filter(task_type_id=task_type_id)
+# -------------------------
+# TASK VIEWS
+# -------------------------
 
-    tasks = tasks.order_by(F('target_date').asc(nulls_last=True), 'updated_date', 'name')
-    task_types = TaskType.objects.all()
-    return render(request, 'tracker/task_list.html', {
-        'tasks': tasks,
-        'task_types': task_types,
-        'selected_type': int(task_type_id) if task_type_id else None,
-    })
+class TaskListView(ListView):
+    model = Task
+    template_name = 'tracker/task_list.html'
+    context_object_name = 'tasks'
 
-def task_history(request):
-    tasks = Task.objects.filter(status='Completed').order_by('-completed_date')
-    return render(request, 'tracker/task_history.html', {'tasks': tasks})
+    def get_queryset(self):
+        queryset = Task.objects.exclude(status='Completed')
+        task_type_id = self.request.GET.get('task_type')
+        if task_type_id:
+            queryset = queryset.filter(task_type_id=task_type_id)
+        return queryset.order_by(F('target_date').asc(nulls_last=True), 'updated_date', 'name')
 
-def task_create(request):
-    if request.method == 'POST':
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            task = form.save()
-            return redirect('task_list')
-    else:
-        form = TaskForm()
-    return render(request, 'tracker/task_form.html', {'form': form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task_type_id = self.request.GET.get('task_type')
+        context['task_types'] = TaskType.objects.all()
+        context['selected_type'] = int(task_type_id) if task_type_id else None
+        return context
 
-def task_update(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
-        if form.is_valid():
-            form.save()
-            return redirect('task_list')
-    else:
-        form = TaskForm(instance=task)
-    return render(request, 'tracker/task_form.html', {'form': form})
 
-def task_delete(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    if request.method == 'POST':
-        task.delete()
-        return redirect('task_list')
-    return render(request, 'tracker/task_confirm_delete.html', {'task': task})
+class TaskHistoryView(ListView):
+    model = Task
+    template_name = 'tracker/task_history.html'
+    context_object_name = 'tasks'
+    queryset = Task.objects.filter(status='Completed').order_by('-completed_date')
+
+
+class TaskCreateView(CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'tracker/task_form.html'
+    success_url = reverse_lazy('task_list')
+
+
+class TaskUpdateView(UpdateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'tracker/task_form.html'
+    success_url = reverse_lazy('task_list')
+
+
+class TaskDeleteView(DeleteView):
+    model = Task
+    template_name = 'tracker/task_confirm_delete.html'
+    success_url = reverse_lazy('task_list')
+
 
 def mark_task_complete(request, pk):
     task = get_object_or_404(Task, pk=pk)
     task.status = 'Completed'
     task.completed_date = timezone.now()
     task.save()
-    return redirect('task_list') 
+    return redirect('task_list')
 
-def update_list(request, task_id):
-    task = get_object_or_404(Task, pk=task_id)
-    updates = task.updates.order_by('-date')
 
-    if request.method == 'POST':
+# -------------------------
+# UPDATE VIEWS
+# -------------------------
+
+class UpdateListView(View):
+    def get(self, request, task_id):
+        task = get_object_or_404(Task, pk=task_id)
+        updates = task.updates.order_by('-date')
+        form = UpdateForm()
+        formset = DocumentFormSet(queryset=Document.objects.none())
+        return render(request, 'tracker/update_list.html', {
+            'task': task,
+            'updates': updates,
+            'form': form,
+            'formset': formset,
+        })
+
+    def post(self, request, task_id):
+        task = get_object_or_404(Task, pk=task_id)
         form = UpdateForm(request.POST)
         formset = DocumentFormSet(request.POST, queryset=Document.objects.none())
+
         if form.is_valid() and formset.is_valid():
             update = form.save(commit=False)
             update.task = task
@@ -77,69 +103,75 @@ def update_list(request, task_id):
                     doc.update = update
                     doc.save()
             return redirect('update_list', task_id=task_id)
-    else:
-        form = UpdateForm()
-        formset = DocumentFormSet(queryset=Document.objects.none())
 
-    return render(request, 'tracker/update_list.html', {
-        'task': task,
-        'updates': updates,
-        'form': form,
-        'formset': formset,
-    })
+        updates = task.updates.order_by('-date')
+        return render(request, 'tracker/update_list.html', {
+            'task': task,
+            'updates': updates,
+            'form': form,
+            'formset': formset,
+        })
 
-def update_edit(request, pk):
-    update = get_object_or_404(Update, pk=pk)
-    task = update.task
 
-    if request.method == 'POST':
+class UpdateEditView(View):
+    def get(self, request, pk):
+        update = get_object_or_404(Update, pk=pk)
+        form = UpdateForm(instance=update)
+        formset = DocumentFormSet(queryset=update.documents.all())
+        return render(request, 'tracker/update_form.html', {
+            'form': form,
+            'formset': formset,
+            'update': update,
+        })
+
+    def post(self, request, pk):
+        update = get_object_or_404(Update, pk=pk)
         form = UpdateForm(request.POST, instance=update)
         formset = DocumentFormSet(request.POST, queryset=update.documents.all())
 
         if form.is_valid() and formset.is_valid():
             form.save()
-            # Handle document updates
             for doc_form in formset:
                 if doc_form.cleaned_data:
-                    if doc_form.cleaned_data.get('DELETE'):
-                        if doc_form.instance.pk:
-                            doc_form.instance.delete()
+                    if doc_form.cleaned_data.get('DELETE') and doc_form.instance.pk:
+                        doc_form.instance.delete()
                     else:
                         doc = doc_form.save(commit=False)
                         doc.update = update
                         doc.save()
-            return redirect('update_list', task_id=task.id)
-    else:
-        form = UpdateForm(instance=update)
-        formset = DocumentFormSet(queryset=update.documents.all())
+            return redirect('update_list', task_id=update.task.id)
 
-    return render(request, 'tracker/update_form.html', {
-        'form': form,
-        'formset': formset,
-        'update': update,
-    })
+        return render(request, 'tracker/update_form.html', {
+            'form': form,
+            'formset': formset,
+            'update': update,
+        })
 
 
-def update_delete(request, pk):
-    update = get_object_or_404(Update, pk=pk)
-    if request.method == 'POST':
-        task_id = update.task.id
-        update.delete()
-        return redirect('update_list', task_id=task_id)
-    return render(request, 'tracker/update_confirm_delete.html', {'update': update})
+class UpdateDeleteView(DeleteView):
+    model = Update
+    template_name = 'tracker/update_confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse('update_list', kwargs={'task_id': self.object.task.id})
+
+
+# -------------------------
+# OTHER STATIC VIEWS
+# -------------------------
 
 def prayer(request):
-    return render(request, 'tracker/prayer.html', {})
+    return render(request, 'tracker/prayer.html')
+
 
 def quotes(request):
     principles = LifePrinciple.objects.all().order_by('principle')
     return render(request, 'tracker/quotes.html', {'principles': principles})
 
+
 def document_view(request, pk):
     doc = get_object_or_404(Document, pk=pk)
-    github_url = doc.github_url()
-
     return render(request, 'tracker/document_view.html', {
         'doc': doc,
-        'github_url': github_url,
+        'github_url': doc.github_url(),
     })
