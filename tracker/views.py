@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from .models import Task, Update, TaskType
+from .models import Task, Update, TaskType, LifePrinciple
 from .forms import TaskForm, UpdateForm
 from django.db.models import F
 
@@ -96,4 +96,5 @@ def prayer(request):
     return render(request, 'tracker/prayer.html', {})
 
 def quotes(request):
-    return render(request, 'tracker/quotes.html', {})
+    principles = LifePrinciple.objects.all().order_by('principle')
+    return render(request, 'tracker/quotes.html', {'principles': principles})

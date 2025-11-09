@@ -6,41 +6,83 @@
     <h2 class="fw-bold text-primary">Quote</h2>
     <blockquote class="blockquote mt-3">
       <p class="fs-5 fst-italic text-muted">
-        "When you stop worrying about consequences and others’ opinions, your life graph flattens — 
+        "When you stop worrying about consequences and others’ opinions, your life graph flattens —
         No worries, no highs, no lows. Just peace."
       </p>
     </blockquote>
   </div>
 
   <div class="mb-4">
-    <h2 class="fw-bold text-success text-center mb-3">Rules</h2>
+    <h2 class="fw-bold text-success text-center mb-3">Life Principles</h2>
 
     <div class="card shadow-sm">
       <div class="card-body p-0">
         <table class="table table-hover mb-0 align-middle">
           <thead class="table-dark text-center">
             <tr>
-              <th>Life Principles</th>
+              <th>Quotes</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td>Don’t sweat the small stuff.</td></tr>
-            <tr><td>Strength grows not by asking, but by searching. Depend less, explore more.</td></tr>
-            <tr><td>Privacy isn’t secrecy; it’s self-respect.</td></tr>
-            <tr><td>Skills outlast jobs — invest in the former.</td></tr>
-            <tr><td>In matters of money, vigilance is your strongest shield against regret.</td></tr>
-            <tr><td>Your dress reflects the way you respect yourself.</td></tr>
-            <tr><td>Anger clouds judgment — hold your words until your heart finds calm.</td></tr>
-            <tr><td>Guard your tongue from whispering about others.</td></tr>
-            <tr><td>Loose lips don’t just sink ships — they ruin careers.</td></tr>
-            <tr><td>Respect others’ privacy — don’t ask, don’t listen, don’t pry.</td></tr>
-            <tr><td>Don’t take any wooden nickels.</td></tr>
-            <tr><td>Standing up for yourself isn’t pride — it’s dignity.</td></tr>
+            {% for principle in principles %}
+            <tr class="principle-row" data-id="{{ principle.id }}" data-meaning="{{ principle.meaning|escapejs }}">
+              <td colspan="2" class="fw-semibold text-dark">
+                <a href="#" class="text-decoration-none text-dark">
+                  {{ principle.principle }}
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const rows = document.querySelectorAll(".principle-row");
+  let openRowId = null; // Track which row is currently expanded
+
+  rows.forEach(row => {
+    row.addEventListener("click", function(e) {
+      e.preventDefault();
+
+      const thisRowId = this.getAttribute("data-id");
+      const existingMeaning = document.querySelector(".meaning-row");
+
+      // If this same row is open, toggle it off
+      if (openRowId === thisRowId && existingMeaning) {
+        existingMeaning.remove();
+        openRowId = null;
+        return;
+      }
+
+      // Remove any previous meaning row
+      if (existingMeaning) existingMeaning.remove();
+
+      // Decode any escaped unicode like \u002D
+      const raw = this.getAttribute("data-meaning");
+      const meaningText = JSON.parse('"' + raw + '"');
+
+      // Create new meaning row
+      const newRow = document.createElement("tr");
+      newRow.classList.add("meaning-row");
+      newRow.innerHTML = `
+        <td colspan="2">
+          <div class="card border-0 bg-light shadow-sm p-3 mt-1">
+            <p class="mb-0">${meaningText}</p>
+          </div>
+        </td>
+      `;
+
+      // Insert below clicked row
+      this.insertAdjacentElement("afterend", newRow);
+      openRowId = thisRowId;
+    });
+  });
+});
+</script>
 
 {% endblock %}

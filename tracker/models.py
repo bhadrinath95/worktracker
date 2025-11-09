@@ -43,3 +43,10 @@ class Update(models.Model):
 
     def __str__(self):
         return f"Update on {self.task.name} - {self.date.strftime('%Y-%m-%d')}"
+    
+class LifePrinciple(models.Model):
+    principle = models.TextField()
+    meaning = models.TextField()
+
+    def __str__(self):
+        return self.principle
