@@ -1,6 +1,22 @@
 {% extends 'tracker/base.html' %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/task_list.css' %}">
+{% endblock %}
 {% block content %}
-<h1>All Tasks</h1>
+
+{% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<h1>Active Tasks</h1>
 
 <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
   <a href="{% url 'task_create' %}" class="btn btn-primary mb-2">+ Add Task</a>
@@ -17,33 +33,74 @@
   </form>
 </div>
 
+{% if today_tasks %}
+  <h3 class="text-success mb-2">Today's Tasks ({{ today_tasks|length }})</h3>
+  <div class="table-responsive mb-4">
+    <table class="table table-bordered table-striped align-middle text-nowrap">
+      <thead class="table-success">
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Target Date</th>
+          <th>Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in today_tasks %}
+        <tr>
+          <td>{{ task.name }}</td>
+          <td>{{ task.task_type.name }}</td>
+          <td>{{ task.status }}</td>
+          <td>{{ task.target_date|date:"d-m-Y" }}</td>
+          <td>{{ task.updated_date|date:"d-m-Y" }}</td>
+          <td>
+            <a href="{% url 'update_list' task.id %}" class="btn btn-sm btn-info">Updates</a>
+            <a href="{% url 'task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{% url 'mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
+            <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+<h3>All Active Tasks</h3>
 <div class="table-responsive">
   <table class="table table-striped table-bordered align-middle text-nowrap">
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Status</th>
-      <th>Target Date</th>
-      <th>Updated</th>
-      <th>Actions</th>
-    </tr>
-    {% for task in tasks %}
-    <tr>
-      <td>{{ task.name }}</td>
-      <td>{{ task.task_type.name }}</td>
-      <td>{{ task.status }}</td>
-      <td>{{ task.target_date|date:"d-m-Y" }}</td>
-      <td>{{ task.updated_date|date:"d-m-Y" }}</td>
-      <td>
-        <a href="{% url 'update_list' task.id %}" class="btn btn-sm btn-info">Updates</a>
-        <a href="{% url 'task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
-        <a href="{% url 'mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
-        <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="6" class="text-center text-muted">No tasks found</td></tr>
-    {% endfor %}
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Target Date</th>
+        <th>Updated</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr>
+        <td>{{ task.name }}</td>
+        <td>{{ task.task_type.name }}</td>
+        <td>{{ task.status }}</td>
+        <td>{{ task.target_date|date:"d-m-Y" }}</td>
+        <td>{{ task.updated_date|date:"d-m-Y" }}</td>
+        <td>
+          <a href="{% url 'update_list' task.id %}" class="btn btn-sm btn-info">Updates</a>
+          <a href="{% url 'task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
+          <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+        <tr><td colspan="6" class="text-center text-muted">No tasks found</td></tr>
+      {% endfor %}
+    </tbody>
   </table>
 </div>
+
 {% endblock %}

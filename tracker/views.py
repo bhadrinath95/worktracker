@@ -6,9 +6,9 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy, reverse
 from django.db.models import F
-
 from .models import Task, Update, TaskType, LifePrinciple, Document
 from .forms import TaskForm, UpdateForm, DocumentFormSet
+from django.contrib import messages
 
 
 # -------------------------
@@ -29,9 +29,22 @@ class TaskListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         task_type_id = self.request.GET.get('task_type')
         context['task_types'] = TaskType.objects.all()
         context['selected_type'] = int(task_type_id) if task_type_id else None
+
+        # Add today's tasks separately
+        today = timezone.localdate()
+        today_tasks = Task.objects.filter(
+            target_date=today
+        ).exclude(status='Completed')
+
+        if task_type_id:
+            today_tasks = today_tasks.filter(task_type_id=task_type_id)
+
+        context['today_tasks'] = today_tasks.order_by('name')
+
         return context
 
 
@@ -67,6 +80,7 @@ def mark_task_complete(request, pk):
     task.status = 'Completed'
     task.completed_date = timezone.now()
     task.save()
+    messages.success(request, f'🎉 Congratulations! Task "{task.name}" has been marked as completed.')
     return redirect('task_list')
 
 
