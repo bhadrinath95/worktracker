@@ -22,8 +22,8 @@ def invoice_form(request):
         prices = request.POST.getlist("price")
         qty_totals = request.POST.getlist("qty_totals")
         overall_total = request.POST.get("overall_total")
-        amount_received = request.POST.get("amount_received", "")
-        balance = request.POST.get("balance", "")
+        amount_received = request.POST.get("amount_received", None)
+        balance = request.POST.get("balance", None)
         unit = request.POST.get("unit", "")
         date_today = date.today()
         formatted_date = date_today.strftime("%d-%m-%Y")
@@ -38,8 +38,8 @@ def invoice_form(request):
             "invoice_number": invoice_number,
             "items": items,
             "overall_total": f"{unit} {overall_total}",
-            "amount_received": f"{unit} {amount_received}",
-            "balance": f"{unit} {balance}",
+            "amount_received": f"{unit} {amount_received}" if amount_received else amount_received,
+            "balance": f"{unit} {balance}" if balance else balance,
             "date_today": formatted_date,
         })
     return render(request, "invoice/invoice_form.html")
