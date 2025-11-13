@@ -16,6 +16,29 @@ body {
     border: 1px solid #ddd;
   }
 
+  .customer-details {
+  background-color: #f8f9fa;         /* Light gray background */
+  border: 1px solid #dee2e6;         /* Subtle border */
+  border-radius: 8px;                /* Soft corners */
+  padding: 15px 20px;
+  margin-bottom: 25px;
+}
+
+.customer-details h4 {
+  margin-bottom: 15px;
+  color: #0d6efd;                    /* Bootstrap primary blue */
+  font-weight: 600;
+}
+
+.customer-details p {
+  margin-bottom: 5px;
+  font-size: 15px;
+  color: #333;
+}
+
+.customer-details strong {
+  color: #000;
+}
   /* ---------------- HEADER ---------------- */
   .header {
     text-align: center;
@@ -159,6 +182,11 @@ body {
 
     .no-print {
       display: none;
+    }
+
+    .customer-details {
+      background-color: #fff !important;
+      border: 1px solid #000;
     }
 
     @page {

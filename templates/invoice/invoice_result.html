@@ -15,6 +15,17 @@
       <h3>Invoice #{{ invoice_number }}</h3>
     </div>
 
+        <!-- CUSTOMER DETAILS -->
+    <div class="customer-details">
+      <p><strong>Billed To:</strong> {{ customer.name }}</p>
+      {% if customer.address %}
+        <p>{{ customer.address }}</p>
+      {% endif %}
+      {% if customer.phone %}
+        <p>Ph: {{ customer.phone }}</p>
+      {% endif %}
+    </div>
+    
     <!-- TABLE -->
     <table>
       <tr>

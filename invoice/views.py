@@ -15,8 +15,12 @@ def invoice_form(request):
         invoice_number = random.randint(100000, 999999)
         items = []
         total = 0
-
-        # Parse dynamic items
+        customer = {
+            "name": request.POST.get("customer_name", ""),
+            "address": request.POST.get("customer_address", ""),
+            "phone": request.POST.get("customer_phone", ""),
+            "email": request.POST.get("customer_email", ""),
+        }
         descriptions = request.POST.getlist("description")
         quantities = request.POST.getlist("quantity")
         prices = request.POST.getlist("price")
@@ -34,6 +38,7 @@ def invoice_form(request):
                 items.append({"description": desc, "quantity": qty, "price": f"{unit} {price}", "line_total": f"{unit} {line_total}"})
 
         return render(request, "invoice/invoice_result.html", {
+            "customer": customer,
             "company": company,
             "invoice_number": invoice_number,
             "items": items,
