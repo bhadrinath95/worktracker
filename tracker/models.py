@@ -60,7 +60,7 @@ class Document(models.Model):
 
     def save(self, *args, **kwargs):
         ext = os.path.splitext(self.fileurl)[1].lower()
-        if ext in ['.pdf']:
+        if ext in ['.pdf', '.doc', '.docx']:
             self.filetype = 'pdf'
         elif ext in ['.jpg', '.jpeg', '.png', '.gif']:
             self.filetype = 'image'
