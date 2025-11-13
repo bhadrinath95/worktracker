@@ -7,44 +7,62 @@
 </head>
 <body>
   <div class="invoice-container">
+    
+    <!-- ✅ WATERMARK (Add this line) -->
+    <div class="watermark">
+      <img src="{% static 'image/Bookmark.png' %}" alt="Watermark">
+    </div>
+
     <!-- HEADER -->
     <div class="header">
-      <h2>{{ company.name }}</h2>
-      <p>{{ company.address }}</p>
-      <p>Ph: {{ company.phone }} | Email: {{ company.email }}</p>
-      <h3>Invoice #{{ invoice_number }}</h3>
+      <div class="header-left">
+        <img src="{% static 'image/Logo.png' %}" alt="Company Logo" class="company-logo">
+      </div>
+
+      <div class="header-right">
+        <h2>Bhadrinath Consultancy and Services (BCS)</h2>
+        <p>#14, Third Cross North, Suriya Gandhi Nagar, Muthialpet, Puducherry - 605003</p>
+        <p>Mobile: 7200948401 | Email: bhadrinath95@gmail.com</p>
+      </div>
     </div>
 
-        <!-- CUSTOMER DETAILS -->
+    <h3>Invoice #{{ invoice_number }}</h3>
+
+    <!-- CUSTOMER DETAILS -->
     <div class="customer-details">
-      <p><strong>Billed To:</strong> {{ customer.name }}</p>
+      <h4>Billed To:</h4>
+      <p><strong>{{ customer.name }}</strong></p>
       {% if customer.address %}
-        <p>{{ customer.address }}</p>
+        <p>{{ customer.address | linebreaks }}</p>
       {% endif %}
       {% if customer.phone %}
-        <p>Ph: {{ customer.phone }}</p>
+        <p>Mobile: {{ customer.phone }}</p>
       {% endif %}
       {% if customer.email %}
-        <p>Ph: {{ customer.email }}</p>
+        <p>Email: {{ customer.email }}</p>
       {% endif %}
     </div>
 
-    <!-- TABLE -->
+    <!-- INVOICE TABLE -->
     <table>
-      <tr>
-        <th>Description</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Total</th>
-      </tr>
-      {% for item in items %}
-      <tr>
-        <td>{{ item.description }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>{{ item.price }}</td>
-        <td>{{ item.line_total }}</td>
-      </tr>
-      {% endfor %}
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.description }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.price }}</td>
+          <td>{{ item.line_total }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
 
     <!-- TOTAL SECTION -->
@@ -59,8 +77,10 @@
     <!-- SIGNATURE SECTION -->
     <div class="signature-section">
       <div>
-        <p><strong>Authorized Signatory</strong></p>
-        <p class="signature">For {{ company.name }}</p>
+        <p><strong>Authorized Signatory</strong></p><br /><br />
+        <p class="signature">
+          For {{ company.name }}<br>
+        </p>
       </div>
       <div>
         <p><em>Date:</em> {{ date_today }}</p>
@@ -73,10 +93,17 @@
       <p>This is a computer-generated invoice. No signature required if sent electronically.</p>
     </div>
 
-    <!-- PRINT BUTTON -->
-    <div style="text-align: center;">
-      <button class="no-print" onclick="window.print()">Print / Save as PDF</button>
-    </div>
   </div>
+
+  <!-- ✅ Print button centered -->
+  <div class="print-button-container">
+    <button class="no-print" id="printButton">Print / Save as PDF</button>
+  </div>
+
+  <script>
+    document.getElementById("printButton").addEventListener("click", function() {
+      window.print();
+    });
+  </script>
 </body>
 </html>

@@ -1,10 +1,13 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Customer
 import random
 from datetime import date
-from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='login')
 def invoice_form(request):
+    customers = Customer.objects.all()
+
     if request.method == "POST":
         company = {
             "name": "Bhadrinath Consultancy and Services (BCS)",
@@ -12,15 +15,19 @@ def invoice_form(request):
             "phone": "7200948401",
             "email": "bhadrinath95@gmail.com"
         }
+
         invoice_number = random.randint(100000, 999999)
         items = []
-        total = 0
+        customer_id = request.POST.get("customer_id")
+        selected_customer = Customer.objects.filter(id=customer_id).first()
+
         customer = {
-            "name": request.POST.get("customer_name", ""),
-            "address": request.POST.get("customer_address", ""),
-            "phone": request.POST.get("customer_phone", ""),
-            "email": request.POST.get("customer_email", ""),
+            "name": selected_customer.name if selected_customer else "",
+            "address": selected_customer.address if selected_customer else "",
+            "phone": selected_customer.phone if selected_customer else "",
+            "email": selected_customer.email if selected_customer else "",
         }
+
         descriptions = request.POST.getlist("description")
         quantities = request.POST.getlist("quantity")
         prices = request.POST.getlist("price")
@@ -29,13 +36,16 @@ def invoice_form(request):
         amount_received = request.POST.get("amount_received", None)
         balance = request.POST.get("balance", None)
         unit = request.POST.get("unit", "")
-        date_today = date.today()
-        formatted_date = date_today.strftime("%d-%m-%Y")
-
+        date_today = date.today().strftime("%d-%m-%Y")
 
         for desc, qty, price, line_total in zip(descriptions, quantities, prices, qty_totals):
             if desc:
-                items.append({"description": desc, "quantity": qty, "price": f"{unit} {price}", "line_total": f"{unit} {line_total}"})
+                items.append({
+                    "description": desc,
+                    "quantity": qty,
+                    "price": f"{unit} {price}",
+                    "line_total": f"{unit} {line_total}"
+                })
 
         return render(request, "invoice/invoice_result.html", {
             "customer": customer,
@@ -45,6 +55,7 @@ def invoice_form(request):
             "overall_total": f"{unit} {overall_total}",
             "amount_received": f"{unit} {amount_received}" if amount_received else amount_received,
             "balance": f"{unit} {balance}" if balance else balance,
-            "date_today": formatted_date,
+            "date_today": date_today,
         })
-    return render(request, "invoice/invoice_form.html")
+
+    return render(request, "invoice/invoice_form.html", {"customers": customers})
