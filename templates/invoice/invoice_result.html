@@ -75,24 +75,22 @@
     </div>
 
     <!-- SIGNATURE SECTION -->
-    <div class="signature-section">
-      <div>
-        <p><strong>Authorized Signatory</strong></p><br /><br />
-        <p class="signature">
-          For {{ company.name }}<br>
-        </p>
+    <div class="signature-page">
+      <div class="signature-section">
+        <div>
+          <p><strong>Authorized Signatory</strong></p><br><br>
+          <p class="signature">For {{ company.name }}</p>
+        </div>
+        <div>
+          <p><em>Date:</em> {{ date_today }}</p>
+        </div>
       </div>
-      <div>
-        <p><em>Date:</em> {{ date_today }}</p>
+
+      <div class="footer">
+        <p>Thank you for your business!</p>
+        <p>This is a computer-generated invoice. No signature required if sent electronically.</p>
       </div>
     </div>
-
-    <!-- FOOTER -->
-    <div class="footer">
-      <p>Thank you for your business!</p>
-      <p>This is a computer-generated invoice. No signature required if sent electronically.</p>
-    </div>
-
   </div>
 
   <!-- ✅ Print button centered -->
