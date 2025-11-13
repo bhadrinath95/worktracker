@@ -12,29 +12,34 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand text-light" href='{% url "task_list" %}'>Work Tracker</a>
+    <a class="navbar-brand text-light" href='{% url "tracker:task_list" %}'>Work Tracker</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link text-light" href="{% url 'task_list' %}">Active</a>
+          <a class="nav-link text-light" href="{% url 'tracker:task_list' %}">Active</a>
         </li>
       </ul>
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link text-light" href="{% url 'task_history' %}">History</a>
+          <a class="nav-link text-light" href="{% url 'tracker:task_history' %}">History</a>
         </li>
       </ul>
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link text-light" href="{% url 'prayer' %}">Prayer</a>
+          <a class="nav-link text-light" href="{% url 'tracker:prayer' %}">Prayer</a>
         </li>
       </ul>
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link text-light" href="{% url 'quotes' %}">Quotes</a>
+          <a class="nav-link text-light" href="{% url 'tracker:quotes' %}">Quotes</a>
+        </li>
+      </ul>
+           <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link text-light" href="{% url 'invoice:invoice_form' %}">Invoice</a>
         </li>
       </ul>
     </div>

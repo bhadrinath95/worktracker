@@ -20,7 +20,7 @@
   <button type="button" class="btn btn-secondary mb-2" id="add-more">Add Another Document</button>
   <br>
   <button type="submit" class="btn btn-success">Save Changes</button>
-  <a href="{% url 'update_list' update.task.id %}" class="btn btn-secondary">Cancel</a>
+  <a href="{% url 'tracker:update_list' update.task.id %}" class="btn btn-secondary">Cancel</a>
 </form>
 {% endblock %}
 

@@ -29,8 +29,8 @@
     <div>
       <strong>{{ u.date|date:"d-m-Y" }}</strong>
       <div class="float-end">
-        <a href="{% url 'update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
-        <a href="{% url 'update_delete' u.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        <a href="{% url 'tracker:update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+        <a href="{% url 'tracker:update_delete' u.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
       </div>
       <br>
       {{ u.description|linebreaks }}
@@ -39,22 +39,22 @@
       <div class="mt-2 d-flex flex-wrap gap-2">
         {% for doc in u.documents.all %}
           {% if doc.filetype == 'pdf' %}
-            <a href="{% url 'document_view' doc.id %}" class="btn btn-outline-danger d-flex align-items-center">
+            <a href="{% url 'tracker:document_view' doc.id %}" class="btn btn-outline-danger d-flex align-items-center">
               <i class="bi bi-file-earmark-pdf-fill me-2"></i> {{ doc.filename }}
             </a>
 
           {% elif doc.filetype == 'image' %}
-            <a href="{% url 'document_view' doc.id %}">
+            <a href="{% url 'tracker:document_view' doc.id %}">
               <img src="{{ doc.github_url }}" alt="{{ doc.filename }}" style="max-width:100px; border-radius:5px;">
             </a>
 
           {% elif doc.filetype == 'video' %}
-            <a href="{% url 'document_view' doc.id %}" class="btn btn-outline-dark d-flex align-items-center">
+            <a href="{% url 'tracker:document_view' doc.id %}" class="btn btn-outline-dark d-flex align-items-center">
               <i class="bi bi-camera-video-fill me-2"></i> {{ doc.filename }}
             </a>
 
           {% else %}
-            <a href="{% url 'document_view' doc.id %}" class="btn btn-outline-secondary d-flex align-items-center">
+            <a href="{% url 'tracker:document_view' doc.id %}" class="btn btn-outline-secondary d-flex align-items-center">
               <i class="bi bi-file-earmark-fill me-2"></i> {{ doc.filename }}
             </a>
           {% endif %}

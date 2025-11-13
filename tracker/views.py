@@ -61,20 +61,20 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
     template_name = 'tracker/task_form.html'
-    success_url = reverse_lazy('task_list')
+    success_url = reverse_lazy('tracker:task_list')
 
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
     template_name = 'tracker/task_form.html'
-    success_url = reverse_lazy('task_list')
+    success_url = reverse_lazy('tracker:task_list')
 
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     template_name = 'tracker/task_confirm_delete.html'
-    success_url = reverse_lazy('task_list')
+    success_url = reverse_lazy('tracker:task_list')
 
 
 def mark_task_complete(request, pk):
@@ -83,7 +83,7 @@ def mark_task_complete(request, pk):
     task.completed_date = timezone.now()
     task.save()
     messages.success(request, f'🎉 Congratulations! Task "{task.name}" has been marked as completed.')
-    return redirect('task_list')
+    return redirect('tracker:task_list')
 
 
 # -------------------------
@@ -118,7 +118,7 @@ class UpdateListView(LoginRequiredMixin, View):
                     doc = doc_form.save(commit=False)
                     doc.update = update
                     doc.save()
-            return redirect('update_list', task_id=task_id)
+            return redirect('tracker:update_list', task_id=task_id)
 
         updates = task.updates.order_by('-date')
         return render(request, 'tracker/update_list.html', {
@@ -155,7 +155,7 @@ class UpdateEditView(LoginRequiredMixin, View):
                         doc = doc_form.save(commit=False)
                         doc.update = update
                         doc.save()
-            return redirect('update_list', task_id=update.task.id)
+            return redirect('tracker:update_list', task_id=update.task.id)
 
         return render(request, 'tracker/update_form.html', {
             'form': form,
@@ -169,7 +169,7 @@ class UpdateDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'tracker/update_confirm_delete.html'
 
     def get_success_url(self):
-        return reverse('update_list', kwargs={'task_id': self.object.task.id})
+        return reverse('tracker:update_list', kwargs={'task_id': self.object.task.id})
 
 
 # -------------------------

@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Invoice {{ invoice_number }}</title>
+  <link rel="stylesheet" href="{% static 'css/invoice.css' %}">
+</head>
+<body>
+  <div class="invoice-container">
+    <!-- HEADER -->
+    <div class="header">
+      <h2>{{ company.name }}</h2>
+      <p>{{ company.address }}</p>
+      <p>Ph: {{ company.phone }} | Email: {{ company.email }}</p>
+      <h3>Invoice #{{ invoice_number }}</h3>
+    </div>
+
+    <!-- TABLE -->
+    <table>
+      <tr>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+      </tr>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.description }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td>{{ item.line_total }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <!-- TOTAL SECTION -->
+    <div class="total-section">
+      <p class="total">Overall Total: {{ overall_total }}</p>
+      {% if amount_received %}
+        <p class="total">Amount Received: {{ amount_received }}</p>
+        <p class="total">Balance: {{ balance }}</p>
+      {% endif %}
+    </div>
+
+    <!-- SIGNATURE SECTION -->
+    <div class="signature-section">
+      <div>
+        <p><strong>Authorized Signatory</strong></p>
+        <p class="signature">For {{ company.name }}</p>
+      </div>
+      <div>
+        <p><em>Date:</em> {{ date_today }}</p>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>Thank you for your business!</p>
+      <p>This is a computer-generated invoice. No signature required if sent electronically.</p>
+    </div>
+
+    <!-- PRINT BUTTON -->
+    <div style="text-align: center;">
+      <button class="no-print" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+  </div>
+</body>
+</html>

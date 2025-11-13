@@ -1,10 +1,5 @@
 from django.urls import path
 from . import views
-from accounts.views import (
-    login_view,
-    logout_view,
-    register_view
-)
 
 urlpatterns = [
     path('', views.TaskListView.as_view(), name='task_list'),
@@ -21,8 +16,4 @@ urlpatterns = [
     path('prayer/', views.prayer, name='prayer'),
     path('quotes/', views.quotes, name='quotes'),
     path('document/<int:pk>/', views.document_view, name='document_view'),
-    
-    path('login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
-    path('register/', register_view, name='register'),
 ]

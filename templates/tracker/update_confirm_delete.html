@@ -8,6 +8,6 @@
 <form method="POST">
   {% csrf_token %}
   <button type="submit" class="btn btn-danger">Yes, Delete</button>
-  <a href="{% url 'update_list' update.task.id %}" class="btn btn-secondary">Cancel</a>
+  <a href="{% url 'tracker:update_list' update.task.id %}" class="btn btn-secondary">Cancel</a>
 </form>
 {% endblock %}

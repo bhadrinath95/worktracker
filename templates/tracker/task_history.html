@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Completed Tasks</h1>
-<a href="{% url 'task_list' %}" class="btn btn-secondary mb-3">← Back to Active Tasks</a>
+<a href="{% url 'tracker:task_list' %}" class="btn btn-secondary mb-3">← Back to Active Tasks</a>
 <div class="table-responsive">
 <table class="table table-striped table-bordered align-middle text-nowrap">
   <tr>
@@ -14,8 +14,8 @@
     <td>{{ task.name }}</td>
     <td>{{ task.completed_date|date:"d-m-Y" }}</td>
     <td>
-      <a href="{% url 'update_list' task.id %}" class="btn btn-sm btn-info">View Updates</a>
-      <a href="{% url 'task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+      <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View Updates</a>
+      <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
     </td>
   </tr>
   {% empty %}
