@@ -9,13 +9,15 @@ from django.db.models import F
 from .models import Task, Update, TaskType, LifePrinciple, Document
 from .forms import TaskForm, UpdateForm, DocumentFormSet
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
 # -------------------------
 # TASK VIEWS
 # -------------------------
 
-class TaskListView(ListView):
+class TaskListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'tracker/task_list.html'
     context_object_name = 'tasks'
@@ -48,28 +50,28 @@ class TaskListView(ListView):
         return context
 
 
-class TaskHistoryView(ListView):
+class TaskHistoryView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'tracker/task_history.html'
     context_object_name = 'tasks'
     queryset = Task.objects.filter(status='Completed').order_by('-completed_date')
 
 
-class TaskCreateView(CreateView):
+class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
     template_name = 'tracker/task_form.html'
     success_url = reverse_lazy('task_list')
 
 
-class TaskUpdateView(UpdateView):
+class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
     template_name = 'tracker/task_form.html'
     success_url = reverse_lazy('task_list')
 
 
-class TaskDeleteView(DeleteView):
+class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     template_name = 'tracker/task_confirm_delete.html'
     success_url = reverse_lazy('task_list')
@@ -88,7 +90,7 @@ def mark_task_complete(request, pk):
 # UPDATE VIEWS
 # -------------------------
 
-class UpdateListView(View):
+class UpdateListView(LoginRequiredMixin, View):
     def get(self, request, task_id):
         task = get_object_or_404(Task, pk=task_id)
         updates = task.updates.order_by('-date')
@@ -127,7 +129,7 @@ class UpdateListView(View):
         })
 
 
-class UpdateEditView(View):
+class UpdateEditView(LoginRequiredMixin, View):
     def get(self, request, pk):
         update = get_object_or_404(Update, pk=pk)
         form = UpdateForm(instance=update)
@@ -162,7 +164,7 @@ class UpdateEditView(View):
         })
 
 
-class UpdateDeleteView(DeleteView):
+class UpdateDeleteView(LoginRequiredMixin, DeleteView):
     model = Update
     template_name = 'tracker/update_confirm_delete.html'
 
@@ -174,15 +176,16 @@ class UpdateDeleteView(DeleteView):
 # OTHER STATIC VIEWS
 # -------------------------
 
+@login_required(login_url='login')
 def prayer(request):
     return render(request, 'tracker/prayer.html')
 
-
+@login_required(login_url='login')
 def quotes(request):
     principles = LifePrinciple.objects.all().order_by('principle')
     return render(request, 'tracker/quotes.html', {'principles': principles})
 
-
+@login_required(login_url='login')
 def document_view(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     return render(request, 'tracker/document_view.html', {

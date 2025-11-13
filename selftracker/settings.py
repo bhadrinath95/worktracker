@@ -55,7 +55,7 @@ ROOT_URLCONF = 'selftracker.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,6 +124,10 @@ STATICFILES_DIRS = [
 
 # 👇 For production (needed when running collectstatic)
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'task_list'   # Redirect here after login
+LOGOUT_REDIRECT_URL = 'login' 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
