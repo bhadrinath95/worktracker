@@ -1,43 +1,80 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Create Invoice</h2>
+<div class="container my-4">
+  <h2 class="mb-4 text-center">Create Invoice</h2>
+
   <form method="POST">
     {% csrf_token %}
-    <table id="items">
-      <tr>
-        <th>Description</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Total</th>
-      </tr>
-      <tr>
-        <td><input name="description"></td>
-        <td><input name="quantity"></td>
-        <td><input name="price"></td>
-        <td><input name="qty_totals"></td>
-      </tr>
-    </table><br>
-    <button type="button" onclick="addRow()">+ Add another item</button><br><br>
-    Price Unit: <input name="unit" required><br><br>
-    Overall Total: <input name="overall_total" required><br><hr/><br> 
-    <h2>Amount Received</h2>
-    Amount Received (if any): <input name="amount_received"><br><br>
-    Balance: <input name="balance"><br><br>
-    <button type="submit">Generate Invoice</button>
+
+    <div class="table-responsive">
+      <table id="items" class="table table-bordered align-middle text-center">
+        <thead class="table-light">
+          <tr>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input name="description" class="form-control"></td>
+            <td><input name="quantity" class="form-control"></td>
+            <td><input name="price" class="form-control"></td>
+            <td><input name="qty_totals" class="form-control"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-end mb-3">
+      <button type="button" class="btn btn-outline-primary" onclick="addRow()">+ Add another item</button>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Price Unit</label>
+        <input name="unit" class="form-control" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Overall Total</label>
+        <input name="overall_total" class="form-control" required>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <h4 class="mb-3">Amount Received</h4>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Amount Received (if any)</label>
+        <input name="amount_received" class="form-control">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Balance</label>
+        <input name="balance" class="form-control">
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-success px-4">Generate Invoice</button>
+    </div>
   </form>
+</div>
 {% endblock %}
 
 {% block static %}
+
   <script>
     function addRow() {
-      const table = document.getElementById('items');
+      const table = document.getElementById('items').getElementsByTagName('tbody')[0];
       const row = table.insertRow();
       row.innerHTML = `
-        <td><input name="description"></td>
-        <td><input name="quantity"></td>
-        <td><input name="price"></td>
-        <td><input name="qty_totals"></td>
+        <td><input name="description" class="form-control"></td>
+        <td><input name="quantity" class="form-control"></td>
+        <td><input name="price" class="form-control"></td>
+        <td><input name="qty_totals" class="form-control"></td>
       `;
     }
   </script>
