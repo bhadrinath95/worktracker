@@ -1,7 +1,9 @@
 from django.shortcuts import render
 import random
 from datetime import date
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='login')
 def invoice_form(request):
     if request.method == "POST":
         company = {
