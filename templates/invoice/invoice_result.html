@@ -7,13 +7,6 @@
 </head>
 <body>
   <div class="invoice-container">
-    
-    <!-- ✅ WATERMARK (Add this line) -->
-    <div class="watermark">
-      <img src="{% static 'image/Bookmark.png' %}" alt="Watermark">
-    </div>
-
-    <!-- HEADER -->
     <div class="header">
       <div class="header-left">
         <img src="{% static 'image/Logo.png' %}" alt="Company Logo" class="company-logo">
@@ -28,7 +21,6 @@
 
     <h3>Invoice #{{ invoice_number }}</h3>
 
-    <!-- CUSTOMER DETAILS -->
     <div class="customer-details">
       <h4>Billed To:</h4>
       <p><strong>{{ customer.name }}</strong></p>
@@ -43,7 +35,6 @@
       {% endif %}
     </div>
 
-    <!-- INVOICE TABLE -->
     <table>
       <thead>
         <tr>
@@ -65,7 +56,6 @@
       </tbody>
     </table>
 
-    <!-- TOTAL SECTION -->
     <div class="total-section">
       <p class="total">Overall Total: {{ overall_total }}</p>
       {% if amount_received %}
@@ -74,7 +64,6 @@
       {% endif %}
     </div>
 
-    <!-- SIGNATURE SECTION -->
     <div class="signature-page">
       <div class="signature-section">
         <div>
@@ -92,7 +81,7 @@
       </div>
     </div>
   </div>
-
+  
   <!-- ✅ Print button centered -->
   <div class="print-button-container">
     <button class="no-print" id="printButton">Print / Save as PDF</button>

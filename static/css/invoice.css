@@ -17,28 +17,6 @@ body {
   overflow: hidden;
 }
 
-/* ✅ Watermark overlay */
-.watermark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.08;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.watermark img {
-  width: 300px;
-  height: auto;
-}
-
-/* Keep all content above watermark */
-.invoice-container > *:not(.watermark) {
-  position: relative;
-  z-index: 1;
-}
-
 /* ---------------- HEADER ---------------- */
 .header {
   display: flex;
@@ -195,28 +173,21 @@ td {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  .no-print, .print-button-container {
+  .no-print,
+  .print-button-container {
     display: none !important;
   }
-.invoice-container::before {
-  content: "";
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  height: auto;
-  background: url("{% static 'image/Bookmark.png' %}") no-repeat center center;
-  background-size: contain;
-  opacity: 0.08;
-  z-index: 0;
-}
-.signature-page { 
-  page-break-before: always; 
-  position: relative; 
-  height: 100vh; 
-  background-size: 300px auto !important; 
-}
+
+  .invoice-container {
+    position: relative;
+  }
+
+  .signature-page {
+    page-break-before: always;
+    position: relative;
+    height: 100vh;
+  }
+
   @page {
     size: A4;
     margin: 10mm;
