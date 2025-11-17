@@ -10,6 +10,6 @@
         </form>
     </div>
 {% else %}
-    <p>You're not already logged in. Would you like to <a href='/login/'>login</a> ?</p>
+    <p>You're not already logged in. Would you like to <a href='{% url "login" %}'>login</a> ?</p>
 {% endif %}
 {% endblock content %}

@@ -24,6 +24,11 @@ class TaskListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = Task.objects.exclude(status='Completed')
+        view_mode = self.request.GET.get('view', 'public')
+        if view_mode == "public":
+            queryset = queryset.filter(is_private=False)
+        elif view_mode == "private":
+            queryset = queryset.filter(is_private=True)
         task_type_id = self.request.GET.get('task_type')
         if task_type_id:
             queryset = queryset.filter(task_type_id=task_type_id)
@@ -36,11 +41,19 @@ class TaskListView(LoginRequiredMixin, ListView):
         context['task_types'] = TaskType.objects.all()
         context['selected_type'] = int(task_type_id) if task_type_id else None
 
+        view_mode = self.request.GET.get('view', 'public')
+        context['view_mode'] = view_mode
+
         # Add today's tasks separately
         today = timezone.localdate()
         today_tasks = Task.objects.filter(
             target_date=today
         ).exclude(status='Completed')
+
+        if view_mode == "public":
+            today_tasks = today_tasks.filter(is_private=False)
+        elif view_mode == "private":
+            today_tasks = today_tasks.filter(is_private=True)
 
         if task_type_id:
             today_tasks = today_tasks.filter(task_type_id=task_type_id)

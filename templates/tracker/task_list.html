@@ -33,6 +33,24 @@
   </form>
 </div>
 
+<div class="btn-group mb-3 ms-3">
+  <a href="?view=public{% if selected_type %}&task_type={{ selected_type }}{% endif %}"
+     class="btn btn-outline-primary {% if view_mode == 'public' %}active{% endif %}">
+     Public
+  </a>
+
+  <a href="?view=private{% if selected_type %}&task_type={{ selected_type }}{% endif %}"
+     class="btn btn-outline-primary {% if view_mode == 'private' %}active{% endif %}">
+     Private
+  </a>
+
+  <a href="?view=all{% if selected_type %}&task_type={{ selected_type }}{% endif %}"
+     class="btn btn-outline-primary {% if view_mode == 'all' %}active{% endif %}">
+     All
+  </a>
+</div>
+
+
 {% if today_tasks %}
   <h3 class="text-success mb-2">Today's Tasks ({{ today_tasks|length }})</h3>
   <div class="table-responsive mb-4">

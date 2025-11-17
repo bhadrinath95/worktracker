@@ -10,9 +10,9 @@
             </table>
             <button type="submit">Register</button>
         </form>
-        <p>Already have an account? Please <a href="/login">login</a></p>
+        <p>Already have an account? Please <a href='{% url "login" %}'>login</a></p>
     </div>
 {% else %}
-    <p>You're already logged in and connot register. Would you like to <a href='/logout/'>logout</a> ?</p>
+    <p>You're already logged in and connot register. Would you like to <a href='{% url "logout" %}'>logout</a> ?</p>
 {% endif %}
 {% endblock content %}
