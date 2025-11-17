@@ -33,22 +33,28 @@
   </form>
 </div>
 
-<div class="btn-group mb-3 ms-3">
-  <a href="?view=public{% if selected_type %}&task_type={{ selected_type }}{% endif %}"
-     class="btn btn-outline-primary {% if view_mode == 'public' %}active{% endif %}">
-     Public
+<div class="toggle-container mb-3 ms-3">
+
+  <a href="?view={% if view_mode == 'public' %}private{% else %}public{% endif %}
+      {% if selected_type %}&task_type={{ selected_type }}{% endif %}"
+     class="text-decoration-none d-flex align-items-center">
+
+    <div class="toggle-switch {% if view_mode == 'private' %}active{% endif %}">
+      <div class="toggle-circle"></div>
+    </div>
+
+    <span class="toggle-label">
+      {% if view_mode == 'private' %}
+        🔒 Private
+      {% else %}
+        🔓 Public
+      {% endif %}
+    </span>
+
   </a>
 
-  <a href="?view=private{% if selected_type %}&task_type={{ selected_type }}{% endif %}"
-     class="btn btn-outline-primary {% if view_mode == 'private' %}active{% endif %}">
-     Private
-  </a>
-
-  <a href="?view=all{% if selected_type %}&task_type={{ selected_type }}{% endif %}"
-     class="btn btn-outline-primary {% if view_mode == 'all' %}active{% endif %}">
-     All
-  </a>
 </div>
+
 
 
 {% if today_tasks %}
