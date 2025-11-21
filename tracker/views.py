@@ -107,7 +107,7 @@ class UpdateListView(LoginRequiredMixin, View):
     def get(self, request, task_id):
         task = get_object_or_404(Task, pk=task_id)
 
-        checkbox_updates = task.updates.filter(is_check_box=True)
+        checkbox_updates = task.updates.filter(is_check_box=True).order_by('name')
         normal_updates   = task.updates.filter(is_check_box=False).order_by('-date')
 
         form = UpdateForm()
