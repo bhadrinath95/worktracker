@@ -11,6 +11,7 @@ from .forms import TaskForm, UpdateForm, DocumentFormSet
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 
 # -------------------------
@@ -149,6 +150,7 @@ class UpdateListView(LoginRequiredMixin, View):
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
+        update.date = timezone.now().date()
         update.is_completed = True
         update.save()
         return redirect('tracker:update_list', task_id=update.task.id)
