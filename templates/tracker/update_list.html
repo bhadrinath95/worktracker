@@ -39,8 +39,8 @@
     {% for u in checkbox_updates %}
     <tr>
       <td>{{ u.description }}</td>
-      <td>{% if u.is_completed %}<p>{{ u.date|date:"d-m-Y" }} </p>{% endif %}</td>
-      <td>{% if u.is_completed %}<p>Completed </p>{% endif %}</td>
+      <td>{{ u.date|date:"d-m-Y" }}</td>
+      <td>{% if u.is_completed %}Completed{% endif %}</td>
       <td>
         <div class="d-flex align-items-center gap-2">
           {% if not u.is_completed %}
