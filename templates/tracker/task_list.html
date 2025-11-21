@@ -35,8 +35,7 @@
 
 <div class="toggle-container mb-3 ms-3">
 
-  <a href="?view={% if view_mode == 'public' %}private{% else %}public{% endif %}
-      {% if selected_type %}&task_type={{ selected_type }}{% endif %}"
+  <a href="?view={% if view_mode == 'public' %}private{% else %}public{% endif %}{% if selected_type %}&task_type={{ selected_type }}{% endif %}"
      class="text-decoration-none d-flex align-items-center">
 
     <div class="toggle-switch {% if view_mode == 'private' %}active{% endif %}">
