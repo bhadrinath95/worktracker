@@ -40,7 +40,7 @@
     <tr>
       <td>{{ u.description }}</td>
       <td>{{ u.date|date:"d-m-Y" }}</td>
-      <td>{% if u.is_completed %}Completed{% endif %}</td>
+      <td>{% if u.is_completed %}<p class="text-success">Completed</p>{% endif %}</td>
       <td>
         <div class="d-flex align-items-center gap-2">
           {% if not u.is_completed %}
@@ -74,7 +74,7 @@
       <br>
       {{ u.description|linebreaks }}
       {% if u.is_completed %}
-        <p class="text-success fw-bold">- Completed</p>
+        <p class="text-success fw-bold">— Completed</p>
       {% endif %}
 
       {% if u.documents.all %}
