@@ -40,8 +40,10 @@ class Task(models.Model):
 
 class Update(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='updates')
-    date = models.DateField(default=timezone.now)
+    date = models.DateField(default=timezone.now, null=True, blank=True)
     description = models.TextField()
+    is_check_box = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False) 
 
     def __str__(self):
         return f"Update on {self.task.name} - {self.date.strftime('%Y-%m-%d')}"

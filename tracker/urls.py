@@ -12,6 +12,7 @@ urlpatterns = [
     path('task/<int:task_id>/updates/', views.UpdateListView.as_view(), name='update_list'),
     path('update/<int:pk>/edit/', views.UpdateEditView.as_view(), name='update_edit'),
     path('update/<int:pk>/delete/', views.UpdateDeleteView.as_view(), name='update_delete'),
+    path('update/<int:update_id>/complete/', views.UpdateCompleteView.as_view(), name='update_complete'),
 
     path('prayer/', views.prayer, name='prayer'),
     path('quotes/', views.quotes, name='quotes'),

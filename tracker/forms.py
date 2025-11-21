@@ -18,10 +18,12 @@ class TaskForm(forms.ModelForm):
 class UpdateForm(forms.ModelForm):
     class Meta:
         model = Update
-        fields = ['date', 'description']
+        fields = ['date', 'description', 'is_check_box', 'is_completed']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'is_check_box': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_completed': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
 
 class DocumentForm(forms.ModelForm):

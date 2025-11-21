@@ -106,12 +106,17 @@ def mark_task_complete(request, pk):
 class UpdateListView(LoginRequiredMixin, View):
     def get(self, request, task_id):
         task = get_object_or_404(Task, pk=task_id)
-        updates = task.updates.order_by('-date')
+
+        checkbox_updates = task.updates.filter(is_check_box=True)
+        normal_updates   = task.updates.filter(is_check_box=False).order_by('-date')
+
         form = UpdateForm()
         formset = DocumentFormSet(queryset=Document.objects.none())
+
         return render(request, 'tracker/update_list.html', {
             'task': task,
-            'updates': updates,
+            'checkbox_updates': checkbox_updates,
+            'updates': normal_updates,
             'form': form,
             'formset': formset,
         })
@@ -141,6 +146,12 @@ class UpdateListView(LoginRequiredMixin, View):
             'formset': formset,
         })
 
+class UpdateCompleteView(LoginRequiredMixin, View):
+    def post(self, request, update_id):
+        update = get_object_or_404(Update, pk=update_id)
+        update.is_completed = True
+        update.save()
+        return redirect('tracker:update_list', task_id=update.task.id)
 
 class UpdateEditView(LoginRequiredMixin, View):
     def get(self, request, pk):
