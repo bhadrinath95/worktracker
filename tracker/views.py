@@ -11,7 +11,8 @@ from .forms import TaskForm, UpdateForm, DocumentFormSet
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
+from django.http import JsonResponse
+from .models import UpdateTemplate
 
 
 # -------------------------
@@ -45,21 +46,35 @@ class TaskListView(LoginRequiredMixin, ListView):
         view_mode = self.request.GET.get('view', 'public')
         context['view_mode'] = view_mode
 
-        # Add today's tasks separately
         today = timezone.localdate()
-        today_tasks = Task.objects.filter(
-            target_date=today
-        ).exclude(status='Completed')
+
+        view_mode = context['view_mode']
+        task_type_id = context['selected_type']
+
+        common_filters = {}
 
         if view_mode == "public":
-            today_tasks = today_tasks.filter(is_private=False)
+            common_filters['is_private'] = False
         elif view_mode == "private":
-            today_tasks = today_tasks.filter(is_private=True)
+            common_filters['is_private'] = True
 
         if task_type_id:
-            today_tasks = today_tasks.filter(task_type_id=task_type_id)
+            common_filters['task_type_id'] = task_type_id
 
-        context['today_tasks'] = today_tasks.order_by('name')
+        tasks_by_target_date = Task.objects.filter(
+            target_date=today,
+            **common_filters
+        ).exclude(status='Completed')
+
+        tasks_by_updates = Task.objects.filter(
+            updates__date=today,
+            updates__is_completed=False,
+            **common_filters
+        ).exclude(status='Completed')
+
+        today_tasks = tasks_by_target_date.union(tasks_by_updates).order_by('name')
+
+        context['today_tasks'] = today_tasks
 
         return context
 
@@ -103,6 +118,10 @@ def mark_task_complete(request, pk):
 # -------------------------
 # UPDATE VIEWS
 # -------------------------
+
+def get_template_description(request, template_id):
+    template = get_object_or_404(UpdateTemplate, pk=template_id)
+    return JsonResponse({'description': template.description})
 
 class UpdateListView(LoginRequiredMixin, View):
     def get(self, request, task_id):

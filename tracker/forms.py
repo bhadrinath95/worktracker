@@ -1,7 +1,7 @@
 # forms.py
 from django import forms
 from django.forms import modelformset_factory
-from .models import Task, Update, Document
+from .models import Task, Update, Document, UpdateTemplate
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -16,12 +16,20 @@ class TaskForm(forms.ModelForm):
         }
 
 class UpdateForm(forms.ModelForm):
+    template = forms.ModelChoiceField(
+        queryset=UpdateTemplate.objects.all(),
+        required=False,
+        empty_label="Select a template",
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Template"
+    )
+
     class Meta:
         model = Update
-        fields = ['date', 'description', 'is_check_box', 'is_completed']
+        fields = ['template', 'date', 'description', 'is_check_box', 'is_completed']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
             'is_check_box': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_completed': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }

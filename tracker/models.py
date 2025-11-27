@@ -37,7 +37,13 @@ class Task(models.Model):
             self.completed_date = None
         super().save(*args, **kwargs)
 
+class UpdateTemplate(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField()
 
+    def __str__(self):
+        return self.name
+    
 class Update(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='updates')
     date = models.DateField(default=timezone.now, null=True, blank=True)

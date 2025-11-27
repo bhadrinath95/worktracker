@@ -17,4 +17,7 @@ urlpatterns = [
     path('prayer/', views.prayer, name='prayer'),
     path('quotes/', views.quotes, name='quotes'),
     path('document/<int:pk>/', views.document_view, name='document_view'),
+
+    path('template/<int:template_id>/description/', views.get_template_description, name='template_description'),
+
 ]
