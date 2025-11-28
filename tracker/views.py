@@ -25,7 +25,7 @@ class TaskListView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        queryset = Task.objects.exclude(status='Completed').exclude(is_hold=True)
+        queryset = Task.objects.exclude(status='Completed').exclude(is_hold=True).exclude(is_bookmark=True)
         view_mode = self.request.GET.get('view', 'public')
 
         if view_mode == "public":
@@ -69,13 +69,13 @@ class TaskListView(LoginRequiredMixin, ListView):
             started_date__lte=today,
             target_date__gte=today,
             **common_filters
-        ).exclude(status='Completed').exclude(is_hold=True)
+        ).exclude(status='Completed').exclude(is_hold=True).exclude(is_bookmark=True)
 
         tasks_by_updates = Task.objects.filter(
             updates__date=today,
             updates__is_completed=False,
             **common_filters
-        ).exclude(status='Completed').exclude(is_hold=True)
+        ).exclude(status='Completed').exclude(is_hold=True).exclude(is_bookmark=True)
 
         today_tasks = tasks_by_target_date.union(tasks_by_updates).order_by('name')
         context['today_tasks'] = today_tasks
@@ -87,6 +87,15 @@ class TaskListView(LoginRequiredMixin, ListView):
         ).order_by('name')
 
         context['held_tasks'] = held_tasks
+
+        bookmarked_tasks = Task.objects.filter(
+            is_bookmark=True,
+            status__in=['Opened', 'InProgress'],
+            is_hold=False,
+            **common_filters
+        ).order_by('name')
+
+        context['bookmarked_tasks'] = bookmarked_tasks
 
         return context
 

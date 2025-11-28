@@ -6,12 +6,13 @@ from .models import Task, Update, Document, UpdateTemplate
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['name', 'status', 'task_type', 'started_date', 'target_date', 'is_hold', 'is_private']
+        fields = ['name', 'status', 'task_type', 'started_date', 'target_date', 'is_bookmark', 'is_hold', 'is_private']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
             'task_type': forms.Select(attrs={'class': 'form-control', 'required': True}),
             'started_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'is_bookmark': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'target_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'is_private': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }

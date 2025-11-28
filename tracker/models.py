@@ -26,6 +26,7 @@ class Task(models.Model):
     updated_date = models.DateField(auto_now=True)
     completed_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(default=timezone.now, null=True, blank=True)
+    is_bookmark = models.BooleanField(default=False)
     is_private = models.BooleanField(default=False)
     is_hold = models.BooleanField(default=False)
 
