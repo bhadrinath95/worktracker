@@ -25,16 +25,23 @@ class TaskListView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        queryset = Task.objects.exclude(status='Completed')
+        queryset = Task.objects.exclude(status='Completed').exclude(is_hold=True)
         view_mode = self.request.GET.get('view', 'public')
+
         if view_mode == "public":
             queryset = queryset.filter(is_private=False)
         elif view_mode == "private":
             queryset = queryset.filter(is_private=True)
+
         task_type_id = self.request.GET.get('task_type')
         if task_type_id:
             queryset = queryset.filter(task_type_id=task_type_id)
-        return queryset.order_by(F('target_date').asc(nulls_last=True), 'updated_date', 'name')
+
+        return queryset.order_by(
+            F('target_date').asc(nulls_last=True),
+            'updated_date',
+            'name'
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -48,9 +55,6 @@ class TaskListView(LoginRequiredMixin, ListView):
 
         today = timezone.localdate()
 
-        view_mode = context['view_mode']
-        task_type_id = context['selected_type']
-
         common_filters = {}
 
         if view_mode == "public":
@@ -62,19 +66,27 @@ class TaskListView(LoginRequiredMixin, ListView):
             common_filters['task_type_id'] = task_type_id
 
         tasks_by_target_date = Task.objects.filter(
-            target_date=today,
+            started_date__lte=today,
+            target_date__gte=today,
             **common_filters
-        ).exclude(status='Completed')
+        ).exclude(status='Completed').exclude(is_hold=True)
 
         tasks_by_updates = Task.objects.filter(
             updates__date=today,
             updates__is_completed=False,
             **common_filters
-        ).exclude(status='Completed')
+        ).exclude(status='Completed').exclude(is_hold=True)
 
         today_tasks = tasks_by_target_date.union(tasks_by_updates).order_by('name')
-
         context['today_tasks'] = today_tasks
+
+        held_tasks = Task.objects.filter(
+            is_hold=True,
+            status__in=['Opened', 'InProgress'],
+            **common_filters
+        ).order_by('name')
+
+        context['held_tasks'] = held_tasks
 
         return context
 
@@ -105,6 +117,16 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'tracker/task_confirm_delete.html'
     success_url = reverse_lazy('tracker:task_list')
 
+@login_required
+def toggle_hold(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    task.is_hold = not task.is_hold
+    task.save()
+    if task.is_hold:
+        messages.warning(request, "Task moved to Hold.")
+    else:
+        messages.success(request, "Task Activated.")
+    return redirect('tracker:task_list')
 
 def mark_task_complete(request, pk):
     task = get_object_or_404(Task, pk=pk)
