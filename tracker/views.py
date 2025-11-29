@@ -66,17 +66,15 @@ class TaskListView(LoginRequiredMixin, ListView):
             common_filters['task_type_id'] = task_type_id
 
         tasks_by_target_date = Task.objects.filter(
-            started_date__lte=today,
-            target_date__gte=today,
+            started_date=today,
+            target_date=today,
             **common_filters
         ).exclude(status='Completed').exclude(is_hold=True).exclude(is_bookmark=True)
-
         tasks_by_updates = Task.objects.filter(
             updates__date=today,
             updates__is_completed=False,
             **common_filters
         ).exclude(status='Completed').exclude(is_hold=True).exclude(is_bookmark=True)
-
         today_tasks = tasks_by_target_date.union(tasks_by_updates).order_by('name')
         context['today_tasks'] = today_tasks
 
