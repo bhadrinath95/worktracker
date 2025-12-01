@@ -8,7 +8,14 @@
 {% if messages %}
   <div class="container mt-3">
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          <div class="alert
+        {% if message.tags == 'error' %}
+            alert-danger
+        {% else %}
+            alert-{{ message.tags }}
+        {% endif %}
+        alert-dismissible fade show"
+        role="alert">
         {{ message }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
@@ -41,7 +48,7 @@
 
 <div class="toggle-container mb-3 ms-3">
 
-  <a href="?view={% if view_mode == 'public' %}private{% else %}public{% endif %}{% if selected_type %}&task_type={{ selected_type }}{% endif %}"
+  <a href="{% if view_mode == 'public' %}{% url 'private_access' %}{% else %}?view=public{% endif %}"
      class="text-decoration-none d-flex align-items-center">
 
     <div class="toggle-switch {% if view_mode == 'private' %}active{% endif %}">

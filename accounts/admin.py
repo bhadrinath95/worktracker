@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import UserProfile
+from .forms import UserProfileAdminForm
 
-# Register your models here.
+class UserProfileAdmin(admin.ModelAdmin):
+    form = UserProfileAdminForm
+
+admin.site.register(UserProfile, UserProfileAdmin)

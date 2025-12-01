@@ -27,11 +27,17 @@ class TaskListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = Task.objects.exclude(status='Completed').exclude(is_hold=True).exclude(is_bookmark=True)
         view_mode = self.request.GET.get('view', 'public')
-
-        if view_mode == "public":
-            queryset = queryset.filter(is_private=False)
-        elif view_mode == "private":
+        if view_mode == "private":
+            user_profile  = getattr(self.request.user, "userprofile", None)
+            if user_profile is None or not user_profile.special_privilege_password:
+                messages.error(self.request, "You do not have access to private tasks.")
+                return Task.objects.none()
+            if not self.request.session.get("private_access"):
+                raise PermissionError("PRIVATE_ACCESS_REQUIRED")
             queryset = queryset.filter(is_private=True)
+        elif view_mode == "public":
+            self.request.session['private_access'] = False
+            queryset = queryset.filter(is_private=False)
 
         task_type_id = self.request.GET.get('task_type')
         if task_type_id:
@@ -96,6 +102,13 @@ class TaskListView(LoginRequiredMixin, ListView):
         context['bookmarked_tasks'] = bookmarked_tasks
 
         return context
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except PermissionError as e:
+            if str(e) == "PRIVATE_ACCESS_REQUIRED":
+                return redirect("private_access")
+            raise
 
 
 class TaskHistoryView(LoginRequiredMixin, ListView):
