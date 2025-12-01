@@ -188,6 +188,9 @@ class UpdateListView(LoginRequiredMixin, View):
 
     def post(self, request, task_id):
         task = get_object_or_404(Task, pk=task_id)
+        if task.is_private:
+            if not self.request.session.get("private_access"):
+                raise PermissionError("PRIVATE_ACCESS_REQUIRED")
         form = UpdateForm(request.POST)
         formset = DocumentFormSet(request.POST, queryset=Document.objects.none())
 
