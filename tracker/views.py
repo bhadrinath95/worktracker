@@ -168,6 +168,9 @@ def get_template_description(request, template_id):
 class UpdateListView(LoginRequiredMixin, View):
     def get(self, request, task_id):
         task = get_object_or_404(Task, pk=task_id)
+        if task.is_private:
+            if not self.request.session.get("private_access"):
+                raise PermissionError("PRIVATE_ACCESS_REQUIRED")
 
         checkbox_updates = task.updates.filter(is_check_box=True).order_by('is_completed', '-date')
         normal_updates   = task.updates.filter(is_check_box=False).order_by('-date')
@@ -207,6 +210,14 @@ class UpdateListView(LoginRequiredMixin, View):
             'form': form,
             'formset': formset,
         })
+    
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except PermissionError as e:
+            if str(e) == "PRIVATE_ACCESS_REQUIRED":
+                return redirect("private_access")
+            raise
 
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
