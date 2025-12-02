@@ -9,6 +9,7 @@ def register_view(request):
     form = UserCreationForm(request.POST or None)
     if form.is_valid():
         user_obj = form.save()
+        messages.success(request, f"New user created successfully! Please log in.")
         return redirect('login')
     context = {"form": form}
     return render(request, "accounts/register.html", context)
@@ -22,6 +23,8 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             return redirect('tracker:task_list')
+        else:
+            messages.error(request, "Incorrect username or password. Try again.")
     else:
         form = AuthenticationForm(request)
     context = {
@@ -54,5 +57,6 @@ def private_access(request):
 def logout_view(request):
     if request.method == "POST":
         logout(request)
+        messages.success(request, "You have been logged out successfully!")
         return redirect('login')
     return render(request, "accounts/logout.html", {})

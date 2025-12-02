@@ -1,18 +1,59 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+          <div class="alert
+        {% if message.tags == 'error' %}
+            alert-danger
+        {% else %}
+            alert-{{ message.tags }}
+        {% endif %}
+        alert-dismissible fade show"
+        role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 {% if not request.user.is_authenticated %}
-    <div style="margin-top: 30px;">
-        <form method="POST">
-            {% csrf_token %}
-            <table>
-                {{ form.as_table }}
-            </table>
-            <button type="submit">Login</button>
-        </form>
-        <p>Need an account ? Please <a href='{% url "register" %}'>Register</a></p>
-    </div>
+
+<div class="container mt-5" style="max-width: 400px;">
+    <h3 class="mb-3 text-center">Login</h4>
+
+    <form method="post" class="card shadow p-4">
+        {% csrf_token %}
+
+        <table class="w-100">
+            {% for field in form %}
+            <tr>
+                <th style="width: 30%;"><label class="form-label">{{ field.label }}</label></th>
+                <td style="width: 70%;">{{ field }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3">
+            Login
+        </button>
+    </form>
+
+    <p class="text-center mt-3">
+        Need an account?
+        <a href="{% url 'register' %}">Register</a>
+    </p>
+</div>
+
 {% else %}
-    <p>You're already logged in. Would you like to <a href='{% url "logout" %}'>logout</a> ?</p>
+<div class="container mt-5">
+    <div class="alert alert-info text-center">
+        You're already logged in.
+        <a href="{% url 'logout' %}">Logout?</a>
+    </div>
+</div>
 {% endif %}
 {% endblock content %}
