@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>Updates for {{ task.name }}</h1>
+<h1>{{ task.name }}</h1>
 
 <form method="POST">
   {% csrf_token %}
