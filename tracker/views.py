@@ -5,8 +5,8 @@ from django.views.generic import (
     ListView, CreateView, UpdateView, DeleteView
 )
 from django.urls import reverse_lazy, reverse
-from django.db.models import F
-from .models import Task, Update, TaskType, LifePrinciple, Document
+from django.db.models import F, Q
+from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic
 from .forms import TaskForm, UpdateForm, DocumentFormSet
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -115,8 +115,23 @@ class TaskHistoryView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'tracker/task_history.html'
     context_object_name = 'tasks'
-    queryset = Task.objects.filter(status='Completed').order_by('-completed_date')
 
+    def get_queryset(self):
+        queryset = Task.objects.filter(status='Completed').order_by('-completed_date')
+        search = self.request.GET.get('search', '').strip()
+
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(updates__description__icontains=search)
+            ).distinct()
+
+        return queryset
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get('HX-Request'):
+            return render(self.request, 'tracker/task_history_rows.html', context)
+        return super().render_to_response(context, **response_kwargs)
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
@@ -283,8 +298,16 @@ def prayer(request):
 
 @login_required(login_url='login')
 def quotes(request):
-    principles = LifePrinciple.objects.all().order_by('principle')
-    return render(request, 'tracker/quotes.html', {'principles': principles})
+    topics = LifePrincipleTopic.objects.prefetch_related(
+        "principle_topic"
+    ).all().order_by("topic") 
+
+    for topic in topics:
+        topic.sorted_principles = topic.principle_topic.all().order_by("principle")
+
+    return render(request, "tracker/quotes.html", {
+        "topics": topics
+    })
 
 @login_required(login_url='login')
 def document_view(request, pk):

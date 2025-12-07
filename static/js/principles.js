@@ -1,4 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
+  // ----------- Initialize Bootstrap Tooltips -----------
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+
+  // ----------- Expand/Collapse Meaning Row -----------
   const rows = document.querySelectorAll(".principle-row");
   let openRowId = null; // Track which row is currently expanded
 

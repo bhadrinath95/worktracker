@@ -3,6 +3,7 @@
 {% block content %}
 
 <div class="container py-3">
+
   <div class="text-center mb-4">
     <h2 class="fw-bold text-primary">Quote</h2>
     <blockquote class="blockquote mt-3">
@@ -13,33 +14,54 @@
     </blockquote>
   </div>
 
-  <div class="mb-4">
-    <h2 class="fw-bold text-success text-center mb-3">Life Principles</h2>
+  <h2 class="fw-bold text-success text-center mb-3">Life Principles</h2>
 
-    <div class="card shadow-sm">
-      <div class="card-body p-0">
-        <table class="table table-hover mb-0 align-middle">
-          <thead class="table-dark text-center">
-            <tr>
-              <th>Quotes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for principle in principles %}
-            <tr class="principle-row" data-id="{{ principle.id }}" data-meaning="{{ principle.meaning|escapejs }}">
-              <td colspan="2" class="fw-semibold text-dark">
-                <a href="#" class="text-decoration-none text-dark">
+  <div class="accordion" id="principlesAccordion">
+
+    {% for topic in topics %}
+    <div class="accordion-item shadow-sm">
+      <h2 class="accordion-header" id="heading{{ topic.id }}">
+        <button class="accordion-button collapsed fw-bold" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapse{{ topic.id }}"
+                aria-expanded="false"
+                aria-controls="collapse{{ topic.id }}">
+          {{ topic.topic }}
+        </button>
+      </h2>
+
+      <div id="collapse{{ topic.id }}" class="accordion-collapse collapse"
+           aria-labelledby="heading{{ topic.id }}"
+           data-bs-parent="#principlesAccordion">
+
+        <div class="accordion-body p-0">
+          <table class="table table-hover mb-0">
+            <tbody>
+              {% for principle in topic.principle_topic.all %}
+              <tr>
+                <td class="fw-semibold"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="{{ principle.meaning }}">
                   {{ principle.principle }}
-                </a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td class="text-muted fst-italic">No principles added yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
+    {% endfor %}
+
   </div>
 </div>
+
 {% endblock %}
 
 {% block static %}

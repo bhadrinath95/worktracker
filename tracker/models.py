@@ -57,7 +57,21 @@ class Update(models.Model):
     def __str__(self):
         return f"Update on {self.task.name} - {self.date.strftime('%Y-%m-%d')}"
     
+class LifePrincipleTopic(models.Model):
+    topic = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return self.topic
+    
 class LifePrinciple(models.Model):
+    
+    topic = models.ForeignKey(
+        LifePrincipleTopic,
+        on_delete=models.CASCADE,
+        related_name="principle_topic",
+        null=True,
+        blank=True
+    )
     principle = models.TextField()
     meaning = models.TextField()
 
@@ -65,7 +79,7 @@ class LifePrinciple(models.Model):
         return self.principle
 
 class Document(models.Model):
-    update = models.ForeignKey('Update', on_delete=models.CASCADE, related_name='documents')
+    update = models.ForeignKey(Update, on_delete=models.CASCADE, related_name='documents')
     filename = models.CharField(max_length=255)
     fileurl = models.CharField(max_length=255)
     filetype = models.CharField(max_length=50, editable=False)
