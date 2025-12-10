@@ -97,7 +97,9 @@ class Document(models.Model):
         super().save(*args, **kwargs)
 
     def github_url(self):
-        return f"https://raw.githubusercontent.com/tenctech10c/Document/main/{self.fileurl}"
+        if self.filetype != "other":
+            return f"https://raw.githubusercontent.com/tenctech10c/Document/main/{self.fileurl}"
+        return self.fileurl
 
     def __str__(self):
         return self.filename
