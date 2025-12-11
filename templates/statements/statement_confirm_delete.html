@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-danger text-white">
+        <h4 class="mb-0">Delete Statement</h4>
+    </div>
+
+    <div class="card-body">
+        <p class="lead">
+            Are you sure you want to delete this statement?
+        </p>
+
+        <div class="alert alert-warning">
+            <strong>{{ object.title }}</strong><br>
+            {{ object.statement_text }}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn btn-danger px-4" type="submit">Yes, Delete</button>
+            <a href="{% url 'statements:statement_detail' object.pk %}" 
+               class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

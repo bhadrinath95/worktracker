@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">
+        <h4 class="mb-0">{{ statement.title }}
+
+        <span class="badge 
+            {% if statement.status == 'open' %} bg-warning
+            {% elif statement.status == 'inprogress' %} bg-primary
+            {% elif statement.status == 'closed' %} bg-success
+            {% else %} bg-info {% endif %}">
+            {{ statement.get_status_display }}
+        </span></h4>
+    </div>
+
+    <div class="card-body">
+
+        <p class="mb-4">{{ statement.statement_text | linebreaks }}</p>
+
+        <h5 class="text-secondary">Options</h5>
+        <ul class="list-group mb-4">
+            {% for opt in statement.options.all %}
+                <li class="list-group-item">
+                    {{ opt.option_description | linebreaks }}
+                    {% if opt.get_decision_display == "Agree" %}
+                     <p class="text-success"><strong>— {{ opt.get_decision_display }}</strong></p>
+                    {% elif opt.get_decision_display == "Disagree" %}
+                     <p class="text-danger"><strong>— {{ opt.get_decision_display }}</strong></p>
+                    {% endif %}
+
+                    <small class="text-muted">
+                        {% if opt.cancelled_principles.all %}
+                        Principles:
+                        {% for p in opt.cancelled_principles.all %}
+                            {{ p.principle }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}<br />
+                        {% endif %}
+
+                        {% if opt.advice_from %}
+                        Advice: {{ opt.advice_from }} — <i>‘{{ opt.advice_reason }}’</i><br />
+                        {% endif %}
+                    </small>
+
+                </li>
+            {% empty %}
+                <li class="list-group-item text-muted">No options added.</li>
+            {% endfor %}
+        </ul>
+
+        {% if statement.conclusion %}
+        <h5 class="text-secondary">Conclusion</h5>
+        <p>{{ statement.conclusion }}</p>
+        {% endif %}
+
+        <a href="{% url 'statements:statement_update' statement.pk %}" class="btn btn-warning">
+            Edit
+        </a>
+
+        <a href="{% url 'statements:statement_delete' statement.pk %}" class="btn btn-danger">
+            Delete
+        </a>
+
+        <a href="{% url 'statements:statement_list' %}" class="btn btn-secondary">
+            Back
+        </a>
+
+    </div>
+</div>
+
+{% endblock %}
