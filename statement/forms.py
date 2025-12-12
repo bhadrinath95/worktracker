@@ -25,7 +25,9 @@ class StatementOptionForm(forms.ModelForm):
             "advice_reason",
         ]
         widgets = {
-            "cancelled_principles": forms.CheckboxSelectMultiple()
+            "cancelled_principles": forms.SelectMultiple(attrs={
+                "class": "select2-multi"
+            })
         }
 
 

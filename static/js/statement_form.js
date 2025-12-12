@@ -21,5 +21,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         optionsArea.appendChild(newForm);
         totalForms.value = formIndex + 1;
+
+        $(newForm).find('.select2-multi').select2({
+            width: '100%',
+            placeholder: "Select Life Principles",
+            allowClear: true
+        });
     });
 });

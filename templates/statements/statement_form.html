@@ -77,6 +77,13 @@
 <script>
     window.EMPTY_FORM_HTML = `{{ formset.empty_form.as_p|escapejs }}`;
     window.FORMSET_PREFIX = "{{ formset.prefix }}";
+    $(document).ready(function() {
+        $('.select2-multi').select2({
+            width: '100%',
+            placeholder: "Select Life Principles",
+            allowClear: true
+        });
+    });
 </script>
 
 <script src="{% static 'js/statement_form.js' %}"></script>
