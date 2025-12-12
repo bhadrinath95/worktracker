@@ -55,6 +55,7 @@ class StatementOption(models.Model):
     # If the option is influenced by someone
     advice_from = models.CharField(max_length=255, null=True, blank=True)
     advice_reason = models.TextField(null=True, blank=True)
+    advice_is_link = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.statement.title} - {self.decision}"

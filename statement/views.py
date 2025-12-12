@@ -3,19 +3,20 @@ from django.urls import reverse_lazy
 from .models import Statement
 from .forms import StatementForm, StatementOptionFormSet
 from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
-class StatementListView(ListView):
+class StatementListView(LoginRequiredMixin, ListView):
     model = Statement
     template_name = "statements/statement_list.html"
     context_object_name = "statements"
 
-class StatementDetailView(DetailView):
+class StatementDetailView(LoginRequiredMixin, DetailView):
     model = Statement
     template_name = "statements/statement_detail.html"
     context_object_name = "statement"
 
-class StatementCreateView(CreateView):
+class StatementCreateView(LoginRequiredMixin, CreateView):
     model = Statement
     form_class = StatementForm
     template_name = "statements/statement_form.html"
@@ -42,7 +43,7 @@ class StatementCreateView(CreateView):
             context["formset"] = StatementOptionFormSet()
         return context
     
-class StatementUpdateView(UpdateView):
+class StatementUpdateView(LoginRequiredMixin, UpdateView):
     model = Statement
     form_class = StatementForm
     template_name = "statements/statement_form.html"
@@ -69,7 +70,7 @@ class StatementUpdateView(UpdateView):
             context["formset"] = StatementOptionFormSet(instance=self.object)
         return context
 
-class StatementDeleteView(DeleteView):
+class StatementDeleteView(LoginRequiredMixin, DeleteView):
     model = Statement
     template_name = "statements/statement_confirm_delete.html"
     success_url = reverse_lazy("statements:statement_list")

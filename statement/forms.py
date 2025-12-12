@@ -23,6 +23,7 @@ class StatementOptionForm(forms.ModelForm):
             "cancelled_principles",
             "advice_from",
             "advice_reason",
+            "advice_is_link"
         ]
         widgets = {
             "cancelled_principles": forms.SelectMultiple(attrs={
