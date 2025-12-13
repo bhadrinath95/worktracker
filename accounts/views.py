@@ -34,12 +34,12 @@ def login_view(request):
 
 
 @login_required
-def private_access(request):
+def private_access(request, reverse_url):
     user_profile  = getattr(request.user, "userprofile", None)
 
     if user_profile is None or not user_profile.special_privilege_password:
         messages.error(request, "You don't have a privilege to access private tasks.")
-        return redirect("tracker:task_list")
+        return redirect(reverse_url)
 
     if request.method == "POST":
         pwd = request.POST.get("password")
@@ -47,12 +47,13 @@ def private_access(request):
         if pwd == user_profile.special_privilege_password:
             request.session['private_access'] = True
             messages.success(request, "Private mode unlocked successfully!")
-            url = reverse("tracker:task_list") + "?view=private"
+            url = reverse(reverse_url) + "?view=private"
             return redirect(url)
         else:
             messages.error(request, "Incorrect password. Try again.")
 
     return render(request, "accounts/private_access.html")
+
 
 def logout_view(request):
     if request.method == "POST":

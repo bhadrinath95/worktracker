@@ -103,12 +103,13 @@ class TaskListView(LoginRequiredMixin, ListView):
         context['bookmarked_tasks'] = bookmarked_tasks
 
         return context
+    
     def dispatch(self, request, *args, **kwargs):
         try:
             return super().dispatch(request, *args, **kwargs)
         except PermissionError as e:
             if str(e) == "PRIVATE_ACCESS_REQUIRED":
-                return redirect("private_access")
+                return redirect("private_access", "tracker:task_list") 
             raise
 
 
@@ -235,7 +236,7 @@ class UpdateListView(LoginRequiredMixin, View):
             return super().dispatch(request, *args, **kwargs)
         except PermissionError as e:
             if str(e) == "PRIVATE_ACCESS_REQUIRED":
-                return redirect("private_access")
+                return redirect("private_access", "tracker:task_list") 
             raise
 
 class UpdateCompleteView(LoginRequiredMixin, View):

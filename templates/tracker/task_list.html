@@ -48,7 +48,7 @@
 
 <div class="toggle-container mb-3 ms-3">
 
-  <a href="{% if view_mode == 'public' %}{% url 'private_access' %}{% else %}?view=public{% endif %}"
+  <a href="{% if view_mode == 'public' %}{% url 'private_access' 'tracker:task_list' %}{% else %}?view=public{% endif %}"
      class="text-decoration-none d-flex align-items-center">
 
     <div class="toggle-switch {% if view_mode == 'private' %}active{% endif %}">
