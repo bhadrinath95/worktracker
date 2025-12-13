@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1>{{ statement.title }}
+<h3>{{ statement.title }}
 
 <span class="badge 
     {% if statement.status == 'open' %} bg-warning
@@ -10,7 +10,7 @@
     {% elif statement.status == 'closed' %} bg-success
     {% else %} bg-info {% endif %}">
     {{ statement.get_status_display }}
-</span></h1>
+</span></h3>
 
 <div class="body">
 
