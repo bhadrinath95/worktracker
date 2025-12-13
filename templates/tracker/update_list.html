@@ -96,7 +96,7 @@
             </a>
 
           {% else %}
-            <a href="{% url 'tracker:document_view' doc.id %}" class="btn btn-outline-secondary d-flex align-items-center">
+            <a href="{{ doc.github_url }}" class="btn btn-outline-secondary d-flex align-items-center">
               <i class="bi bi-file-earmark-fill me-2"></i> {{ doc.filename }}
             </a>
           {% endif %}

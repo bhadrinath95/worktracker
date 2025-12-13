@@ -53,9 +53,11 @@ class Update(models.Model):
     description = models.TextField()
     is_check_box = models.BooleanField(default=False)
     is_completed = models.BooleanField(default=False) 
+    is_monthly_reminder = models.BooleanField(default=False)
+    date_to_remind = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f"Update on {self.task.name} - {self.date.strftime('%Y-%m-%d')}"
+        return f"Update on {self.task.name}"
     
 class LifePrincipleTopic(models.Model):
     topic = models.CharField(max_length=200, null=True, blank=True)

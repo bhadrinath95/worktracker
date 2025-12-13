@@ -13,7 +13,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import UpdateTemplate
-
+from datetime import date
+from calendar import monthrange
 
 # -------------------------
 # TASK VIEWS
@@ -187,7 +188,7 @@ class UpdateListView(LoginRequiredMixin, View):
             if not self.request.session.get("private_access"):
                 raise PermissionError("PRIVATE_ACCESS_REQUIRED")
 
-        checkbox_updates = task.updates.filter(is_check_box=True).order_by('is_completed', '-date')
+        checkbox_updates = task.updates.filter(is_check_box=True).order_by('is_completed', '-date', 'description')
         normal_updates   = task.updates.filter(is_check_box=False).order_by('-date')
 
         form = UpdateForm()
@@ -240,8 +241,19 @@ class UpdateListView(LoginRequiredMixin, View):
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
-        update.date = timezone.now().date()
-        update.is_completed = True
+
+        print(update.is_monthly_reminder)
+        if update.is_monthly_reminder:
+            year = update.date.year
+            month = update.date.month + 1
+            if month == 13:
+                month = 1
+                year += 1
+            day = update.date_to_remind
+            update.date = date(year, month, day)
+        else:
+            update.date = timezone.now().date()
+            update.is_completed = True
         update.save()
         return redirect('tracker:update_list', task_id=update.task.id)
 

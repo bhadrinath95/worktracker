@@ -28,12 +28,20 @@ class UpdateForm(forms.ModelForm):
 
     class Meta:
         model = Update
-        fields = ['template', 'date', 'description', 'is_check_box', 'is_completed']
+        fields = ['template', 'date', 'description', 'is_check_box', 'is_completed', 'is_monthly_reminder', 'date_to_remind']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
             'is_check_box': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'is_completed': forms.CheckboxInput(attrs={'class': 'form-check-input'})
+            'is_completed': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_monthly_reminder': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'date_to_remind': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Days to remind',
+                'min': 1,
+                'max': 31,
+                'step': 1
+            }),
         }
 
 class DocumentForm(forms.ModelForm):

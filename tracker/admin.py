@@ -5,6 +5,9 @@ from .models import Task, Update, TaskType, LifePrincipleTopic, LifePrinciple, D
 class LifePrincipleTopicAdmin(admin.ModelAdmin):
     list_display = ('id', 'topic')
 
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'filename', 'fileurl', 'filetype')
+
 
 class LifePrincipleAdmin(admin.ModelAdmin):
     list_display = ('id', 'topic', 'principle_short', 'meaning_short')
@@ -25,5 +28,5 @@ admin.site.register(Task)
 admin.site.register(Update)
 admin.site.register(LifePrincipleTopic, LifePrincipleTopicAdmin)
 admin.site.register(LifePrinciple, LifePrincipleAdmin)
-admin.site.register(Document)
+admin.site.register(Document, DocumentAdmin)
 admin.site.register(UpdateTemplate)
