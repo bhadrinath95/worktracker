@@ -16,6 +16,7 @@ class Blog(models.Model):
     
 class Word(models.Model):
     word = models.CharField(max_length=100, unique=True)
+    is_phase = models.BooleanField(default=False)
     meaning = models.TextField()
     example = models.TextField(help_text="Usage example", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

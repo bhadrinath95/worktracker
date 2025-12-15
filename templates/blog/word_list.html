@@ -19,6 +19,7 @@
     </form>
 </div>
 
+<h3>Words</h3>
 
 {% if words %}
   <div class="table-responsive mb-4">
@@ -27,19 +28,13 @@
         <tr>
           <th>Word</th>
           <th>Meaning</th>
-          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for word in words %}
         <tr>
-          <td>{{ word.word }}</td>
+          <td> <a href="{% url 'blogs:word_detail' word.id %}">{{ word.word }}</a></td>
           <td>{{ word.meaning }}</td>
-          <td>
-            <a href="{% url 'blogs:word_detail' word.id %}" class="btn btn-sm btn-info">View</a>
-            <a href="{% url 'blogs:word_update' word.id %}" class="btn btn-sm btn-warning">Update</a>
-            <a href="{% url 'blogs:word_delete' word.id %}" class="btn btn-sm btn-danger">Delete</a>
-          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -47,6 +42,31 @@
   </div>
 {% else %}
   <p class="text-muted">No words found.</p>
+{% endif %}
+
+<h3>Phases</h3>
+
+{% if phases %}
+  <div class="table-responsive mb-4">
+    <table class="table table-bordered table-striped align-middle text-nowrap">
+      <thead class="table-success">
+        <tr>
+          <th>Phase</th>
+          <th>Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for phase in phases %}
+        <tr>
+          <td> <a href="{% url 'blogs:word_detail' phase.id %}">{{ phase.word }}</a></td>
+          <td>{{ phase.meaning }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted">No phases found.</p>
 {% endif %}
 
 {% endblock %}

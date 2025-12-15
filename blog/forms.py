@@ -7,11 +7,36 @@ class BlogForm(forms.ModelForm):
         model = Blog
         fields = ['title', 'content', 'pin']
         widgets = {
-            'content': forms.Textarea(attrs={'rows': 10}),
+            'title': forms.TextInput(attrs={
+                'class': 'form-control w-100'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control w-100',
+                'rows': 15
+            }),
+            'pin': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
         }
 
 
 class WordForm(forms.ModelForm):
     class Meta:
         model = Word
-        fields = ['word', 'meaning', 'example']
+        fields = ['word', 'meaning', 'is_phase', 'example']
+        widgets = {
+            'word': forms.TextInput(attrs={
+                'class': 'form-control w-100'
+            }),
+            'meaning': forms.Textarea(attrs={
+                'class': 'form-control w-100',
+                'rows': 5
+            }),
+            'is_phase': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+            'example': forms.Textarea(attrs={
+                'class': 'form-control w-100',
+                'rows': 5
+            }),
+        }

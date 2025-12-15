@@ -49,15 +49,19 @@ def blog_delete(request, pk):
 @login_required
 def word_list(request):
     query = request.GET.get('q', '')
-    words = Word.objects.all()
+    word_objects = Word.objects.all()
     if query:
-        words = words.filter(
+        word_objects = word_objects.filter(
             Q(word__icontains=query) |
             Q(meaning__icontains=query) |
             Q(example__icontains=query)
         )
-    words = words.order_by('word', '-created_at')
-    return render(request, 'blog/word_list.html', {'words': words, 'query': query})
+    word_objects = word_objects.order_by('word', '-created_at')
+
+    words = word_objects.filter(is_phase=False)
+    phases = word_objects.filter(is_phase=True)
+    print(phases)
+    return render(request, 'blog/word_list.html', {'words': words, 'phases': phases, 'query': query})
 
 @login_required
 def word_detail(request, pk):
