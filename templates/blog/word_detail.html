@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>{{ word.word }}</h1>
+<hr>
+<h3>Meaning: </h3>
+<div class="mb-4">{{ word.meaning|linebreaks }}</div>
+
+<h3>Example: </h3>
+<div class="mb-4">{{ word.example|linebreaks }}</div>
+
+<a href="{% url 'blogs:word_update' word.id %}" class="btn btn-warning btn-sm">Edit</a>
+<a href="{% url 'blogs:word_delete' word.id %}" class="btn btn-danger btn-sm">Delete</a>
+<a href="{% url 'blogs:word_list' %}" class="btn btn-secondary btn-sm">Back</a>
+{% endblock %}

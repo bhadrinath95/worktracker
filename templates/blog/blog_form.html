@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1>{{ form.instance.pk|yesno:"Edit Blog,New Blog" }}</h1>
+
+<!-- TAG SELECT -->
+<div class="mb-3">
+  <label class="form-label">Insert Tag</label>
+  <select id="tagSelect" class="form-select">
+    <option value="">-- Select Tag --</option>
+    {% for tag in tags %}
+      <option value="{{ tag.syntax }}">{{ tag.name }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<form method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button type="submit" class="btn btn-success">Save</button>
+  <a href="{% url 'blogs:blog_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}
+
+{% block static %}
+<script src="{% static 'js/tag_insert.js' %}"></script>
+{% endblock %}

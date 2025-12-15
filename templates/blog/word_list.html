@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Dictionary</h1>
+
+
+
+<div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <div class="d-flex gap-2 mb-2">
+        <a href="{% url 'blogs:word_create' %}" class="btn btn-outline-primary">➕ Create Word</a>
+        <a href="{% url 'blogs:blog_list' %}" class="btn btn-outline-secondary">← Back to Blog</a>
+    </div>
+    <form method="get" class="d-flex align-items-center mb-2 ms-auto">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search blogs..." value="{{ query }}">
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </div>
+    </form>
+</div>
+
+
+{% if words %}
+  <div class="table-responsive mb-4">
+    <table class="table table-bordered table-striped align-middle text-nowrap">
+      <thead class="table-success">
+        <tr>
+          <th>Word</th>
+          <th>Meaning</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for word in words %}
+        <tr>
+          <td>{{ word.word }}</td>
+          <td>{{ word.meaning }}</td>
+          <td>
+            <a href="{% url 'blogs:word_detail' word.id %}" class="btn btn-sm btn-info">View</a>
+            <a href="{% url 'blogs:word_update' word.id %}" class="btn btn-sm btn-warning">Update</a>
+            <a href="{% url 'blogs:word_delete' word.id %}" class="btn btn-sm btn-danger">Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted">No words found.</p>
+{% endif %}
+
+{% endblock %}

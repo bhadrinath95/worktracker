@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ form.instance.pk|yesno:"Edit Word,New Word" }}</h1>
+<form method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Save</button>
+  <a href="{% url 'blogs:word_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

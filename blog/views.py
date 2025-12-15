@@ -1,0 +1,81 @@
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Blog, Word, Tag
+from .forms import BlogForm, WordForm
+from django.db.models import Q
+
+
+def blog_list(request):
+    query = request.GET.get('q', '')
+    blogs = Blog.objects.all()
+    if query:
+        blogs = blogs.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query)
+        )
+    blogs = blogs.order_by('-pin', 'title', '-created_at')
+    return render(request, 'blog/blog_list.html', {'blogs': blogs, 'query': query})
+
+def blog_detail(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+    return render(request, 'blog/blog_detail.html', {'blog': blog})
+
+def blog_create(request):
+    form = BlogForm(request.POST or None)
+    tags = Tag.objects.all().order_by('name')
+    if form.is_valid():
+        form.save()
+        return redirect('blogs:blog_list')
+    return render(request, 'blog/blog_form.html', {'form': form, 'tags': tags})
+
+def blog_update(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+    tags = Tag.objects.all().order_by('name')
+    form = BlogForm(request.POST or None, instance=blog)
+    if form.is_valid():
+        form.save()
+        return redirect('blogs:blog_detail', pk=pk)
+    return render(request, 'blog/blog_form.html', {'form': form, 'tags': tags})
+
+def blog_delete(request, pk):
+    blog = get_object_or_404(Blog, pk=pk)
+    blog.delete()
+    return redirect('blogs:blog_list')
+
+
+def word_list(request):
+    query = request.GET.get('q', '')
+    words = Word.objects.all()
+    if query:
+        words = words.filter(
+            Q(word__icontains=query) |
+            Q(meaning__icontains=query) |
+            Q(example__icontains=query)
+        )
+    words = words.order_by('word', '-created_at')
+    return render(request, 'blog/word_list.html', {'words': words, 'query': query})
+
+def word_detail(request, pk):
+    word = get_object_or_404(Word, pk=pk)
+    return render(request, 'blog/word_detail.html', {'word': word})
+
+def word_create(request):
+    form = WordForm(request.POST or None)
+    tags = Tag.objects.all()
+    if form.is_valid():
+        form.save()
+        return redirect('blogs:word_list')
+    return render(request, 'blog/word_form.html', {'form': form})
+
+def word_update(request, pk):
+    word = get_object_or_404(Word, pk=pk)
+    tags = Tag.objects.all()
+    form = WordForm(request.POST or None, instance=word)
+    if form.is_valid():
+        form.save()
+        return redirect('blogs:word_list')
+    return render(request, 'blog/word_form.html', {'form': form})
+
+def word_delete(request, pk):
+    word = get_object_or_404(Word, pk=pk)
+    word.delete()
+    return redirect('blogs:word_list')
