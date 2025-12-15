@@ -60,7 +60,6 @@ def word_list(request):
 
     words = word_objects.filter(is_phase=False)
     phases = word_objects.filter(is_phase=True)
-    print(phases)
     return render(request, 'blog/word_list.html', {'words': words, 'phases': phases, 'query': query})
 
 @login_required
