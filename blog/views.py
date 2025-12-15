@@ -2,8 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Blog, Word, Tag
 from .forms import BlogForm, WordForm
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def blog_list(request):
     query = request.GET.get('q', '')
     blogs = Blog.objects.all()
@@ -15,10 +16,12 @@ def blog_list(request):
     blogs = blogs.order_by('-pin', 'title', '-created_at')
     return render(request, 'blog/blog_list.html', {'blogs': blogs, 'query': query})
 
+@login_required
 def blog_detail(request, pk):
     blog = get_object_or_404(Blog, pk=pk)
     return render(request, 'blog/blog_detail.html', {'blog': blog})
 
+@login_required
 def blog_create(request):
     form = BlogForm(request.POST or None)
     tags = Tag.objects.all().order_by('name')
@@ -27,6 +30,7 @@ def blog_create(request):
         return redirect('blogs:blog_list')
     return render(request, 'blog/blog_form.html', {'form': form, 'tags': tags})
 
+@login_required
 def blog_update(request, pk):
     blog = get_object_or_404(Blog, pk=pk)
     tags = Tag.objects.all().order_by('name')
@@ -36,12 +40,13 @@ def blog_update(request, pk):
         return redirect('blogs:blog_detail', pk=pk)
     return render(request, 'blog/blog_form.html', {'form': form, 'tags': tags})
 
+@login_required
 def blog_delete(request, pk):
     blog = get_object_or_404(Blog, pk=pk)
     blog.delete()
     return redirect('blogs:blog_list')
 
-
+@login_required
 def word_list(request):
     query = request.GET.get('q', '')
     words = Word.objects.all()
@@ -54,10 +59,12 @@ def word_list(request):
     words = words.order_by('word', '-created_at')
     return render(request, 'blog/word_list.html', {'words': words, 'query': query})
 
+@login_required
 def word_detail(request, pk):
     word = get_object_or_404(Word, pk=pk)
     return render(request, 'blog/word_detail.html', {'word': word})
 
+@login_required
 def word_create(request):
     form = WordForm(request.POST or None)
     tags = Tag.objects.all()
@@ -66,6 +73,7 @@ def word_create(request):
         return redirect('blogs:word_list')
     return render(request, 'blog/word_form.html', {'form': form})
 
+@login_required
 def word_update(request, pk):
     word = get_object_or_404(Word, pk=pk)
     tags = Tag.objects.all()
@@ -75,6 +83,7 @@ def word_update(request, pk):
         return redirect('blogs:word_list')
     return render(request, 'blog/word_form.html', {'form': form})
 
+@login_required
 def word_delete(request, pk):
     word = get_object_or_404(Word, pk=pk)
     word.delete()
