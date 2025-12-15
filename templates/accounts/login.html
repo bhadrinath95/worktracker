@@ -43,6 +43,10 @@
             {% endfor %}
         </table>
 
+        {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
         <button type="submit" class="btn btn-primary w-100 mt-3">
             Login
         </button>
