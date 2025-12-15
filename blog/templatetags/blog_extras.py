@@ -10,4 +10,5 @@ def remove_media(html):
     # Remove img and video tags
     html = re.sub(r'<img[^>]*>', '', html, flags=re.IGNORECASE)
     html = re.sub(r'<video[^>]*>.*?</video>', '', html, flags=re.IGNORECASE | re.DOTALL)
+    html = re.sub(r'<table[^>]*>.*?</table>', '', html, flags=re.IGNORECASE | re.DOTALL)
     return html
