@@ -40,10 +40,19 @@
     <tr>
       <td>{{ u.description }}</td>
       <td>{{ u.date|date:"d-m-Y" }}</td>
-      <td>{% if u.is_completed %}<p class="text-success">Completed</p>{% endif %}</td>
+      <td>
+        {% if u.status == 'Completed' %}
+          <p class="text-success">{{ u.status }}</p>
+        {% elif u.status == 'InProgress' %}
+          <p class="text-warning">{{ u.status }}</p>
+        {% elif u.status == 'Cancelled' %}
+          <p class="text-danger">{{ u.status }}</p>
+        {% endif %}
+      
+      </td>
       <td>
         <div class="d-flex align-items-center gap-2">
-          {% if not u.is_completed %}
+          {% if u.status != 'Completed' and u.status != 'Cancelled' %}
           <form method="POST" action="{% url 'tracker:update_complete' u.id %}">
             {% csrf_token %}
             <button class="btn btn-outline-success btn-sm">Mark Complete</button>
@@ -73,10 +82,13 @@
       </div>
       <br>
       {{ u.description|linebreaks }}
-      {% if u.is_completed %}
-        <p class="text-success fw-bold">— Completed</p>
+      {% if u.status == 'Completed' %}
+        <p class="text-success fw-bold">— {{ u.status }}</p>
+      {% elif u.status == 'InProgress' %}
+        <p class="text-warning fw-bold">— {{ u.status }}</p>
+      {% elif u.status == 'Cancelled' %}
+        <p class="text-danger fw-bold">— {{ u.status }}</p>
       {% endif %}
-
       {% if u.documents.all %}
       <div class="mt-2 d-flex flex-wrap gap-2">
         {% for doc in u.documents.all %}

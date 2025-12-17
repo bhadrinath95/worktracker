@@ -26,7 +26,7 @@ class TaskListView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        queryset = Task.objects.exclude(status='Completed').exclude(is_hold=True).exclude(is_bookmark=True)
+        queryset = Task.objects.exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True)
         view_mode = self.request.GET.get('view', 'public')
         if view_mode == "private":
             user_profile  = getattr(self.request.user, "userprofile", None)
@@ -76,18 +76,17 @@ class TaskListView(LoginRequiredMixin, ListView):
             started_date=today,
             target_date=today,
             **common_filters
-        ).exclude(status='Completed').exclude(is_hold=True).exclude(is_bookmark=True)
+        ).exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True)
         tasks_by_updates = Task.objects.filter(
             updates__date=today,
-            updates__is_completed=False,
+            updates__status__in=['Opened', 'InProgress'],
             **common_filters
-        ).exclude(status='Completed').exclude(is_hold=True).exclude(is_bookmark=True)
+        ).exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True)
         today_tasks = tasks_by_target_date.union(tasks_by_updates).order_by('name')
         context['today_tasks'] = today_tasks
 
         held_tasks = Task.objects.filter(
-            is_hold=True,
-            status__in=['Opened', 'InProgress'],
+            status__in=['Hold'],
             **common_filters
         ).order_by('name')
 
@@ -96,7 +95,6 @@ class TaskListView(LoginRequiredMixin, ListView):
         bookmarked_tasks = Task.objects.filter(
             is_bookmark=True,
             status__in=['Opened', 'InProgress'],
-            is_hold=False,
             **common_filters
         ).order_by('name')
 
@@ -119,7 +117,7 @@ class TaskHistoryView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        queryset = Task.objects.filter(status='Completed').order_by('-completed_date')
+        queryset = Task.objects.filter(status__in=['Completed', 'Cancelled']).order_by('-completed_date')
         search = self.request.GET.get('search', '').strip()
 
         if search:
@@ -157,9 +155,9 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
 @login_required
 def toggle_hold(request, pk):
     task = get_object_or_404(Task, pk=pk)
-    task.is_hold = not task.is_hold
+    task.status = "Hold" if task.status == "Opened" else "Hold"
     task.save()
-    if task.is_hold:
+    if task.status == "Hold":
         messages.warning(request, "Task moved to Hold.")
     else:
         messages.success(request, "Task Activated.")
@@ -189,7 +187,7 @@ class UpdateListView(LoginRequiredMixin, View):
             if not self.request.session.get("private_access"):
                 raise PermissionError("PRIVATE_ACCESS_REQUIRED")
 
-        checkbox_updates = task.updates.filter(is_check_box=True).order_by('is_completed', '-date', 'description')
+        checkbox_updates = task.updates.filter(is_check_box=True).order_by('-date', '-status', 'description')
         normal_updates   = task.updates.filter(is_check_box=False).order_by('-date')
 
         form = UpdateForm()
@@ -254,7 +252,7 @@ class UpdateCompleteView(LoginRequiredMixin, View):
             update.date = date(year, month, day)
         else:
             update.date = timezone.now().date()
-            update.is_completed = True
+            update.status = 'Completed'
         update.save()
         return redirect('tracker:update_list', task_id=update.task.id)
 

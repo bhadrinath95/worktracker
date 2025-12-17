@@ -17,6 +17,8 @@ class Task(models.Model):
         ('Opened', 'Opened'),
         ('InProgress', 'In Progress'),
         ('Completed', 'Completed'),
+        ('Cancelled', 'Cancelled'),
+        ('Hold', 'Hold'),
     ]
     name = models.CharField(max_length=200)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Opened')
@@ -28,13 +30,12 @@ class Task(models.Model):
     target_date = models.DateField(default=timezone.now, null=True, blank=True)
     is_bookmark = models.BooleanField(default=False)
     is_private = models.BooleanField(default=False)
-    is_hold = models.BooleanField(default=False)
-
+    
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.status == 'Completed' and not self.completed_date:
+        if self.status in ['Completed', 'Cancelled'] and not self.completed_date:
             self.completed_date = timezone.now()
         elif self.status != 'Completed':
             self.completed_date = None
@@ -48,11 +49,17 @@ class UpdateTemplate(models.Model):
         return self.name
     
 class Update(models.Model):
+    STATUS_CHOICES = [
+        ('Opened', 'Opened'),
+        ('InProgress', 'In Progress'),
+        ('Completed', 'Completed'),
+        ('Cancelled', 'Cancelled')
+    ]
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='updates')
     date = models.DateField(default=timezone.now, null=True, blank=True)
     description = models.TextField()
     is_check_box = models.BooleanField(default=False)
-    is_completed = models.BooleanField(default=False) 
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Opened')
     is_monthly_reminder = models.BooleanField(default=False)
     date_to_remind = models.IntegerField(null=True, blank=True)
 

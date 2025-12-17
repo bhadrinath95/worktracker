@@ -6,7 +6,7 @@ from .models import Task, Update, Document, UpdateTemplate
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['name', 'status', 'task_type', 'started_date', 'target_date', 'is_bookmark', 'is_hold', 'is_private']
+        fields = ['name', 'status', 'task_type', 'started_date', 'target_date', 'is_bookmark', 'is_private']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
@@ -28,12 +28,11 @@ class UpdateForm(forms.ModelForm):
 
     class Meta:
         model = Update
-        fields = ['template', 'date', 'description', 'is_check_box', 'is_completed', 'is_monthly_reminder', 'date_to_remind']
+        fields = ['template', 'date', 'description', 'is_check_box', 'status', 'is_monthly_reminder', 'date_to_remind']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
             'is_check_box': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'is_completed': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_monthly_reminder': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'date_to_remind': forms.NumberInput(attrs={
                 'class': 'form-control',
