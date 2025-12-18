@@ -240,8 +240,6 @@ class UpdateListView(LoginRequiredMixin, View):
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
-
-        print(update.is_monthly_reminder)
         if update.is_monthly_reminder:
             year = update.date.year
             month = update.date.month + 1
@@ -249,7 +247,11 @@ class UpdateCompleteView(LoginRequiredMixin, View):
                 month = 1
                 year += 1
             day = update.date_to_remind
-            update.date = date(year, month, day)
+            try:
+                update.date = date(year, month, day)
+            except ValueError:
+                last_day = monthrange(year, month)[1]
+                update.date = date(year, month, last_day)
         else:
             update.date = timezone.now().date()
             update.status = 'Completed'
