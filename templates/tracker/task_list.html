@@ -78,8 +78,7 @@
           <th>Name</th>
           <th>Type</th>
           <th>Status</th>
-          <th>Start Date</th>
-          <th>Target Date</th>
+          <th>Due</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -89,10 +88,9 @@
           <td>{{ task.name }}{% if task.is_important %}<i class="bi bi-star-fill text-warning ms-1"></i>{% endif %}</td>
           <td>{{ task.task_type.name }}</td>
           <td>{{ task.status }}</td>
-          <td>{{ task.started_date|date:"d-m-Y" }}</td>
-          <td>{{ task.target_date|date:"d-m-Y" }}</td>
+          <td>{% if task.days_till_upcoming == 0 %}Today{% elif task.days_till_upcoming > 0 %}{{ task.days_till_upcoming }}{% endif %}</td>
           <td>
-            <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">Updates</a>
+            <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
             <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
             <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
             <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
@@ -112,8 +110,7 @@
         <th>Name</th>
         <th>Type</th>
         <th>Status</th>
-        <th>Start Date</th>
-        <th>Target Date</th>
+        <th>Due</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -123,10 +120,9 @@
         <td>{{ task.name }}{% if task.is_important %}<i class="bi bi-star-fill text-warning ms-1"></i>{% endif %}</td>
         <td>{{ task.task_type.name }}</td>
         <td>{{ task.status }}</td>
-        <td>{{ task.started_date|date:"d-m-Y" }}</td>
-        <td>{{ task.target_date|date:"d-m-Y" }}</td>
+        <td>{% if task.days_till_upcoming == 0 %}Today{% elif task.days_till_upcoming > 0 %}{{ task.days_till_upcoming }}{% endif %}</td>
         <td>
-          <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">Updates</a>
+          <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
           <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
           <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
           <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
@@ -156,7 +152,7 @@
           <td>{{ task.name }}{% if task.is_important %}<i class="bi bi-star-fill text-warning ms-1"></i>{% endif %}</td>
           <td>{{ task.task_type.name }}</td>
           <td>
-            <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">Updates</a>
+            <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
             <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
             <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
           </td>
@@ -177,8 +173,7 @@
           <th>Name</th>
           <th>Type</th>
           <th>Status</th>
-          <th>Start Date</th>
-          <th>Target Date</th>
+          <th>Due</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -188,10 +183,9 @@
           <td>{{ task.name }}{% if task.is_important %}<i class="bi bi-star-fill text-warning ms-1"></i>{% endif %}</td>
           <td>{{ task.task_type.name }}</td>
           <td>On Hold</td>
-          <td>{{ task.started_date|date:"d-m-Y" }}</td>
-          <td>{{ task.target_date|date:"d-m-Y" }}</td>
+          <td>{% if task.days_till_upcoming == 0 %}Today{% elif task.days_till_upcoming > 0 %}{{ task.days_till_upcoming }}{% endif %}</td>
           <td>
-            <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">Updates</a>
+            <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
             <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
 
             <a href="{% url 'tracker:toggle_hold' task.id %}" class="btn btn-sm btn-primary">

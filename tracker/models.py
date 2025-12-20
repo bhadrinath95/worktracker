@@ -34,6 +34,26 @@ class Task(models.Model):
     
     def __str__(self):
         return self.name
+    
+    @property
+    def days_till_upcoming(self):
+        today = timezone.now().date()
+        dates = []
+
+        if self.started_date and self.started_date >= today:
+            dates.append(self.started_date)
+
+        if self.target_date and self.target_date >= today:
+            dates.append(self.target_date)
+
+        for upd in self.updates.all():
+            if upd.status not in ['Completed', 'Cancelled'] and upd.date and upd.date >= today:
+                dates.append(upd.date)
+
+        if not dates:
+            return None
+        
+        return (min(dates) - today).days
 
     def save(self, *args, **kwargs):
         if self.status in ['Completed', 'Cancelled'] and not self.completed_date:

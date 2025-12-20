@@ -3,6 +3,87 @@
 {% block content %}
 <h1>{{ task.name }}</h1>
 
+{% if not task.is_bookmark %}
+<table class="table table-sm table-bordered align-middle mt-3">
+  <tbody>
+    <tr>
+      <th>Status</th>
+      <td>
+        {% if task.status == 'Completed' %}
+          <span class="badge bg-success">{{ task.status }}</span>
+        {% elif task.status == 'InProgress' %}
+          <span class="badge bg-warning text-dark">{{ task.status }}</span>
+        {% elif task.status == 'Cancelled' %}
+          <span class="badge bg-danger">{{ task.status }}</span>
+        {% else %}
+          <span class="badge bg-secondary">{{ task.status }}</span>
+        {% endif %}
+      </td>
+    </tr>
+
+    <tr>
+      <th>Started</th>
+      <td>{{ task.started_date|date:"d-m-Y"|default:"—" }}</td>
+    </tr>
+
+    <tr>
+      <th>Created</th>
+      <td>{{ task.created_date|date:"d-m-Y" }}</td>
+    </tr>
+
+    <tr>
+      <th>Updated</th>
+      <td>{{ task.updated_date|date:"d-m-Y" }}</td>
+    </tr>
+
+    <tr>
+      <th>Target</th>
+      <td>{{ task.target_date|date:"d-m-Y"|default:"—" }}</td>
+    </tr>
+
+    <tr>
+      <th>
+        {% if task.completed_date %}
+          Completed
+        {% else %}
+          Due
+        {% endif %}
+      </th>
+      <td>
+        {% if task.completed_date %}
+          <span class="text-success fw-bold">
+            {{ task.completed_date|date:"d-m-Y" }}
+          </span>
+        {% elif task.days_till_upcoming is not None %}
+          {% if task.days_till_upcoming == 0 %}
+            <span class="text-danger fw-bold">Today</span>
+          {% elif task.days_till_upcoming < 0 %}
+            <span class="text-muted">—</span>
+          {% else %}
+            <span class="text-warning fw-bold">
+              {{ task.days_till_upcoming }} days left
+            </span>
+          {% endif %}
+        {% else %}
+          —
+        {% endif %}
+      </td>
+    </tr>
+
+    <tr>
+      <th>Action</th>
+      <td>          
+        <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
+        <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a></td>
+    </tr>
+  </tbody>
+</table>
+<hr />  
+{% endif %}
+
+<h3>Add Update</h3>
+
 <form method="POST">
   {% csrf_token %}
   {{ form.as_p }}
@@ -17,9 +98,7 @@
     {% endfor %}
   </div>
 
-  <button type="button" class="btn btn-secondary mb-2" id="add-more">Add Another Document</button>
-  <br>
-  <button type="submit" class="btn btn-success">Add Update</button>
+  <button type="button" class="btn btn-secondary mb-2" id="add-more">Add Document</button> <button type="submit" class="btn btn-success mb-2">Add Update</button>
 </form>
 
 <hr>
