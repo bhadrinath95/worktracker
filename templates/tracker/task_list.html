@@ -120,7 +120,7 @@
     <tbody>
       {% for task in tasks %}
       <tr>
-        <td>{{ task.name }}</td>
+        <td>{{ task.name }}{% if task.is_important %}<i class="bi bi-star-fill text-warning ms-1"></i>{% endif %}</td>
         <td>{{ task.task_type.name }}</td>
         <td>{{ task.status }}</td>
         <td>{{ task.started_date|date:"d-m-Y" }}</td>

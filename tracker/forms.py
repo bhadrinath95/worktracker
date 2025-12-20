@@ -6,7 +6,7 @@ from .models import Task, Update, Document, UpdateTemplate
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['name', 'status', 'task_type', 'started_date', 'target_date', 'is_bookmark', 'is_private']
+        fields = ['name', 'status', 'task_type', 'started_date', 'target_date', 'is_important', 'is_bookmark', 'is_private']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),

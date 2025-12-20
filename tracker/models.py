@@ -30,6 +30,7 @@ class Task(models.Model):
     target_date = models.DateField(default=timezone.now, null=True, blank=True)
     is_bookmark = models.BooleanField(default=False)
     is_private = models.BooleanField(default=False)
+    is_important = models.BooleanField(default=False)
     
     def __str__(self):
         return self.name
