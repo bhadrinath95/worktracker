@@ -1,0 +1,10 @@
+.content-wrapper textarea {
+    height: 400px;
+    overflow-y: auto;
+}
+
+/* Optional vertical ruler line */
+.content-wrapper {
+    border-left: 3px solid #dee2e6;
+    padding-left: 15px;
+}

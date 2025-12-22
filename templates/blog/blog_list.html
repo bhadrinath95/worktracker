@@ -27,6 +27,7 @@
                         <a href="{% url 'blogs:blog_detail' blog.id %}">
                             {{ blog.title }}
                         </a>
+                        {% if blog.pin %}<i class="bi bi-pin-fill text-warning ms-1"></i>{% endif %}
                     </h5>
                     <div class="card-text mb-3">
                         {{ blog.content|remove_media|truncatewords_html:40|safe }}

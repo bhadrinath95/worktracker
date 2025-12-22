@@ -1,27 +1,49 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/blog_form.css' %}">
+{% endblock %}
+
 {% block content %}
 
-<h1>{{ form.instance.pk|yesno:"Edit Blog,New Blog" }}</h1>
+<div class="row">
+  
+  <!-- LEFT: TAG PANEL -->
+  <div class="col-md-3">
+    <h3>{{ form.instance.pk|yesno:"Edit Blog,New Blog" }}</h3>
 
-<!-- TAG SELECT -->
-<div class="mb-3">
-  <label class="form-label">Insert Tag</label>
-  <select id="tagSelect" class="form-select">
-    <option value="">-- Select Tag --</option>
-    {% for tag in tags %}
-      <option value="{{ tag.syntax }}">{{ tag.name }}</option>
-    {% endfor %}
-  </select>
+    <div class="sticky-top" style="top: 80px;">
+      <label class="form-label fw-bold">Insert Tag</label>
+      <select id="tagSelect" class="form-select mb-3">
+        <option value="">-- Select Tag --</option>
+        {% for tag in tags %}
+          <option value="{{ tag.syntax }}">{{ tag.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <!-- RIGHT: BLOG FORM -->
+  <div class="col-md-9">
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.title }}
+
+      <div class="content-wrapper">
+        {{ form.content }}
+      </div>
+
+      <div class="form-check mt-3">
+        {{ form.pin }} <label class="form-check-label">Pin Blog</label>
+      </div>
+
+      <button type="submit" class="btn btn-success mt-3">Save</button>
+      <a href="{% url 'blogs:blog_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+    </form>
+  </div>
+
 </div>
 
-<form method="POST">
-  {% csrf_token %}
-  {{ form.as_p }}
-
-  <button type="submit" class="btn btn-success">Save</button>
-  <a href="{% url 'blogs:blog_list' %}" class="btn btn-secondary">Cancel</a>
-</form>
 
 {% endblock %}
 
