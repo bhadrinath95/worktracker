@@ -26,9 +26,26 @@
 <h1>Active Tasks</h1>
 
 <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+    <div class="dropdown mb-2">
+      <button class="btn btn-outline-primary dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        ➕ New Task
+      </button>
 
-  <div class="d-flex gap-2 mb-2">
-    <a href="{% url 'tracker:task_create' %}" class="btn btn-outline-primary">➕ New Task</a>
+      <ul class="dropdown-menu">
+        <li>
+          <a class="dropdown-item" href="{% url 'tracker:task_create' %}">
+            📝 Create Task
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'tracker:task_from_template' %}">
+            📋 From Template
+          </a>
+        </li>
+      </ul>
     <a href="{% url 'tracker:task_history' %}" class="btn btn-outline-secondary">📜 History</a>
   </div>
 
@@ -200,6 +217,36 @@
     </table>
   </div>
   {% endif %}
+
+  {% if template_tasks %}
+  <h3 class="text-info mt-4">Templates ({{ template_tasks|length }})</h3>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle text-nowrap">
+      <thead class="table-info">
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in template_tasks %}
+        <tr>
+          <td>{{ task.name }}{% if task.is_important %}<i class="bi bi-star-fill text-warning ms-1"></i>{% endif %}</td>
+          <td>{{ task.task_type.name }}</td>
+          <td>
+            <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
+            <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
 </div>
 </div>
 {% endblock %}

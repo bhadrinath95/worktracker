@@ -2,12 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views import View
 from django.views.generic import (
-    ListView, CreateView, UpdateView, DeleteView
+    ListView, CreateView, UpdateView, DeleteView, FormView
 )
 from django.urls import reverse_lazy, reverse
 from django.db.models import F, Q
 from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic
-from .forms import TaskForm, UpdateForm, DocumentFormSet
+from .forms import TaskForm, UpdateForm, DocumentFormSet, TaskFromTemplateForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -15,6 +15,7 @@ from django.http import JsonResponse
 from .models import UpdateTemplate
 from datetime import date
 from calendar import monthrange
+from django.db import transaction
 
 # -------------------------
 # TASK VIEWS
@@ -26,7 +27,7 @@ class TaskListView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        queryset = Task.objects.exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True)
+        queryset = Task.objects.exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True).exclude(is_template=True)
         view_mode = self.request.GET.get('view', 'public')
         if view_mode == "private":
             user_profile  = getattr(self.request.user, "userprofile", None)
@@ -76,19 +77,19 @@ class TaskListView(LoginRequiredMixin, ListView):
             started_date=today,
             target_date=today,
             **common_filters
-        ).exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True)
+        ).exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True).exclude(is_template=True)
         tasks_by_updates = Task.objects.filter(
             updates__date=today,
             updates__status__in=['Opened', 'InProgress'],
             **common_filters
-        ).exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True)
+        ).exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True).exclude(is_template=True)
         today_tasks = tasks_by_target_date.union(tasks_by_updates).order_by('name')
         context['today_tasks'] = today_tasks
 
         held_tasks = Task.objects.filter(
             status__in=['Hold'],
             **common_filters
-        ).order_by('name')
+        ).exclude(is_template=True).order_by('name')
 
         context['held_tasks'] = held_tasks
 
@@ -96,10 +97,13 @@ class TaskListView(LoginRequiredMixin, ListView):
             is_bookmark=True,
             status__in=['Opened', 'InProgress'],
             **common_filters
-        ).order_by('name')
+        ).exclude(is_template=True).order_by('name')
 
         context['bookmarked_tasks'] = bookmarked_tasks
 
+        template_tasks = Task.objects.filter(is_template=True)
+        context['template_tasks'] = template_tasks
+        
         return context
     
     def dispatch(self, request, *args, **kwargs):
@@ -110,14 +114,52 @@ class TaskListView(LoginRequiredMixin, ListView):
                 return redirect("private_access", "tracker:task_list") 
             raise
 
+class TaskFromTemplateCreateView(LoginRequiredMixin, FormView):
+    template_name = 'tracker/task_form.html'
+    form_class = TaskFromTemplateForm
+    success_url = reverse_lazy('tracker:task_list')
 
+    def form_valid(self, form):
+        template_task = form.cleaned_data['template']
+
+        with transaction.atomic():
+            # Create new Task
+            new_task = Task.objects.create(
+                name=form.cleaned_data['name'],
+                task_type=template_task.task_type,
+                started_date=form.cleaned_data.get('started_date'),
+                target_date=form.cleaned_data.get('target_date'),
+                status='Opened',
+                is_template=False,
+                is_bookmark=False,
+                is_private=False,
+                is_important=template_task.is_important
+            )
+
+            # Clone Updates
+            updates = template_task.updates.all()
+            Update.objects.bulk_create([
+                Update(
+                    task=new_task,
+                    description=upd.description,
+                    date=upd.date,
+                    is_check_box=upd.is_check_box,
+                    status='Opened',
+                    is_monthly_reminder=upd.is_monthly_reminder,
+                    date_to_remind=upd.date_to_remind
+                )
+                for upd in updates
+            ])
+
+        return super().form_valid(form)
+    
 class TaskHistoryView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'tracker/task_history.html'
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        queryset = Task.objects.filter(status__in=['Completed', 'Cancelled']).order_by('-completed_date')
+        queryset = Task.objects.filter(status__in=['Completed', 'Cancelled']).exclude(is_template=True).order_by('-completed_date')
         search = self.request.GET.get('search', '').strip()
 
         if search:

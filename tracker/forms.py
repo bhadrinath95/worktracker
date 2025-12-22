@@ -6,7 +6,7 @@ from .models import Task, Update, Document, UpdateTemplate
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['name', 'status', 'task_type', 'started_date', 'target_date', 'is_important', 'is_bookmark', 'is_private']
+        fields = ['name', 'status', 'task_type', 'started_date', 'target_date', 'is_important', 'is_bookmark', 'is_private', 'is_template']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
@@ -17,6 +17,25 @@ class TaskForm(forms.ModelForm):
             'is_private': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
 
+class TaskFromTemplateForm(forms.Form):
+    template = forms.ModelChoiceField(
+        queryset=Task.objects.filter(is_template=True),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    name = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    started_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+    )
+    target_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+    )
+    
 class UpdateForm(forms.ModelForm):
     template = forms.ModelChoiceField(
         queryset=UpdateTemplate.objects.all().order_by('name'),
