@@ -74,7 +74,9 @@
       <th>Action</th>
       <td>          
         <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
+        {% if task.status != 'Completed' and task.status != 'Cancelled' %}
         <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
+        {% endif %}
         <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a></td>
     </tr>
   </tbody>
