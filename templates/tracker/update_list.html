@@ -117,7 +117,7 @@
   <tbody>
     {% for u in checkbox_updates %}
     <tr>
-      <td>{{ u.description }}</td>
+      <td>{{ u.description|linebreaks }}</td>
       <td>{{ u.date|date:"d-m-Y" }}</td>
       <td>
         {% if u.status == 'Completed' %}
