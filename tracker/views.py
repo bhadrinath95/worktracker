@@ -131,8 +131,8 @@ class TaskFromTemplateCreateView(LoginRequiredMixin, FormView):
                 target_date=form.cleaned_data.get('target_date'),
                 status='Opened',
                 is_template=False,
-                is_bookmark=False,
-                is_private=False,
+                is_bookmark=template_task.is_bookmark,
+                is_private=template_task.is_private,
                 is_important=template_task.is_important
             )
 
