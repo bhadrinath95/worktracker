@@ -229,8 +229,8 @@ class UpdateListView(LoginRequiredMixin, View):
             if not self.request.session.get("private_access"):
                 raise PermissionError("PRIVATE_ACCESS_REQUIRED")
 
-        checkbox_updates = task.updates.filter(is_check_box=True).order_by('-status', 'date' , 'description')
-        normal_updates   = task.updates.filter(is_check_box=False).order_by('-date')
+        checkbox_updates = task.updates.filter(is_check_box=True).order_by('-status', F('date').asc(nulls_first=True), 'description')
+        normal_updates   = task.updates.filter(is_check_box=False).order_by(F('date').asc(nulls_first=True),)
 
         form = UpdateForm()
         formset = DocumentFormSet(queryset=Document.objects.none())
