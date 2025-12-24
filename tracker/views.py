@@ -197,7 +197,8 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
 @login_required
 def toggle_hold(request, pk):
     task = get_object_or_404(Task, pk=pk)
-    task.status = "Hold" if task.status == "Opened" else "Hold"
+    print(task.status)
+    task.status = "Hold" if task.status == "Opened" else "Opened"
     task.save()
     if task.status == "Hold":
         messages.warning(request, "Task moved to Hold.")
