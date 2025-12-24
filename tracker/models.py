@@ -77,12 +77,18 @@ class Update(models.Model):
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled')
     ]
+    REMINDER_CHOICE = [
+        ('Days', 'Days'),
+        ('Weekly', 'Weekly'),
+        ('Monthly', 'Monthly'),
+        ('Yearly', 'Yearly'),
+    ]
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='updates')
     date = models.DateField(default=timezone.now, null=True, blank=True)
     description = models.TextField()
     is_check_box = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Opened')
-    is_monthly_reminder = models.BooleanField(default=False)
+    reminder_type = models.CharField(max_length=20, choices=REMINDER_CHOICE, null=True, blank=True)
     date_to_remind = models.IntegerField(null=True, blank=True)
 
     def __str__(self):

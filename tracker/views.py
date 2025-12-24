@@ -13,7 +13,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import UpdateTemplate
-from datetime import date
+from datetime import date, timedelta
 from calendar import monthrange
 from django.db import transaction
 
@@ -145,7 +145,7 @@ class TaskFromTemplateCreateView(LoginRequiredMixin, FormView):
                     date=upd.date,
                     is_check_box=upd.is_check_box,
                     status='Opened',
-                    is_monthly_reminder=upd.is_monthly_reminder,
+                    reminder_type=upd.reminder_type,
                     date_to_remind=upd.date_to_remind
                 )
                 for upd in updates
@@ -282,7 +282,7 @@ class UpdateListView(LoginRequiredMixin, View):
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
-        if update.is_monthly_reminder:
+        if update.reminder_type == 'Monthly':
             year = update.date.year
             month = update.date.month + 1
             if month == 13:
@@ -294,6 +294,30 @@ class UpdateCompleteView(LoginRequiredMixin, View):
             except ValueError:
                 last_day = monthrange(year, month)[1]
                 update.date = date(year, month, last_day)
+        elif update.reminder_type == 'Yearly':
+            year = update.date.year + 1
+            month = update.date.month
+            day = update.date.day
+            if update.date_to_remind:
+                day = update.date_to_remind
+            else:
+                update.date_to_remind = day
+            try:
+                update.date = date(year, month, day)
+            except ValueError:
+                last_day = monthrange(year, month)[1]
+                update.date = date(year, month, last_day)
+        elif update.reminder_type == 'Weekly':
+            current_date = update.date
+            python_weekday = current_date.weekday()
+            current_weekday = (python_weekday + 1) % 7
+            target_weekday = update.date_to_remind 
+            days_ahead = target_weekday - current_weekday
+            if days_ahead <= 0:
+                days_ahead += 7
+            update.date = current_date + timedelta(days=days_ahead)
+        elif update.reminder_type == 'Days':
+            update.date = update.date + timedelta(days=update.date_to_remind)
         else:
             update.date = timezone.now().date()
             update.status = 'Completed'
