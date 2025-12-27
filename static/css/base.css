@@ -1,25 +1,55 @@
+/* Page background */
 body {
     padding: 0 8px;
+    background-color: #f5f7fa;
+    color: #212529;
 }
-h1 {
-    text-align: center;
+
+/* Navbar */
+.custom-navbar {
+    background-color: #1f3a5f;
+}
+
+/* Navbar brand */
+.custom-navbar .navbar-brand {
     font-weight: 600;
-    margin-bottom: 1rem;
+    color: #ffffff !important;
 }
+
+/* Navbar links */
+.custom-navbar .nav-link {
+    color: #e0e6ed !important;
+    font-weight: 500;
+}
+
+/* Hover & active state */
+.custom-navbar .nav-link:hover,
+.custom-navbar .nav-link:focus {
+    color: #8fd3f4 !important;
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: #1f3a5f;
+    font-weight: 600;
+}
+
+/* Tables */
 .table td, .table th {
     vertical-align: middle;
     font-size: 0.9rem;
 }
+
+/* Cards */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Mobile adjustments */
 @media (max-width: 768px) {
-    .navbar {
-    flex-wrap: wrap;
-    justify-content: space-between;
-    }
     .navbar a {
-    font-size: 0.9rem;
-    padding: 4px 6px !important;
-    }
-    h2, h3 {
-    font-size: 1.2rem;
+        font-size: 0.9rem;
+        padding: 4px 6px !important;
     }
 }
