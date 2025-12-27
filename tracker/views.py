@@ -101,7 +101,7 @@ class TaskListView(LoginRequiredMixin, ListView):
 
         context['bookmarked_tasks'] = bookmarked_tasks
 
-        template_tasks = Task.objects.filter(is_template=True)
+        template_tasks = Task.objects.filter(is_template=True, **common_filters)
         context['template_tasks'] = template_tasks
         
         return context
