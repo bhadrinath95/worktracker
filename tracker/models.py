@@ -89,6 +89,7 @@ class Update(models.Model):
     is_check_box = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Opened')
     reminder_type = models.CharField(max_length=20, choices=REMINDER_CHOICE, null=True, blank=True)
+    can_store_reminder = models.BooleanField(default=False)
     date_to_remind = models.IntegerField(null=True, blank=True)
 
     def __str__(self):

@@ -47,7 +47,7 @@ class UpdateForm(forms.ModelForm):
 
     class Meta:
         model = Update
-        fields = ['template', 'date', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind']
+        fields = ['template', 'date', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
