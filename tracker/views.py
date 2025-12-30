@@ -210,7 +210,7 @@ def toggle_hold(request, pk):
 def mark_task_complete(request, pk):
     task = get_object_or_404(Task, pk=pk)
     task.status = 'Completed'
-    task.completed_date = timezone.localtime(timezone.now()).date()
+    task.completed_date = timezone.localdate()
     task.save()
     messages.success(request, f'🎉 Congratulations! Task "{task.name}" has been marked as completed.')
     return redirect('tracker:task_list')
@@ -287,7 +287,7 @@ class UpdateCompleteView(LoginRequiredMixin, View):
         if update.can_store_reminder:
             update_copy = copy(update)
             update_copy.pk = None
-            update_copy.date = timezone.localtime(timezone.now()).date()
+            update_copy.date = timezone.localdate()
             update_copy.is_check_box = False
             update_copy.status = 'Completed'
             update_copy.save()
@@ -328,7 +328,7 @@ class UpdateCompleteView(LoginRequiredMixin, View):
         elif update.reminder_type == 'Days':
             update.date = update.date + timedelta(days=update.date_to_remind)
         else:
-            update.date = timezone.localtime(timezone.now()).date()
+            update.date = timezone.localdate()
             update.status = 'Completed'
         update.save()
         return redirect('tracker:update_list', task_id=update.task.id)
