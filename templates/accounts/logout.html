@@ -2,14 +2,27 @@
 
 {% block content %}
 {% if request.user.is_authenticated %}
-    <div style="margin-top: 30px;">
-        <form method="POST">
+<div class="container mt-5" style="max-width: 400px;">
+    <h3 class="mb-3 text-center">Logout</h4>
+    <div class="card shadow p-4">
+        <div class="text-center mb-3">
+            <img src="https://raw.githubusercontent.com/tenctech10c/Document/main/Logo.png"
+                alt="logo"
+                style="max-width: 120px;">
+        </div>
+        <p class="mb-4 text-center">Are you sure you want to logout?</p>
+        <form method="POST" class="d-flex justify-content-between">
             {% csrf_token %}
-            <p>Are you sure you want to logout?</p>
-            <button type="submit" class="btn btn-danger">Yes, logout.</button>
+            <a href="{% url 'tracker:task_list' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-danger">Yes, logout</button>
         </form>
     </div>
+</div>
 {% else %}
-    <p>You're not already logged in. Would you like to <a href='{% url "login" %}'>login</a> ?</p>
+<div class="container mt-5 text-center">
+    <p>You're not already logged in. Would you like to 
+        <a href="{% url 'login' %}">login</a>?
+    </p>
+</div>
 {% endif %}
 {% endblock content %}
