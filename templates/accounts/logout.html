@@ -6,7 +6,7 @@
         <form method="POST">
             {% csrf_token %}
             <p>Are you sure you want to logout?</p>
-            <button type="submit">Yes, logout.</button>
+            <button type="submit" class="btn btn-danger">Yes, logout.</button>
         </form>
     </div>
 {% else %}
