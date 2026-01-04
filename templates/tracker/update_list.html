@@ -88,7 +88,49 @@
 
 <form method="POST">
   {% csrf_token %}
-  {{ form.as_p }}
+
+  <div class="mb-3">
+    <label class="form-label">Dates</label>
+    <input type="date" id="date-picker" class="form-control">
+    {{ form.dates }}   <!-- ONLY ONCE -->
+    <small class="text-muted">Click date to add multiple dates</small>
+    <div id="selected-dates" class="mt-2"></div>
+  </div>
+
+  <div class="mb-3">
+    {{ form.template.label_tag }}
+    {{ form.template }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.description.label_tag }}
+    {{ form.description }}
+  </div>
+
+  <div class="form-check mb-3">
+    {{ form.is_check_box }}
+    {{ form.is_check_box.label_tag }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.status.label_tag }}
+    {{ form.status }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.reminder_type.label_tag }}
+    {{ form.reminder_type }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.date_to_remind.label_tag }}
+    {{ form.date_to_remind }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.can_store_reminder.label_tag }}
+    {{ form.can_store_reminder }}
+  </div>
 
   <h4>Attach Documents</h4>
   <div id="formset">
@@ -206,5 +248,6 @@
 
 {% block static %}
 <script src="{% static 'js/update.js' %}"></script>
+<script src="{% static 'js/update_date.js' %}"></script>
 <script src="{% static 'js/template.js' %}"></script>
 {% endblock %}

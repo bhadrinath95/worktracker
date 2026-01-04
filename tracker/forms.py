@@ -62,6 +62,37 @@ class UpdateForm(forms.ModelForm):
             }),
         }
 
+class MultipleUpdateForm(forms.ModelForm):
+    template = forms.ModelChoiceField(
+        queryset=UpdateTemplate.objects.all().order_by('name'),
+        required=False,
+        empty_label="Select a template",
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Template"
+    )
+
+    dates = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput(),
+        label="Dates"
+    )
+
+    class Meta:
+        model = Update
+        fields = ['template', 'dates', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder']
+        widgets = {
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'is_check_box': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'reminder_type': forms.Select(attrs={'class': 'form-control'}),
+            'date_to_remind': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Days to remind',
+                'min': 1,
+                'max': 31,
+                'step': 1
+            }),
+        }
+
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document

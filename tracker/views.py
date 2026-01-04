@@ -7,13 +7,14 @@ from django.views.generic import (
 from django.urls import reverse_lazy, reverse
 from django.db.models import F, Q
 from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic
-from .forms import TaskForm, UpdateForm, DocumentFormSet, TaskFromTemplateForm
+from .forms import TaskForm, UpdateForm, DocumentFormSet, TaskFromTemplateForm, MultipleUpdateForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import UpdateTemplate
-from datetime import date, timedelta
+from datetime import datetime
+from datetime import datetime, date, timedelta
 from calendar import monthrange
 from django.db import transaction
 from copy import copy
@@ -198,7 +199,6 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
 @login_required
 def toggle_hold(request, pk):
     task = get_object_or_404(Task, pk=pk)
-    print(task.status)
     task.status = "Hold" if task.status == "Opened" else "Opened"
     task.save()
     if task.status == "Hold":
@@ -234,7 +234,7 @@ class UpdateListView(LoginRequiredMixin, View):
         checkbox_updates = task.updates.filter(is_check_box=True).order_by('-status', F('date').asc(nulls_first=True), 'description')
         normal_updates   = task.updates.filter(is_check_box=False).order_by(F('date').asc(nulls_first=True),)
 
-        form = UpdateForm()
+        form = MultipleUpdateForm()
         formset = DocumentFormSet(queryset=Document.objects.none())
 
         return render(request, 'tracker/update_list.html', {
@@ -250,19 +250,37 @@ class UpdateListView(LoginRequiredMixin, View):
         if task.is_private:
             if not self.request.session.get("private_access"):
                 raise PermissionError("PRIVATE_ACCESS_REQUIRED")
-        form = UpdateForm(request.POST)
+        form = MultipleUpdateForm(request.POST)
         formset = DocumentFormSet(request.POST, queryset=Document.objects.none())
 
         if form.is_valid() and formset.is_valid():
-            update = form.save(commit=False)
-            update.task = task
-            update.save()
+            dates_str = form.cleaned_data.get('dates')
+            dates = [
+                datetime.strptime(d, "%Y-%m-%d").date()
+                for d in dates_str.split(',')
+            ]
+            
+            updates = []
 
-            for doc_form in formset:
-                if doc_form.cleaned_data and not doc_form.cleaned_data.get('DELETE', False):
-                    doc = doc_form.save(commit=False)
-                    doc.update = update
-                    doc.save()
+            for date in dates:
+                update = Update(
+                    task=task,
+                    date=date,
+                    description=form.cleaned_data['description'],
+                    is_check_box=form.cleaned_data['is_check_box'],
+                    status=form.cleaned_data['status'],
+                    reminder_type=form.cleaned_data['reminder_type'],
+                    date_to_remind=form.cleaned_data['date_to_remind'],
+                    can_store_reminder=form.cleaned_data['can_store_reminder'],
+                )
+                update.save()
+                updates.append(update)
+
+                for doc_form in formset:
+                    if doc_form.cleaned_data and not doc_form.cleaned_data.get('DELETE', False):
+                        doc = doc_form.save(commit=False)
+                        doc.update = update
+                        doc.save()
             return redirect('tracker:update_list', task_id=task_id)
 
         updates = task.updates.order_by('-date')
