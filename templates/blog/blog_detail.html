@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<h1>{{ blog.title }}</h1>
-<hr>
-<div class="mb-4">{{ blog.content|safe }}</div>
+
+{% include "blog/blog_content.html" %}
 
 
 <a href="{% url 'blogs:blog_update' blog.id %}" class="btn btn-warning btn-sm">Edit</a>
 <a href="{% url 'blogs:blog_delete' blog.id %}" class="btn btn-danger btn-sm">Delete</a>
 <a href="{% url 'blogs:blog_list' %}" class="btn btn-secondary btn-sm">Back</a>
+<a href="{% url 'blogs:blog_print' blog.id %}" 
+    class="btn btn-primary btn-sm">
+    Export
+</a>
 
 <br />
 {% endblock %}

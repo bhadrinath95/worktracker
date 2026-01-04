@@ -8,6 +8,7 @@ path('blog/<int:pk>/', views.blog_detail, name='blog_detail'),
 path('blog/create/', views.blog_create, name='blog_create'),
 path('blog/<int:pk>/edit/', views.blog_update, name='blog_update'),
 path('blog/<int:pk>/delete/', views.blog_delete, name='blog_delete'),
+path('blogs/<int:pk>/print/', views.blog_print, name='blog_print'),
 
 
 path('words/', views.word_list, name='word_list'),
