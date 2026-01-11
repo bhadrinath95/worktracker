@@ -255,6 +255,25 @@ class UpdateListView(LoginRequiredMixin, View):
 
         if form.is_valid() and formset.is_valid():
             dates_str = form.cleaned_data.get('dates')
+            if dates_str == "":
+                update = Update(
+                    task=task,
+                    date=None,
+                    description=form.cleaned_data['description'],
+                    is_check_box=form.cleaned_data['is_check_box'],
+                    status=form.cleaned_data['status'],
+                    reminder_type=form.cleaned_data['reminder_type'],
+                    date_to_remind=form.cleaned_data['date_to_remind'],
+                    can_store_reminder=form.cleaned_data['can_store_reminder'],
+                )
+                update.save()
+                for doc_form in formset:
+                    if doc_form.cleaned_data and not doc_form.cleaned_data.get('DELETE', False):
+                        doc = doc_form.save(commit=False)
+                        doc.update = update
+                        doc.save()
+                return redirect('tracker:update_list', task_id=task_id)
+            
             dates = [
                 datetime.strptime(d, "%Y-%m-%d").date()
                 for d in dates_str.split(',')
