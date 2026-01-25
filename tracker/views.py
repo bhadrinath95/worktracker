@@ -387,12 +387,23 @@ class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
             date=today
         )
 
+        if not updates.exists():
+            messages.warning(
+                request,
+                f'No updates found for task "{task.name}" for today.'
+            )
+            return redirect('tracker:task_list')
+
         with transaction.atomic():
             for update in updates:
                 complete_update(update)
 
-        messages.success(request, f'🎉 Congratulations! Task "{task.name}" today's task has been marked as completed.')
-    return redirect('tracker:task_list')
+        messages.success(
+            request,
+            f'🎉 Congratulations! Task "{task.name}" today\'s updates have been marked as completed.'
+        )
+
+        return redirect('tracker:task_list')
 
 class UpdateEditView(LoginRequiredMixin, View):
     def get(self, request, pk):
