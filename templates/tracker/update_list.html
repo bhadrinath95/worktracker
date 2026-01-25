@@ -184,7 +184,11 @@
           {% if u.status != 'Completed' and u.status != 'Cancelled' %}
           <form method="POST" action="{% url 'tracker:update_complete' u.id %}">
             {% csrf_token %}
-            <button class="btn btn-outline-success btn-sm">Mark Complete</button>
+            <button class="btn btn-outline-success btn-sm">Complete</button>
+          </form>
+          <form method="POST" action="{% url 'tracker:update_cancelled' u.id %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-warning btn-sm">Cancelled</button>
           </form>
           {% endif %}
           <a href="{% url 'tracker:update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
