@@ -377,10 +377,10 @@ class UpdateCompleteView(LoginRequiredMixin, View):
         return redirect('tracker:update_list', task_id=update.task.id)
 
 class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
-    def post(self, request, task_id):
+    def post(self, request, pk):
         today = timezone.localdate()
 
-        task = get_object_or_404(Task, pk=task_id)
+        task = get_object_or_404(Task, pk=pk)
 
         updates = Update.objects.filter(
             task=task,
