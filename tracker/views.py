@@ -391,7 +391,8 @@ class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
             for update in updates:
                 complete_update(update)
 
-        return redirect('tracker:update_list', task_id=task.id)
+        messages.success(request, f'🎉 Congratulations! Task "{task.name}" today's task has been marked as completed.')
+    return redirect('tracker:task_list')
 
 class UpdateEditView(LoginRequiredMixin, View):
     def get(self, request, pk):
