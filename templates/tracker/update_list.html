@@ -76,12 +76,6 @@
         <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
         {% if task.status != 'Completed' and task.status != 'Cancelled' %}
         <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
-        <form method="post" action="{% url 'tracker:complete_today_task_updates' task.id %}" class="d-inline">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-secondary">
-            Complete Today's Update
-            </button>
-        </form>
         {% endif %}
         <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a></td>
     </tr>
@@ -180,7 +174,7 @@
       
       </td>
       <td>
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex flex-wrap align-items-center gap-2">
           {% if u.status != 'Completed' and u.status != 'Cancelled' %}
           <form method="POST" action="{% url 'tracker:update_complete' u.id %}">
             {% csrf_token %}
@@ -193,7 +187,7 @@
           {% endif %}
           <a href="{% url 'tracker:update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
           <a href="{% url 'tracker:update_delete' u.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
-          </div>
+        </div>
       </td>
     </tr>
     {% empty %}
