@@ -375,8 +375,9 @@ class UpdateCancelledView(LoginRequiredMixin, View):
         update = get_object_or_404(Update, pk=update_id)
         today = timezone.localdate()
         update.date = today
-        update.status = 'Completed'
+        update.status = 'Cancelled'
         update.save()
+        return redirect('tracker:update_list', task_id=update.task.id)
 
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
