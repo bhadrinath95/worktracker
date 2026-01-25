@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
         # DB path
         db_path = base_dir / "db.sqlite3"
-
+        self.stdout.write(f"DB Sqlite 3 Path: {db_path}")
         if not db_path.exists():
             self.stderr.write(self.style.ERROR("db.sqlite3 not found"))
             return
@@ -41,7 +41,8 @@ class Command(BaseCommand):
             )
 
             email.attach_file(zip_path)
-            email.send()
+            sent_count = email.send(fail_silently=False)
+            self.stdout.write(f"Emails sent: {sent_count}")
 
             self.stdout.write(self.style.SUCCESS("Backup emailed successfully"))
 
