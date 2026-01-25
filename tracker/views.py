@@ -397,7 +397,7 @@ class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
                 request,
                 f'No updates found for task "{task.name}" for today.'
             )
-            return redirect('tracker:task_list')
+            return redirect('tracker:update_list', task_id=task.id)
         with transaction.atomic():
             for update in updates:
                 complete_update(update)
