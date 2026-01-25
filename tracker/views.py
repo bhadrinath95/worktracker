@@ -370,6 +370,14 @@ def complete_update(update):
 
     update.save()
 
+class UpdateCancelledView(LoginRequiredMixin, View):
+    def post(self, request, update_id):
+        update = get_object_or_404(Update, pk=update_id)
+        today = timezone.localdate()
+        update.date = today
+        update.status = 'Completed'
+        update.save()
+
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
@@ -379,31 +387,21 @@ class UpdateCompleteView(LoginRequiredMixin, View):
 class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         today = timezone.localdate()
-
         task = get_object_or_404(Task, pk=pk)
-
         updates = Update.objects.filter(
             task=task,
             date=today
         )
-
         if not updates.exists():
             messages.warning(
                 request,
                 f'No updates found for task "{task.name}" for today.'
             )
             return redirect('tracker:task_list')
-
         with transaction.atomic():
             for update in updates:
                 complete_update(update)
-
-        messages.success(
-            request,
-            f'🎉 Congratulations! Task "{task.name}" today\'s updates have been marked as completed.'
-        )
-
-        return redirect('tracker:task_list')
+        return redirect('tracker:update_list', task_id=task.id)
 
 class UpdateEditView(LoginRequiredMixin, View):
     def get(self, request, pk):
