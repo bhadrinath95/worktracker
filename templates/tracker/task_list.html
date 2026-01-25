@@ -106,69 +106,11 @@
           <td>{{ task.task_type.name }}</td>
           <td>{{ task.status }}</td>
           <td>{% if task.days_till_upcoming == 0 %}Today{% elif task.days_till_upcoming > 0 %}{{ task.days_till_upcoming }}{% endif %}</td>
-            <td>
-  <div class="dropdown">
-    <button class="btn btn-sm btn-secondary dropdown-toggle"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false">
-      Actions
-    </button>
-
-    <ul class="dropdown-menu">
-      <!-- View -->
-      <li>
-        <a class="dropdown-item"
-           href="{% url 'tracker:update_list' task.id %}">
-          View
-        </a>
-      </li>
-
-      <!-- Edit -->
-      <li>
-        <a class="dropdown-item"
-           href="{% url 'tracker:task_update' task.id %}">
-          Edit
-        </a>
-      </li>
-
-      <!-- Mark Complete (POST) -->
-      <li>
-        <form method="post"
-              action="{% url 'tracker:mark_task_complete' task.id %}">
-          {% csrf_token %}
-          <button type="submit" class="dropdown-item">
-            Mark Complete
-          </button>
-        </form>
-      </li>
-
-      <li><hr class="dropdown-divider"></li>
-
-      <!-- Complete Today's Updates (POST) -->
-      <li>
-        <form method="post"
-              action="{% url 'tracker:complete_today_task_updates' task.id %}">
-          {% csrf_token %}
-          <button type="submit"
-                  class="dropdown-item"
-                  onclick="return confirm('Complete today’s updates?');">
-            Complete Today’s Updates
-          </button>
-        </form>
-      </li>
-
-      <li><hr class="dropdown-divider"></li>
-
-      <!-- Delete -->
-      <li>
-        <a class="dropdown-item text-danger"
-           href="{% url 'tracker:task_delete' task.id %}">
-          Delete
-        </a>
-      </li>
-    </ul>
-  </div>
+          <td>
+            <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
+            <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
+            <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
           </td>
         </tr>
         {% endfor %}
