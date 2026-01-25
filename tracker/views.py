@@ -318,57 +318,80 @@ class UpdateListView(LoginRequiredMixin, View):
                 return redirect("private_access", "tracker:task_list") 
             raise
 
+def complete_update(update):
+    today = timezone.localdate()
+
+    # ---- store completed copy ----
+    if update.can_store_reminder:
+        update_copy = copy(update)
+        update_copy.pk = None
+        update_copy.date = today
+        update_copy.is_check_box = False
+        update_copy.status = 'Completed'
+        update_copy.save()
+
+    # ---- calculate next reminder date ----
+    if update.reminder_type == 'Monthly':
+        year = update.date.year
+        month = update.date.month + 1
+        if month == 13:
+            month = 1
+            year += 1
+        day = update.date_to_remind
+        try:
+            update.date = date(year, month, day)
+        except ValueError:
+            update.date = date(year, month, monthrange(year, month)[1])
+
+    elif update.reminder_type == 'Yearly':
+        year = update.date.year + 1
+        month = update.date.month
+        day = update.date_to_remind or update.date.day
+        update.date_to_remind = day
+        try:
+            update.date = date(year, month, day)
+        except ValueError:
+            update.date = date(year, month, monthrange(year, month)[1])
+
+    elif update.reminder_type == 'Weekly':
+        current_weekday = (update.date.weekday() + 1) % 7
+        target_weekday = update.date_to_remind
+        days_ahead = target_weekday - current_weekday
+        if days_ahead <= 0:
+            days_ahead += 7
+        update.date += timedelta(days=days_ahead)
+
+    elif update.reminder_type == 'Days':
+        update.date += timedelta(days=update.date_to_remind)
+
+    else:
+        update.date = today
+        update.status = 'Completed'
+
+    update.save()
+
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
-        if update.can_store_reminder:
-            update_copy = copy(update)
-            update_copy.pk = None
-            update_copy.date = timezone.localdate()
-            update_copy.is_check_box = False
-            update_copy.status = 'Completed'
-            update_copy.save()
-        if update.reminder_type == 'Monthly':
-            year = update.date.year
-            month = update.date.month + 1
-            if month == 13:
-                month = 1
-                year += 1
-            day = update.date_to_remind
-            try:
-                update.date = date(year, month, day)
-            except ValueError:
-                last_day = monthrange(year, month)[1]
-                update.date = date(year, month, last_day)
-        elif update.reminder_type == 'Yearly':
-            year = update.date.year + 1
-            month = update.date.month
-            day = update.date.day
-            if update.date_to_remind:
-                day = update.date_to_remind
-            else:
-                update.date_to_remind = day
-            try:
-                update.date = date(year, month, day)
-            except ValueError:
-                last_day = monthrange(year, month)[1]
-                update.date = date(year, month, last_day)
-        elif update.reminder_type == 'Weekly':
-            current_date = update.date
-            python_weekday = current_date.weekday()
-            current_weekday = (python_weekday + 1) % 7
-            target_weekday = update.date_to_remind 
-            days_ahead = target_weekday - current_weekday
-            if days_ahead <= 0:
-                days_ahead += 7
-            update.date = current_date + timedelta(days=days_ahead)
-        elif update.reminder_type == 'Days':
-            update.date = update.date + timedelta(days=update.date_to_remind)
-        else:
-            update.date = timezone.localdate()
-            update.status = 'Completed'
-        update.save()
+        complete_update(update)
         return redirect('tracker:update_list', task_id=update.task.id)
+
+class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
+    def post(self, request, task_id):
+        today = timezone.localdate()
+
+        task = get_object_or_404(Task, pk=task_id)
+
+        updates = Update.objects.filter(
+            task=task,
+            date=today
+        )
+
+        with transaction.atomic():
+            for update in updates:
+                complete_update(update)
+
+        return redirect('tracker:update_list', task_id=task.id)
 
 class UpdateEditView(LoginRequiredMixin, View):
     def get(self, request, pk):
