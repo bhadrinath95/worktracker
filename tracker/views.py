@@ -318,7 +318,7 @@ class UpdateListView(LoginRequiredMixin, View):
                 return redirect("private_access", "tracker:task_list") 
             raise
 
-def complete_update(update):
+def update_status(update, status):
     today = timezone.localdate()
 
     # ---- store completed copy ----
@@ -327,7 +327,7 @@ def complete_update(update):
         update_copy.pk = None
         update_copy.date = today
         update_copy.is_check_box = False
-        update_copy.status = 'Completed'
+        update_copy.status = status
         update_copy.save()
 
     # ---- calculate next reminder date ----
@@ -366,23 +366,20 @@ def complete_update(update):
 
     else:
         update.date = today
-        update.status = 'Completed'
+        update.status = status
 
     update.save()
 
 class UpdateCancelledView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
-        today = timezone.localdate()
-        update.date = today
-        update.status = 'Cancelled'
-        update.save()
+        update_status(update, 'Cancelled')
         return redirect('tracker:update_list', task_id=update.task.id)
 
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
-        complete_update(update)
+        update_status(update, 'Completed')
         return redirect('tracker:update_list', task_id=update.task.id)
 
 class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
@@ -401,7 +398,7 @@ class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
             return redirect('tracker:update_list', task_id=task.id)
         with transaction.atomic():
             for update in updates:
-                complete_update(update)
+                update_status(update, 'Completed')
         return redirect('tracker:update_list', task_id=task.id)
 
 class UpdateEditView(LoginRequiredMixin, View):
