@@ -130,6 +130,8 @@ class Document(models.Model):
             self.filetype = 'image'
         elif ext in ['.mp4', '.mov', '.avi', '.mkv']:
             self.filetype = 'video'
+        elif ext in ['.mp3', '.m4a']:
+            self.filetype = 'audio'
         else:
             self.filetype = 'other'
         super().save(*args, **kwargs)

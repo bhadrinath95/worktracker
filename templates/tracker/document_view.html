@@ -21,6 +21,13 @@
         Your browser does not support video playback.
       </video>
     </div>
+  {% elif doc.filetype == 'audio' %}
+    <div class="d-flex justify-content-center">
+      <audio controls style="width:600px; max-width:90%;">
+        <source src="{{ github_url }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
   {% else %}
     <p>File type not supported for preview.</p>
     <a href="{{ github_url }}" target="_blank" class="btn btn-outline-primary">Download / View</a>
