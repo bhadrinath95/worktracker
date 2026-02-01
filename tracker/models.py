@@ -116,30 +116,68 @@ class LifePrinciple(models.Model):
     def __str__(self):
         return self.principle
 
+class FileType(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    extensions = models.TextField(
+        help_text="Comma-separated extensions like .pdf,.docx,.jpg"
+    )
+
+    preview_html = models.TextField(
+        help_text="""
+            Use {{ url }} for file URL
+            Use {{ filename }} for file name
+        """
+    )
+
+    icon_class = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Bootstrap icon class. Leave empty to show thumbnail."
+    )
+
+    def get_extensions_list(self):
+        return [ext.strip().lower() for ext in self.extensions.split(",")]
+
+    def __str__(self):
+        return self.name
+    
 class Document(models.Model):
     update = models.ForeignKey(Update, on_delete=models.CASCADE, related_name='documents')
     filename = models.CharField(max_length=255)
     fileurl = models.CharField(max_length=255)
-    filetype = models.CharField(max_length=50, editable=False)
-
+    filetype = models.ForeignKey(
+        FileType,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+    
     def save(self, *args, **kwargs):
         ext = os.path.splitext(self.fileurl)[1].lower()
-        if ext in ['.pdf', '.doc', '.docx']:
-            self.filetype = 'pdf'
-        elif ext in ['.jpg', '.jpeg', '.png', '.gif']:
-            self.filetype = 'image'
-        elif ext in ['.mp4', '.mov', '.avi', '.mkv']:
-            self.filetype = 'video'
-        elif ext in ['.mp3', '.m4a']:
-            self.filetype = 'audio'
-        else:
-            self.filetype = 'other'
+        self.filetype = self.detect_file_type(ext)
         super().save(*args, **kwargs)
 
+    @staticmethod
+    def detect_file_type(extension):
+        for ft in FileType.objects.all():
+            if extension in ft.get_extensions_list():
+                return ft
+        return FileType.objects.filter(name="other").first()
+
     def github_url(self):
-        if self.filetype != "other":
+        if self.filetype.name != "other":
             return f"https://raw.githubusercontent.com/tenctech10c/Document/main/{self.fileurl}"
         return self.fileurl
 
+    def render_preview(self):
+        if not self.filetype:
+            return "<p>Preview not available.</p>"
+
+        return (
+            self.filetype.preview_html
+            .replace("{{ github_url }}", self.github_url())
+            .replace("{{ filename }}", self.filename)
+        )
+    
     def __str__(self):
         return self.filename

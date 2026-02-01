@@ -470,5 +470,5 @@ def document_view(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     return render(request, 'tracker/document_view.html', {
         'doc': doc,
-        'github_url': doc.github_url(),
+        "preview_html": doc.render_preview(),
     })

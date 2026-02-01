@@ -231,35 +231,38 @@
       {% elif u.status == 'Cancelled' %}
         <p class="text-danger fw-bold">— {{ u.status }}</p>
       {% endif %}
-      {% if u.documents.all %}
+      {% if u.documents.exists %}
       <div class="mt-2 d-flex flex-wrap gap-2">
         {% for doc in u.documents.all %}
-          {% if doc.filetype == 'pdf' %}
-            <a href="{% url 'tracker:document_view' doc.id %}" class="btn btn-outline-danger d-flex align-items-center">
-              <i class="bi bi-file-earmark-pdf-fill me-2"></i> {{ doc.filename }}
-            </a>
-
-          {% elif doc.filetype == 'image' %}
-            <a href="{% url 'tracker:document_view' doc.id %}">
-              <img src="{{ doc.github_url }}" alt="{{ doc.filename }}" style="max-width:100px; border-radius:5px;">
-            </a>
-
-          {% elif doc.filetype == 'video' %}
-            <a href="{% url 'tracker:document_view' doc.id %}" class="btn btn-outline-dark d-flex align-items-center">
-              <i class="bi bi-camera-video-fill me-2"></i> {{ doc.filename }}
-            </a>
-          {% elif doc.filetype == 'audio' %}
-            <a href="{% url 'tracker:document_view' doc.id %}" class="btn btn-outline-dark d-flex align-items-center">
-              <i class="bi bi-file-earmark-music me-2"></i> {{ doc.filename }}
-            </a>
-          {% else %}
-            <a href="{{ doc.github_url }}" class="btn btn-outline-secondary d-flex align-items-center">
-              <i class="bi bi-file-earmark-fill me-2"></i> {{ doc.filename }}
-            </a>
-          {% endif %}
+          {% with ft=doc.filetype %}
+            {% if ft %}
+              {% if ft.icon_class %}
+                <!-- Icon button -->
+                <a href="{% url 'tracker:document_view' doc.id %}"
+                  class="btn btn-outline-dark d-flex align-items-center">
+                  <i class="bi {{ ft.icon_class }} me-2"></i>
+                  {{ doc.filename }}
+                </a>
+              {% else %}
+                <!-- Thumbnail -->
+                <a href="{% url 'tracker:document_view' doc.id %}">
+                  <img src="{{ doc.github_url }}"
+                      alt="{{ doc.filename }}"
+                      style="max-width:100px; border-radius:5px;">
+                </a>
+              {% endif %}
+            {% else %}
+              <!-- Fallback -->
+              <a href="{{ doc.github_url }}" class="btn btn-outline-secondary">
+                <i class="bi bi-file-earmark-fill me-2"></i>
+                {{ doc.filename }}
+              </a>
+            {% endif %}
+          {% endwith %}
         {% endfor %}
       </div>
-      {% endif %}
+    {% endif %}
+
     </div>
   </li>
   {% empty %}
