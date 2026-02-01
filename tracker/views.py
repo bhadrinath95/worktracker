@@ -47,11 +47,19 @@ class TaskListView(LoginRequiredMixin, ListView):
         if task_type_id:
             queryset = queryset.filter(task_type_id=task_type_id)
 
-        return queryset.order_by(
-            F('target_date').asc(nulls_last=True),
-            'updated_date',
-            'name'
+        tasks = list(queryset)
+        tasks = [t for t in tasks if t.days_till_upcoming != 0]
+
+        tasks.sort(
+            key=lambda t: (
+                t.days_till_upcoming is None, 
+                t.days_till_upcoming,
+                t.target_date is None,
+                t.target_date,
+                t.name.lower(),
+            )
         )
+        return tasks
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,24 +83,18 @@ class TaskListView(LoginRequiredMixin, ListView):
         if task_type_id:
             common_filters['task_type_id'] = task_type_id
 
-        tasks_by_target_date = Task.objects.filter(
-            started_date=today,
-            target_date=today,
-            **common_filters
-        ).exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True).exclude(is_template=True)
-        tasks_by_updates = Task.objects.filter(
-            updates__date=today,
-            updates__status__in=['Opened', 'InProgress'],
-            **common_filters
-        ).exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True).exclude(is_template=True)
-        today_tasks = tasks_by_target_date.union(tasks_by_updates).order_by('name')
+        all_tasks = Task.objects.filter(**common_filters) \
+            .exclude(status__in=['Completed', 'Cancelled', 'Hold']) \
+            .exclude(is_bookmark=True) \
+            .exclude(is_template=True) \
+            .order_by('name')
+        today_tasks = [task for task in all_tasks if task.days_till_upcoming == 0]
         context['today_tasks'] = today_tasks
 
         held_tasks = Task.objects.filter(
             status__in=['Hold'],
             **common_filters
         ).exclude(is_template=True).order_by('name')
-
         context['held_tasks'] = held_tasks
 
         bookmarked_tasks = Task.objects.filter(
@@ -100,7 +102,6 @@ class TaskListView(LoginRequiredMixin, ListView):
             status__in=['Opened', 'InProgress'],
             **common_filters
         ).exclude(is_template=True).order_by('name')
-
         context['bookmarked_tasks'] = bookmarked_tasks
 
         template_tasks = Task.objects.filter(is_template=True, **common_filters)
