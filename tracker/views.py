@@ -71,8 +71,6 @@ class TaskListView(LoginRequiredMixin, ListView):
         view_mode = self.request.GET.get('view', 'public')
         context['view_mode'] = view_mode
 
-        today = timezone.localdate()
-
         common_filters = {}
 
         if view_mode == "public":
