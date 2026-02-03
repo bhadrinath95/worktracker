@@ -387,7 +387,8 @@ class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
         task = get_object_or_404(Task, pk=pk)
         updates = Update.objects.filter(
             task=task,
-            date=today
+            date=today,
+            status__in=['Opened', 'InProgress'],
         )
         if not updates.exists():
             messages.warning(
