@@ -242,6 +242,16 @@ class UpdateListView(LoginRequiredMixin, View):
             if not self.request.session.get("private_access"):
                 raise PermissionError("PRIVATE_ACCESS_REQUIRED")
 
+        checkbox_updates_count = task.updates.filter(
+            is_check_box=True
+        ).exclude(
+            status__in=['Completed', 'Cancelled']
+        ).count()
+        normal_updates_count = task.updates.filter(
+            is_check_box=False
+        ).exclude(
+            status__in=['Completed', 'Cancelled']
+        ).count()
         checkbox_updates = task.updates.filter(is_check_box=True).order_by('-status', F('date').asc(nulls_first=True), 'description')
         normal_updates   = task.updates.filter(is_check_box=False).order_by(F('date').asc(nulls_first=True),)
 
@@ -252,6 +262,8 @@ class UpdateListView(LoginRequiredMixin, View):
             'task': task,
             'checkbox_updates': checkbox_updates,
             'updates': normal_updates,
+            'checkbox_updates_count': checkbox_updates_count,
+            'normal_updates_count': normal_updates_count,
             'form': form,
             'formset': formset,
         })
