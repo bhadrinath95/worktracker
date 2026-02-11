@@ -109,14 +109,14 @@
           <td>
             <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
             <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
-            <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
+            <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Complete</a>
             <form method="post" action="{% url 'tracker:complete_today_task_updates' task.id %}" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm btn-secondary">
                 Complete Today's Update
                 </button>
             </form>
-            <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+            <a href="{% url 'tracker:mark_task_cancel' task.id %}" class="btn btn-sm btn-danger">Cancel</a>
           </td>
         </tr>
         {% endfor %}
@@ -147,8 +147,8 @@
         <td>
           <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
           <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
-          <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Mark Complete</a>
-          <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+          <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Complete</a>
+          <a href="{% url 'tracker:mark_task_cancel' task.id %}" class="btn btn-sm btn-danger">Cancel</a>
         </td>
       </tr>
       {% empty %}
@@ -177,7 +177,6 @@
           <td>
             <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
             <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
-            <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
           </td>
         </tr>
         {% endfor %}
@@ -213,7 +212,7 @@
               Activate
             </a>
 
-            <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+            <a href="{% url 'tracker:mark_task_cancel' task.id %}" class="btn btn-sm btn-danger">Cancel</a>
           </td>
         </tr>
         {% endfor %}
@@ -242,7 +241,7 @@
           <td>
             <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
             <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
-            <a href="{% url 'tracker:task_delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+            <a href="{% url 'tracker:mark_task_cancel' task.id %}" class="btn btn-sm btn-danger">Cancel</a>
           </td>
         </tr>
         {% endfor %}

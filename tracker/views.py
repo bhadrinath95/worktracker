@@ -214,6 +214,18 @@ def mark_task_complete(request, pk):
     messages.success(request, f'🎉 Congratulations! Task "{task.name}" has been marked as completed.')
     return redirect('tracker:task_list')
 
+def mark_task_cancel(request, pk):
+    task = get_object_or_404(Task, id=pk)
+
+    if task.status not in ['Completed', 'Cancelled']:
+        task.status = 'Cancelled'
+        task.save()
+        messages.success(request, "Task marked as Cancelled.")
+    else:
+        messages.warning(request, "Task is already Completed or Cancelled.")
+
+    return redirect('tracker:task_list')
+
 
 # -------------------------
 # UPDATE VIEWS
