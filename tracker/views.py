@@ -73,14 +73,12 @@ class TaskListView(LoginRequiredMixin, ListView):
 
         common_filters = {}
 
-        if view_mode == "public":
-            common_filters['is_private'] = False
-        elif view_mode == "private":
-            common_filters['is_private'] = True
-
         if task_type_id:
             common_filters['task_type_id'] = task_type_id
 
+        if view_mode == "private":
+            common_filters['is_private'] = True
+            
         all_tasks = Task.objects.filter(**common_filters) \
             .exclude(status__in=['Completed', 'Cancelled', 'Hold']) \
             .exclude(is_bookmark=True) \
@@ -88,6 +86,9 @@ class TaskListView(LoginRequiredMixin, ListView):
             .order_by('name')
         today_tasks = [task for task in all_tasks if task.days_till_upcoming == 0]
         context['today_tasks'] = today_tasks
+
+        if view_mode == "public":
+            common_filters['is_private'] = False
 
         held_tasks = Task.objects.filter(
             status__in=['Hold'],

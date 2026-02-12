@@ -101,24 +101,32 @@
       </thead>
       <tbody>
         {% for task in today_tasks %}
-        <tr>
-          <td>{{ task.name }}{% if task.is_important %}<i class="bi bi-star-fill text-warning ms-1"></i>{% endif %}</td>
-          <td>{{ task.task_type.name }}</td>
-          <td>{{ task.status }}</td>
-          <td>{% if task.days_till_upcoming == 0 %}Today{% elif task.days_till_upcoming > 0 %}{{ task.days_till_upcoming }}{% endif %}</td>
-          <td>
-            <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
-            <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
-            <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Complete</a>
-            <form method="post" action="{% url 'tracker:complete_today_task_updates' task.id %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-secondary">
-                Complete Today's Update
-                </button>
-            </form>
-            <a href="{% url 'tracker:mark_task_cancel' task.id %}" class="btn btn-sm btn-danger">Cancel</a>
-          </td>
-        </tr>
+          {% if task.is_private and view_mode == "public" %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    <i class="bi bi-eye-slash-fill"></i> Private Task
+                </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td>{{ task.name }}{% if task.is_important %}<i class="bi bi-star-fill text-warning ms-1"></i>{% endif %}</td>
+              <td>{{ task.task_type.name }}</td>
+              <td>{{ task.status }}</td>
+              <td>{% if task.days_till_upcoming == 0 %}Today{% elif task.days_till_upcoming > 0 %}{{ task.days_till_upcoming }}{% endif %}</td>
+              <td>
+                <a href="{% url 'tracker:update_list' task.id %}" class="btn btn-sm btn-info">View</a>
+                <a href="{% url 'tracker:task_update' task.id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'tracker:mark_task_complete' task.id %}" class="btn btn-sm btn-success">Complete</a>
+                <form method="post" action="{% url 'tracker:complete_today_task_updates' task.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-secondary">
+                    Complete Today's Update
+                    </button>
+                </form>
+                <a href="{% url 'tracker:mark_task_cancel' task.id %}" class="btn btn-sm btn-danger">Cancel</a>
+              </td>
+            </tr>
+          {% endif %}
         {% endfor %}
       </tbody>
     </table>
