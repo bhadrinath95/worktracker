@@ -23,11 +23,11 @@ class Task(models.Model):
     name = models.CharField(max_length=200)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Opened')
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
-    started_date = models.DateField(default=timezone.now, null=True, blank=True)
+    started_date = models.DateField(default=timezone.localtime(), null=True, blank=True)
     created_date = models.DateField(auto_now_add=True)
     updated_date = models.DateField(auto_now=True)
     completed_date = models.DateField(null=True, blank=True)
-    target_date = models.DateField(default=timezone.now, null=True, blank=True)
+    target_date = models.DateField(default=timezone.localtime(), null=True, blank=True)
     is_bookmark = models.BooleanField(default=False)
     is_private = models.BooleanField(default=False)
     is_important = models.BooleanField(default=False)
@@ -38,7 +38,7 @@ class Task(models.Model):
     
     @property
     def days_till_upcoming(self):
-        today = timezone.now().date()
+        today = timezone.localdate()
         dates = []
 
         if self.started_date and self.started_date >= today:
@@ -58,7 +58,7 @@ class Task(models.Model):
 
     def save(self, *args, **kwargs):
         if self.status in ['Completed', 'Cancelled'] and not self.completed_date:
-            self.completed_date = timezone.now()
+            self.completed_date = timezone.localtime()
         elif self.status != 'Completed':
             self.completed_date = None
         super().save(*args, **kwargs)
@@ -84,7 +84,7 @@ class Update(models.Model):
         ('Yearly', 'Yearly'),
     ]
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='updates')
-    date = models.DateField(default=timezone.now, null=True, blank=True)
+    date = models.DateField(default=timezone.localtime(), null=True, blank=True)
     description = models.TextField()
     is_check_box = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Opened')
