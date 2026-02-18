@@ -29,46 +29,74 @@ class TaskListView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        queryset = Task.objects.exclude(status__in=['Completed', 'Cancelled', 'Hold']).exclude(is_bookmark=True).exclude(is_template=True)
+        queryset = Task.objects.exclude(
+            status__in=['Completed', 'Cancelled', 'Hold']
+        ).exclude(
+            is_bookmark=True
+        ).exclude(
+            is_template=True
+        )
+
         view_mode = self.request.GET.get('view', 'public')
+
+        # 🔒 Private / Public Logic
         if view_mode == "private":
-            user_profile  = getattr(self.request.user, "userprofile", None)
+            user_profile = getattr(self.request.user, "userprofile", None)
+
             if user_profile is None or not user_profile.special_privilege_password:
                 messages.error(self.request, "You do not have access to private tasks.")
                 return Task.objects.none()
+
             if not self.request.session.get("private_access"):
                 raise PermissionError("PRIVATE_ACCESS_REQUIRED")
+
             queryset = queryset.filter(is_private=True)
+
         elif view_mode == "public":
             self.request.session['private_access'] = False
             queryset = queryset.filter(is_private=False)
 
+        # 🔍 Search filter
+        search_query = self.request.GET.get('search')
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) |
+                Q(updates__description__icontains=search_query)
+            ).distinct()
+
+        # 📂 Task type filter
         task_type_id = self.request.GET.get('task_type')
         if task_type_id:
             queryset = queryset.filter(task_type_id=task_type_id)
 
         tasks = list(queryset)
+
+        # Remove today's tasks from upcoming
         tasks = [t for t in tasks if t.days_till_upcoming != 0]
 
+        # Custom sorting
         tasks.sort(
             key=lambda t: (
-                t.days_till_upcoming is None, 
+                t.days_till_upcoming is None,
                 t.days_till_upcoming,
                 t.target_date is None,
                 t.target_date,
                 t.name.lower(),
             )
         )
+
         return tasks
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         task_type_id = self.request.GET.get('task_type')
+        search_query = self.request.GET.get('search', '')
+        view_mode = self.request.GET.get('view', 'public')
+
         context['task_types'] = TaskType.objects.all()
         context['selected_type'] = int(task_type_id) if task_type_id else None
-
-        view_mode = self.request.GET.get('view', 'public')
+        context['search_query'] = search_query
         context['view_mode'] = view_mode
 
         common_filters = {}
@@ -76,44 +104,62 @@ class TaskListView(LoginRequiredMixin, ListView):
         if task_type_id:
             common_filters['task_type_id'] = task_type_id
 
+        if search_query:
+            common_filters['name__icontains'] = search_query
+
+        # Handle private/public
         if view_mode == "private":
             common_filters['is_private'] = True
-            
-        all_tasks = Task.objects.filter(**common_filters) \
+        else:
+            common_filters['is_private'] = False
+
+        # Base queryset
+        base_queryset = Task.objects.filter(**common_filters) \
             .exclude(status__in=['Completed', 'Cancelled', 'Hold']) \
             .exclude(is_bookmark=True) \
             .exclude(is_template=True) \
             .order_by('name')
-        today_tasks = [task for task in all_tasks if task.days_till_upcoming == 0]
+
+        # 🟢 Today's Tasks
+        today_tasks = [
+            task for task in base_queryset
+            if task.days_till_upcoming == 0
+        ]
         context['today_tasks'] = today_tasks
 
-        if view_mode == "public":
-            common_filters['is_private'] = False
-
+        # 🟡 Held Tasks
         held_tasks = Task.objects.filter(
             status__in=['Hold'],
             **common_filters
         ).exclude(is_template=True).order_by('name')
+
         context['held_tasks'] = held_tasks
 
+        # ⭐ Bookmarked Tasks
         bookmarked_tasks = Task.objects.filter(
             is_bookmark=True,
             status__in=['Opened', 'InProgress'],
             **common_filters
         ).exclude(is_template=True).order_by('name')
+
         context['bookmarked_tasks'] = bookmarked_tasks
 
-        template_tasks = Task.objects.filter(is_template=True, **common_filters)
+        # 📋 Template Tasks
+        template_tasks = Task.objects.filter(
+            is_template=True,
+            **common_filters
+        ).order_by('name')
+
         context['template_tasks'] = template_tasks
-        
+
         return context
-    
+
     def dispatch(self, request, *args, **kwargs):
         try:
             return super().dispatch(request, *args, **kwargs)
         except PermissionError as e:
             if str(e) == "PRIVATE_ACCESS_REQUIRED":
-                return redirect("private_access", "tracker:task_list") 
+                return redirect("private_access", "tracker:task_list")
             raise
 
 class TaskFromTemplateCreateView(LoginRequiredMixin, FormView):
