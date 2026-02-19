@@ -151,7 +151,8 @@ class Document(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
-    
+    is_web_link = models.BooleanField(default=False)
+
     def save(self, *args, **kwargs):
         ext = os.path.splitext(self.fileurl)[1].lower()
         self.filetype = self.detect_file_type(ext)
@@ -165,7 +166,7 @@ class Document(models.Model):
         return FileType.objects.filter(name="other").first()
 
     def github_url(self):
-        if self.filetype.name != "other":
+        if self.filetype.name != "other" and not self.is_web_link:
             return f"https://raw.githubusercontent.com/tenctech10c/Document/main/{self.fileurl}"
         return self.fileurl
 

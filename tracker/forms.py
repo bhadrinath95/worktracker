@@ -96,10 +96,11 @@ class MultipleUpdateForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = ['filename', 'fileurl']
+        fields = ['filename', 'fileurl', 'is_web_link']
         widgets = {
             'filename': forms.TextInput(attrs={'class': 'form-control'}),
             'fileurl': forms.TextInput(attrs={'class': 'form-control'}),
+            'is_check_box': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 DocumentFormSet = modelformset_factory(Document, form=DocumentForm, extra=1, can_delete=True)
