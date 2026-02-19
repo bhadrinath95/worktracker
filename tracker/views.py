@@ -209,12 +209,20 @@ class TaskHistoryView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = Task.objects.filter(status__in=['Completed', 'Cancelled']).exclude(is_template=True).order_by('-completed_date')
         search = self.request.GET.get('search', '').strip()
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
 
         if search:
             queryset = queryset.filter(
                 Q(name__icontains=search) |
                 Q(updates__description__icontains=search)
             ).distinct()
+
+        if start_date and end_date:
+            queryset = queryset.filter(
+                Q(started_date__range=[start_date, end_date]) |
+                Q(completed_date__range=[start_date, end_date])
+            )
 
         return queryset
 
