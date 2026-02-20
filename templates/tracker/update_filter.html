@@ -15,13 +15,17 @@
             <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <button type="submit" class="btn btn-primary w-100">Filter</button>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <a href="{% url 'tracker:update_filter' %}" class="btn btn-secondary w-100">Reset</a>
         </div>
+
+        <a href="{% url 'tracker:task_list' %}" class="btn btn-outline-success col-md-2"><i class="bi bi-arrow-return-left"></i> Back to Tasks</a>
+            
+
     </form>
 
     <!-- Table View -->
