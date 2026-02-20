@@ -18,6 +18,7 @@ from datetime import datetime, date, timedelta
 from calendar import monthrange
 from django.db import transaction
 from copy import copy
+from django.utils.dateparse import parse_date
 
 # -------------------------
 # TASK VIEWS
@@ -249,6 +250,38 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     template_name = 'tracker/task_confirm_delete.html'
     success_url = reverse_lazy('tracker:task_list')
+
+@login_required
+def update_filter(request):
+    updates = (
+        Update.objects
+        .select_related('task')
+        .filter(
+            task__is_private=False,
+            task__is_template=False,
+            task__is_bookmark=False
+        )
+        .order_by(F('date').asc(nulls_last=True))
+    )
+
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    if start_date:
+        start_date = parse_date(start_date)
+        updates = updates.filter(date__gte=start_date)
+
+    if end_date:
+        end_date = parse_date(end_date)
+        updates = updates.filter(date__lte=end_date)
+
+    context = {
+        'updates': updates,
+        'start_date': request.GET.get('start_date', ''),
+        'end_date': request.GET.get('end_date', ''),
+    }
+
+    return render(request, 'tracker/update_filter.html', context)
 
 @login_required
 def toggle_hold(request, pk):

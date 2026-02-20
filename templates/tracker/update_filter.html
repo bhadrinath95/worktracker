@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block style %}
+<style>
+.equal-table {
+    table-layout: fixed;
+    width: 100%;
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h3 class="mb-3">Update List</h3>
+
+    <!-- Filter Form -->
+    <form method="get" class="row g-3 align-items-end mb-4">
+        <div class="col-md-3">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">End Date</label>
+            <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+
+        <div class="col-md-2">
+            <a href="{% url 'tracker:update_filter' %}" class="btn btn-secondary w-100">Reset</a>
+        </div>
+    </form>
+
+    <!-- Table View -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover equal-table">
+            <thead class="table-light">
+                <tr>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Task</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for update in updates %}
+                <tr>
+                    <td style="white-space: pre-line; word-break: break-word;">{{ update.description|linebreaks }}</td>
+                    <td>{{ update.date }}</td>
+                    <td>{{ update.task.name }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if update.status == 'Completed' %}bg-success
+                            {% elif update.status == 'InProgress' %}bg-warning text-dark
+                            {% elif update.status == 'Cancelled' %}bg-danger
+                            {% else %}bg-secondary
+                            {% endif %}">
+                            {{ update.get_status_display }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No updates found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
