@@ -55,7 +55,7 @@ class TaskListView(LoginRequiredMixin, ListView):
 
         elif view_mode == "public":
             self.request.session['private_access'] = False
-            # queryset = queryset.filter(is_private=False)
+            queryset = queryset.filter(is_private=False)
 
         # 🔍 Search filter
         search_query = self.request.GET.get('search')
@@ -111,8 +111,8 @@ class TaskListView(LoginRequiredMixin, ListView):
         # Handle private/public
         if view_mode == "private":
             common_filters['is_private'] = True
-        else:
-            common_filters['is_private'] = False
+        # else:
+            # common_filters['is_private'] = False
 
         # Base queryset
         base_queryset = Task.objects.filter(**common_filters) \
