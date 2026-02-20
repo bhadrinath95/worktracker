@@ -111,8 +111,6 @@ class TaskListView(LoginRequiredMixin, ListView):
         # Handle private/public
         if view_mode == "private":
             common_filters['is_private'] = True
-        # else:
-            # common_filters['is_private'] = False
 
         # Base queryset
         base_queryset = Task.objects.filter(**common_filters) \
@@ -127,6 +125,9 @@ class TaskListView(LoginRequiredMixin, ListView):
             if task.days_till_upcoming == 0
         ]
         context['today_tasks'] = today_tasks
+
+        if view_mode == "public":
+            common_filters['is_private'] = False
 
         # 🟡 Held Tasks
         held_tasks = Task.objects.filter(
