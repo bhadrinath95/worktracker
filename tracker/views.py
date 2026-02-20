@@ -258,8 +258,7 @@ def update_filter(request):
         .select_related('task')
         .filter(
             task__is_private=False,
-            task__is_template=False,
-            task__is_bookmark=False
+            task__is_template=False
         )
         .order_by(F('date').asc(nulls_last=True))
     )
