@@ -254,26 +254,31 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
 
 @login_required
 def update_filter(request):
-    updates = (
-        Update.objects
-        .select_related('task')
-        .filter(
-            task__is_private=False,
-            task__is_template=False
-        )
-        .order_by(F('date').asc(nulls_last=True))
-    )
 
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
 
-    if start_date:
-        start_date = parse_date(start_date)
-        updates = updates.filter(date__gte=start_date)
 
-    if end_date:
-        end_date = parse_date(end_date)
-        updates = updates.filter(date__lte=end_date)
+    if not start_date or not end_date:
+        updates = Update.objects.none()
+    else:
+        updates = (
+            Update.objects
+            .select_related('task')
+            .filter(
+                task__is_private=False,
+                task__is_template=False
+            )
+            .order_by(F('date').asc(nulls_last=True))
+        )
+
+        if start_date:
+            start_date = parse_date(start_date)
+            updates = updates.filter(date__gte=start_date)
+
+        if end_date:
+            end_date = parse_date(end_date)
+            updates = updates.filter(date__lte=end_date)
 
     context = {
         'updates': updates,

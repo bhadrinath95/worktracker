@@ -1,18 +1,6 @@
 {% extends "base.html" %}
-{% block style %}
-<style>
-.equal-table {
-    table-layout: fixed;
-    width: 100%;
-}
-</style>
-
-{% endblock %}
-
 {% block content %}
-
 <div class="container mt-4">
-
     <h3 class="mb-3">Update List</h3>
 
     <!-- Filter Form -->
@@ -38,12 +26,19 @@
 
     <!-- Table View -->
     <div class="table-responsive">
-        <table class="table table-bordered table-hover equal-table">
+        <table class="table table-bordered table-hover">
+
+            <colgroup>
+                <col style="width: 50%;">
+                <col style="width: 30%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+            </colgroup>
             <thead class="table-light">
                 <tr>
                     <th>Description</th>
-                    <th>Date</th>
                     <th>Task</th>
+                    <th>Date</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -51,8 +46,8 @@
                 {% for update in updates %}
                 <tr>
                     <td style="white-space: pre-line; word-break: break-word;">{{ update.description|linebreaks }}</td>
-                    <td>{{ update.date }}</td>
                     <td>{{ update.task.name }}</td>
+                    <td>{{ update.date }}</td>
                     <td>
                         <span class="badge 
                             {% if update.status == 'Completed' %}bg-success
