@@ -79,6 +79,7 @@ class Update(models.Model):
     ]
     REMINDER_CHOICE = [
         ('Days', 'Days'),
+        ('Workweek', 'Workweek'),
         ('Weekly', 'Weekly'),
         ('Monthly', 'Monthly'),
         ('Yearly', 'Yearly'),

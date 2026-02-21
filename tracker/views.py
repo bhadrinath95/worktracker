@@ -477,6 +477,14 @@ def update_status(update, status):
             days_ahead += 7
         update.date += timedelta(days=days_ahead)
 
+    elif update.reminder_type == 'Workweek':
+        next_date = update.date + timedelta(days=1)
+        if next_date.weekday() == 5:   
+            next_date += timedelta(days=2)
+        elif next_date.weekday() == 6:
+            next_date += timedelta(days=1)
+        update.date = next_date
+        
     elif update.reminder_type == 'Days':
         update.date += timedelta(days=update.date_to_remind)
 
