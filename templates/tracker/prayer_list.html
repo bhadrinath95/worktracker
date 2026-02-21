@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+<style>
+    .prayer-card {
+        transition: 0.3s ease;
+        border-radius: 15px;
+    }
+
+    .prayer-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">
+            <i class="bi bi-flower1 text-warning"></i> Divine Prayers
+        </h2>
+        <p class="text-muted">Select a God to begin prayer</p>
+    </div>
+
+    <div class="row g-4">
+        {% for prayer in prayers %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card shadow-sm border-0 h-100 text-center prayer-card">
+
+                <a href="{% url 'tracker:prayer_detail' prayer.pk %}" class="text-decoration-none text-dark">
+                    <img src="{{ prayer.god_icon_url }}"
+                         class="card-img-top p-3"
+                         style="height:150px; object-fit:contain;"
+                         alt="{{ prayer.god_name }}">
+                    
+                    <div class="card-body">
+                        <h6 class="fw-semibold">{{ prayer.god_name }}</h6>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">
+            No prayers added yet.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

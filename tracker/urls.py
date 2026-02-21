@@ -19,7 +19,9 @@ urlpatterns = [
     path('update/<int:update_id>/complete/', views.UpdateCompleteView.as_view(), name='update_complete'),
     path('update/<int:update_id>/cancel/', views.UpdateCancelledView.as_view(), name='update_cancelled'),
 
-    path('prayer/', views.prayer, name='prayer'),
+    # path('prayer/', views.prayer, name='prayer'),
+    path('prayer/', views.prayer_list, name='prayer'),
+    path('prayer/<int:pk>/', views.prayer_detail, name='prayer_detail'),
     path('quotes/', views.quotes, name='quotes'),
     path('document/<int:pk>/', views.document_view, name='document_view'),
 

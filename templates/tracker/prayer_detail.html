@@ -1,0 +1,43 @@
+{% extends "base.html" %} 
+{% block style %} 
+<style> 
+.prayer-card { 
+    transition: 0.3s ease; 
+    border-radius: 15px; 
+    } 
+.prayer-card:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
+} 
+.ratio img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+} 
+</style> 
+{% endblock %} 
+{% block content %} 
+<div> 
+    <div class="text-center mb-4"> 
+        <h2 class="fw-bold text-warning"> 
+            {{ prayer.god_name }} 
+        </h2> 
+    </div> 
+    <div class="card shadow-lg border-0 mx-auto" style="max-width:500px;"> 
+        <div class="ratio ratio-1x1"> 
+            <img src="{{ prayer.god_photo_url }}" class="img-fluid object-fit-cover" alt="{{ prayer.god_name }}"> 
+        </div> 
+        <div class="card-body text-center"> <!-- Audio --> 
+            <audio autoplay loop controls class="w-100 mb-3"> 
+                <source src="{{ prayer.god_audio_url }}" type="audio/mpeg"> 
+            </audio> <!-- Prayer Text --> 
+            <p class="fs-5 text-muted" style="white-space: pre-line;"> 
+                {{ prayer.prayer }} 
+            </p> 
+            <a href="{% url 'tracker:prayer' %}" class="btn btn-outline-warning mt-3"> 
+                <i class="bi bi-arrow-left"></i> Back 
+            </a> 
+        </div> 
+    </div> 
+</div> 
+{% endblock %}

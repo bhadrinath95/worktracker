@@ -183,3 +183,14 @@ class Document(models.Model):
     
     def __str__(self):
         return self.filename
+    
+class Prayer(models.Model):
+    god_name = models.CharField(max_length=100)
+    god_photo_url = models.URLField()
+    god_audio_url = models.URLField()
+    god_icon_url = models.URLField()
+    prayer = models.TextField()
+
+    def __str__(self):
+        return self.god_name
+    

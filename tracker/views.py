@@ -6,7 +6,7 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy, reverse
 from django.db.models import F, Q
-from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic
+from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic, Prayer
 from .forms import TaskForm, UpdateForm, DocumentFormSet, TaskFromTemplateForm, MultipleUpdateForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -574,8 +574,14 @@ class UpdateDeleteView(LoginRequiredMixin, DeleteView):
 # -------------------------
 
 @login_required(login_url='login')
-def prayer(request):
-    return render(request, 'tracker/prayer.html')
+def prayer_list(request):
+    prayers = Prayer.objects.all()
+    return render(request, 'tracker/prayer_list.html', {'prayers': prayers})
+
+@login_required(login_url='login')
+def prayer_detail(request, pk):
+    prayer = get_object_or_404(Prayer, pk=pk)
+    return render(request, 'tracker/prayer_detail.html', {'prayer': prayer})
 
 @login_required(login_url='login')
 def quotes(request):
