@@ -14,7 +14,7 @@ class Command(BaseCommand):
         updates = Update.objects.filter(
             date=today,
             status="Opened",
-            reminder_type="Days",
+            reminder_type__in=["Days", "Workweek"],
             date_to_remind=1
         )
 
