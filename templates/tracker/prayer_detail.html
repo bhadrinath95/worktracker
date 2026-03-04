@@ -28,9 +28,7 @@
             <img src="{{ prayer.god_photo_url }}" class="img-fluid object-fit-cover" alt="{{ prayer.god_name }}"> 
         </div> 
         <div class="card-body text-center"> <!-- Audio --> 
-            <audio autoplay loop controls class="w-100 mb-3"> 
-                <source src="{{ prayer.god_audio_url }}" type="audio/mpeg"> 
-            </audio> <!-- Prayer Text --> 
+            <div id="audioContainer"></div>
             <p class="fs-5 text-muted" style="white-space: pre-line;"> 
                 {{ prayer.prayer }} 
             </p> 
@@ -40,4 +38,20 @@
         </div> 
     </div> 
 </div> 
+{% endblock %}
+
+{% block static %}
+<script>
+    console.info(localStorage.getItem("mutePrayer"))
+    const isMuted = localStorage.getItem("mutePrayer") === "true";
+    const container = document.getElementById("audioContainer");
+
+    if (!isMuted) {
+        container.innerHTML = `
+            <audio autoplay loop controls class="w-100 mb-3">
+                <source src="{{ prayer.god_audio_url }}" type="audio/mpeg">
+            </audio>
+        `;
+    }
+</script>
 {% endblock %}
