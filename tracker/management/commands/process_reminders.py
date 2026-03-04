@@ -3,8 +3,7 @@ from django.utils import timezone
 from datetime import timedelta
 from copy import copy
 
-from tracker.models import Update   # change if needed
-
+from tracker.models import Update
 
 class Command(BaseCommand):
     help = "Process daily reminders"
@@ -32,5 +31,6 @@ class Command(BaseCommand):
             # Move original date forward
             update.date = update.date + timedelta(days=update.date_to_remind)
             update.save()
+            self.stdout.write(self.style.SUCCESS(f"'{update.description}' is updated successfully"))
 
         self.stdout.write(self.style.SUCCESS("Reminders processed successfully"))
