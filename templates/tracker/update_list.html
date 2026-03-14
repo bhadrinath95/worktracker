@@ -167,6 +167,7 @@
   <thead>
     <tr>
       <th>Description</th>
+      <th>Document</th>
       <th>Target / Completed Date</th>
       <th>Status</th>
       <th>Action</th>
@@ -176,6 +177,45 @@
     {% for u in checkbox_updates %}
     <tr>
       <td>{{ u.description|linebreaks }}</td>
+      <td>
+        {% if u.documents.exists %}
+          <div class="mt-2 d-flex flex-wrap gap-2">
+            {% for doc in u.documents.all %}
+              {% with ft=doc.filetype %}
+                {% if ft %}
+                  {% if ft.icon_class %}
+                    <!-- Icon button -->
+                    <a href="{% url 'tracker:document_view' doc.id %}"
+                      class="btn btn-outline-dark d-flex align-items-center"  title="{{ doc.filename }}">
+                      <i class="bi {{ ft.icon_class }} me-2"></i>
+                      {{ doc.filename }}
+                    </a>
+                  {% else %}
+                    <!-- Thumbnail -->
+                    <a href="{% url 'tracker:document_view' doc.id %}" 
+                      class="btn btn-outline-dark d-flex align-items-center"  
+                      title="{{ doc.filename }}">
+                      <i class="bi bi-image me-2"></i>
+                      {{ doc.filename }}
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <!-- Fallback -->
+                  <a href="{{ doc.github_url }}" 
+                    class="btn btn-outline-dark d-flex align-items-center" 
+                    title="{{ doc.filename }}">
+                    <i class="bi bi-file-earmark-fill me-2"></i>
+                    {{ doc.filename }}
+                  </a>
+                {% endif %}
+              {% endwith %}
+              {% if forloop.counter|divisibleby:1 %}
+                  <div class="w-100"></div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </td>
       <td>{{ u.date|date:"d-m-Y" }}</td>
       <td>
         {% if u.status == 'Completed' %}
