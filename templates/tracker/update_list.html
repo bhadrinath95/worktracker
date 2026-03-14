@@ -244,6 +244,85 @@
   </tbody>
 </table>
 
+<button class="btn btn-outline-secondary mb-2"
+        data-bs-toggle="collapse"
+        data-bs-target="#completedChecklist">
+    Show Completed / Cancelled Checklist
+</button>
+
+<div class="collapse" id="completedChecklist">
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Document</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for u in completed_checkbox_updates %}
+      <tr>
+      <td>{{ u.description|linebreaks }}</td>
+      <td>
+      {% if u.documents.exists %}
+          <div class="mt-2 d-flex flex-wrap gap-2">
+            {% for doc in u.documents.all %}
+              {% with ft=doc.filetype %}
+                {% if ft %}
+                  {% if ft.icon_class %}
+                    <!-- Icon button -->
+                    <a href="{% url 'tracker:document_view' doc.id %}"
+                      class="btn d-flex align-items-center"  title="{{ doc.filename }}">
+                      <i class="bi {{ ft.icon_class }}"></i>
+                    </a>
+                  {% else %}
+                    <!-- Thumbnail -->
+                    <a href="{% url 'tracker:document_view' doc.id %}" 
+                      class="btn d-flex align-items-center"  
+                      title="{{ doc.filename }}">
+                      <i class="bi bi-image-fill"></i>
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <!-- Fallback -->
+                  <a href="{{ doc.github_url }}" 
+                    class="btn  d-flex align-items-center" 
+                    title="{{ doc.filename }}">
+                    <i class="bi bi-file-earmark-fill"></i>
+                  </a>
+                {% endif %}
+              {% endwith %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </td>
+      <td>{{ u.date|date:"d-m-Y" }}</td>
+      <td>
+      {% if u.status == 'Completed' %}
+      <span class="text-success">{{ u.status }}</span>
+      {% else %}
+      <span class="text-danger">{{ u.status }}</span>
+      {% endif %}
+      </td>
+      <td>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <a href="{% url 'tracker:update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <a href="{% url 'tracker:update_delete' u.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        </div>
+      </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No completed checklist items.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+
 <hr>
 
 <h3>Updates ({{ normal_updates_count }})</h3>

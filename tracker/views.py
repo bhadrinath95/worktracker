@@ -345,7 +345,18 @@ class UpdateListView(LoginRequiredMixin, View):
         ).exclude(
             status__in=['Completed', 'Cancelled']
         ).count()
-        checkbox_updates = task.updates.filter(is_check_box=True).order_by('-status', F('date').asc(nulls_first=True), 'description')
+
+        checkbox_updates = task.updates.filter(
+            is_check_box=True
+        ).exclude(
+            status__in=['Completed', 'Cancelled']
+        ).order_by('-status', F('date').asc(nulls_first=True), 'description')
+
+        completed_checkbox_updates = task.updates.filter(
+            is_check_box=True,
+            status__in=['Completed', 'Cancelled']
+        ).order_by('-date')
+
         normal_updates   = task.updates.filter(is_check_box=False).order_by(F('date').asc(nulls_first=True),)
 
         form = MultipleUpdateForm()
@@ -354,6 +365,7 @@ class UpdateListView(LoginRequiredMixin, View):
         return render(request, 'tracker/update_list.html', {
             'task': task,
             'checkbox_updates': checkbox_updates,
+            'completed_checkbox_updates': completed_checkbox_updates,
             'updates': normal_updates,
             'checkbox_updates_count': checkbox_updates_count,
             'normal_updates_count': normal_updates_count,
