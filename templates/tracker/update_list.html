@@ -186,32 +186,26 @@
                   {% if ft.icon_class %}
                     <!-- Icon button -->
                     <a href="{% url 'tracker:document_view' doc.id %}"
-                      class="btn btn-outline-dark d-flex align-items-center"  title="{{ doc.filename }}">
-                      <i class="bi {{ ft.icon_class }} me-2"></i>
-                      {{ doc.filename }}
+                      class="btn d-flex align-items-center"  title="{{ doc.filename }}">
+                      <i class="bi {{ ft.icon_class }}"></i>
                     </a>
                   {% else %}
                     <!-- Thumbnail -->
                     <a href="{% url 'tracker:document_view' doc.id %}" 
-                      class="btn btn-outline-dark d-flex align-items-center"  
+                      class="btn d-flex align-items-center"  
                       title="{{ doc.filename }}">
-                      <i class="bi bi-image me-2"></i>
-                      {{ doc.filename }}
+                      <i class="bi bi-image-fill"></i>
                     </a>
                   {% endif %}
                 {% else %}
                   <!-- Fallback -->
                   <a href="{{ doc.github_url }}" 
-                    class="btn btn-outline-dark d-flex align-items-center" 
+                    class="btn  d-flex align-items-center" 
                     title="{{ doc.filename }}">
-                    <i class="bi bi-file-earmark-fill me-2"></i>
-                    {{ doc.filename }}
+                    <i class="bi bi-file-earmark-fill"></i>
                   </a>
                 {% endif %}
               {% endwith %}
-              {% if forloop.counter|divisibleby:1 %}
-                  <div class="w-100"></div>
-              {% endif %}
             {% endfor %}
           </div>
         {% endif %}
