@@ -350,7 +350,7 @@ class UpdateListView(LoginRequiredMixin, View):
             is_check_box=True
         ).exclude(
             status__in=['Completed', 'Cancelled']
-        ).order_by('-status', F('date').asc(nulls_first=False), 'description')
+        ).order_by('-status', F('date').asc(nulls_last=True), 'description')
 
         completed_checkbox_updates = task.updates.filter(
             is_check_box=True,
