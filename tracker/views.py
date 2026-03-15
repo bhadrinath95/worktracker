@@ -350,14 +350,14 @@ class UpdateListView(LoginRequiredMixin, View):
             is_check_box=True
         ).exclude(
             status__in=['Completed', 'Cancelled']
-        ).order_by('-status', F('date').asc(nulls_last=True), 'description')
+        ).order_by('-status', F('date').asc(nulls_last=True), F('start_time').asc(nulls_first=True),'description')
 
         completed_checkbox_updates = task.updates.filter(
             is_check_box=True,
             status__in=['Completed', 'Cancelled']
         ).order_by('-date')
 
-        normal_updates   = task.updates.filter(is_check_box=False).order_by(F('date').asc(nulls_first=True),)
+        normal_updates   = task.updates.filter(is_check_box=False).order_by(F('date').asc(nulls_first=True),F('start_time').asc(nulls_first=True),)
 
         form = MultipleUpdateForm()
         formset = DocumentFormSet(queryset=Document.objects.none())

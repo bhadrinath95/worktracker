@@ -86,6 +86,8 @@ class Update(models.Model):
     ]
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='updates')
     date = models.DateField(default=timezone.localtime(), null=True, blank=True)
+    start_time = models.TimeField(null=True, blank=True)
+    end_time = models.TimeField(null=True, blank=True)
     description = models.TextField()
     is_check_box = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Opened')

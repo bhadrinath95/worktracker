@@ -112,6 +112,16 @@
   </div>
 
   <div class="mb-3">
+    {{ form.start_time.label_tag }}
+    {{ form.start_time }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.end_time.label_tag }}
+    {{ form.end_time }}
+  </div>
+
+  <div class="mb-3">
     {{ form.template.label_tag }}
     {{ form.template }}
   </div>
@@ -169,6 +179,7 @@
       <th>Description</th>
       <th>Document</th>
       <th>Target / Completed Date</th>
+      <th>Time</th>
       <th>Status</th>
       <th>Action</th>
     </tr>
@@ -211,6 +222,7 @@
         {% endif %}
       </td>
       <td>{{ u.date|date:"d-m-Y" }}</td>
+      <td>{% if u.start_time %}{{ u.start_time|time:"h:i A" }}{% endif %}{% if u.end_time %} - {{ u.end_time|time:"h:i A" }}{% endif %}</td>
       <td>
         {% if u.status == 'Completed' %}
           <p class="text-success">{{ u.status }}</p>
@@ -332,6 +344,11 @@
   <li class="list-group-item">
     <div>
       <strong>{{ u.date|date:"d-m-Y" }}</strong>
+      {% if u.start_time or u.end_time %}
+        <span class="text-muted ms-2">
+          <i>Time: {% if u.start_time %}{{ u.start_time|time:"h:i A" }}{% endif %}{% if u.end_time %} - {{ u.end_time|time:"h:i A" }}{% endif %}</i>
+        </span>
+      {% endif %}
       <div class="float-end">
         <a href="{% url 'tracker:update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
         <a href="{% url 'tracker:update_delete' u.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
