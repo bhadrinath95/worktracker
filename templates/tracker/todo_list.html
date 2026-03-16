@@ -35,11 +35,13 @@
 
 <a href="{% url 'tracker:task_list' %}" class="btn btn-outline-secondary mb-3"><i class="bi bi-arrow-return-left"></i> Back to Tasks</a>
 
-<form method="POST">
+<form method="POST" class="w-100">
     {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-    </table>
+    <div class="md-3">
+        <table class="table w-100">
+            {{ form.as_table }}
+        </table>
+    </div>
     <button type="submit" class="btn btn-primary">Add</button>
 </form>
 
