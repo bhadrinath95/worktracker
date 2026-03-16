@@ -27,4 +27,9 @@ urlpatterns = [
 
     path('template/<int:template_id>/description/', views.get_template_description, name='template_description'),
 
+    # TO DO List
+    path('todo/', views.todo_list, name='todo_list'),
+    path('todo/edit/<int:pk>/', views.todo_edit, name='todo_edit'),
+    path('todo/delete/<int:pk>/', views.todo_delete, name='todo_delete'),
+    path('todo/<int:pk>/toggle/', views.todo_toggle, name='todo_toggle'),
 ]

@@ -196,3 +196,11 @@ class Prayer(models.Model):
     def __str__(self):
         return self.god_name
     
+class Todo(models.Model):
+
+    date = models.DateField()
+    description = models.TextField()
+    is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.description

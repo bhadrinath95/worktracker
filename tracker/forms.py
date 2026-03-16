@@ -1,7 +1,7 @@
 # forms.py
 from django import forms
 from django.forms import modelformset_factory
-from .models import Task, Update, Document, UpdateTemplate
+from .models import Task, Update, Document, UpdateTemplate, Todo
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -108,3 +108,15 @@ class DocumentForm(forms.ModelForm):
         }
 
 DocumentFormSet = modelformset_factory(Document, form=DocumentForm, extra=1, can_delete=True)
+
+class TodoForm(forms.ModelForm):
+
+    class Meta:
+        model = Todo
+        fields = ['date', 'description', 'is_completed']
+
+        widgets = {
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'is_completed': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }

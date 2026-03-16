@@ -5,7 +5,7 @@ from copy import copy
 from datetime import date, timedelta
 from calendar import monthrange
 
-from tracker.models import Update
+from tracker.models import Update, Todo
 
 class Command(BaseCommand):
     help = "Process daily reminders"
@@ -78,5 +78,18 @@ class Command(BaseCommand):
                 update.status = "Cancelled"
             update.save()
             self.stdout.write(self.style.SUCCESS(f"'{update.description}' is updated successfully"))
+
+        self.stdout.write(self.style.SUCCESS("Reminders processed successfully"))
+
+        cutoff_date = today - timedelta(days=3)
+
+        deleted_count, _ = Todo.objects.filter(
+            is_completed=True,
+            date__lt=cutoff_date
+        ).delete()
+
+        self.stdout.write(
+            self.style.SUCCESS(f"{deleted_count} completed todos older than 3 days deleted")
+        )
 
         self.stdout.write(self.style.SUCCESS("Reminders processed successfully"))

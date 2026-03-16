@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+    <style>
+    .completed{
+    text-decoration: line-through;
+    color: grey;
+    }
+    form table{
+        border-collapse: separate;
+        border-spacing: 0 10px;  /* vertical row spacing */
+    }
+
+    form th{
+        text-align: left;
+        padding-right: 10px;
+    }
+
+    form td{
+        padding: 5px;
+    }
+
+    input, textarea{
+        width: 100%;
+        padding: 6px;
+    }
+    .table td {
+        line-height: 2;
+    }
+
+    </style>
+{% endblock %}
+{% block content %}
+<h1>To Do List</h1>
+
+<a href="{% url 'tracker:task_list' %}" class="btn btn-outline-secondary mb-3"><i class="bi bi-arrow-return-left"></i> Back to Tasks</a>
+
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+    </table>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+<br>
+
+<div class="container mt-4">
+
+<table class="table table-bordered table-hover align-middle">
+
+<thead class="table-primary">
+<tr>
+<th>Date</th>
+<th>Description</th>
+<th>Completed</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for todo in todos %}
+
+<tr>
+
+<td>{{ todo.date|date:"d-m-Y" }}</td>
+
+<td class="{% if todo.is_completed %}text-decoration-line-through text-muted{% endif %}">
+{{ todo.description }}
+</td>
+
+<td class="text-center">
+<input type="checkbox"
+{% if todo.is_completed %}checked{% endif %} onclick="window.location.href='{% url 'tracker:todo_toggle' todo.id %}'">
+</td>
+
+<td>
+
+<a href="{% url 'tracker:todo_edit' todo.id %}" class="btn btn-sm btn-primary">
+Edit
+</a>
+
+<a href="{% url 'tracker:todo_delete' todo.id %}" class="btn btn-sm btn-danger">
+Delete
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+{% endblock %}

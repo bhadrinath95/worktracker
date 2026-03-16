@@ -6,8 +6,8 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy, reverse
 from django.db.models import F, Q
-from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic, Prayer
-from .forms import TaskForm, UpdateForm, DocumentFormSet, TaskFromTemplateForm, MultipleUpdateForm
+from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic, Prayer, Todo
+from .forms import TaskForm, UpdateForm, DocumentFormSet, TaskFromTemplateForm, MultipleUpdateForm, TodoForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -615,3 +615,42 @@ def document_view(request, pk):
         'doc': doc,
         "preview_html": doc.render_preview(),
     })
+
+@login_required(login_url='login')
+def todo_list(request):
+    todos = Todo.objects.all().order_by("-date")
+    form = TodoForm()
+    if request.method == "POST":
+        form = TodoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("tracker:todo_list")
+    return render(request, "tracker/todo_list.html", {
+        "todos": todos,
+        "form": form
+    })
+
+@login_required(login_url='login')
+def todo_edit(request, pk):
+    todo = get_object_or_404(Todo, pk=pk)
+    if request.method == "POST":
+        form = TodoForm(request.POST, instance=todo)
+        if form.is_valid():
+            form.save()
+            return redirect("tracker:todo_list")
+    else:
+        form = TodoForm(instance=todo)
+    return render(request, "tracker/todo_form.html", {"form": form})
+
+@login_required(login_url='login')
+def todo_delete(request, pk):
+    todo = get_object_or_404(Todo, pk=pk)
+    todo.delete()
+    return redirect("tracker:todo_list")
+
+@login_required(login_url='login')
+def todo_toggle(request, pk):
+    todo = get_object_or_404(Todo, pk=pk)
+    todo.is_completed = not todo.is_completed
+    todo.save()
+    return redirect('tracker:todo_list')
