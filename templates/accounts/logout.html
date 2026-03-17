@@ -7,8 +7,10 @@
     <div class="card shadow p-4">
         <div class="text-center mb-3">
             <img src="https://raw.githubusercontent.com/tenctech10c/Document/main/Logo.png"
-                alt="logo"
-                style="max-width: 120px;">
+                 alt="logo"
+                 style="max-width: 120px; cursor: pointer;"
+                 data-bs-toggle="modal"
+                 data-bs-target="#imageModal">
         </div>
         <p class="mb-4 text-center">Are you sure you want to logout?</p>
         <form method="POST" class="d-flex justify-content-between">
@@ -18,6 +20,21 @@
         </form>
     </div>
 </div>
+
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-transparent border-0 text-center">
+      
+      <div class="modal-body p-0" data-bs-dismiss="modal">
+        <img src="https://raw.githubusercontent.com/tenctech10c/Document/main/iconfullimage.jpg"
+             alt="Full Image"
+             style="width: 100%; border-radius: 10px;">
+      </div>
+
+    </div>
+  </div>
+</div>
+
 {% else %}
 <div class="container mt-5 text-center">
     <p>You're not already logged in. Would you like to 

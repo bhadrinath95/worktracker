@@ -27,8 +27,10 @@
         <form method="post" class="card shadow p-4">
             <div class="text-center mb-3">
                 <img src="https://raw.githubusercontent.com/tenctech10c/Document/main/Logo.png"
-                alt="logo"
-                style="max-width: 120px;">
+                 alt="logo"
+                 style="max-width: 120px; cursor: pointer;"
+                 data-bs-toggle="modal"
+                 data-bs-target="#imageModal">
             </div>
             {% csrf_token %}
             <table class="w-100">
@@ -58,6 +60,21 @@
             <a href='{% url "login" %}'>login</a>
         </p>
     </div>
+
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-transparent border-0 text-center">
+      
+      <div class="modal-body p-0" data-bs-dismiss="modal">
+        <img src="https://raw.githubusercontent.com/tenctech10c/Document/main/iconfullimage.jpg"
+             alt="Full Image"
+             style="width: 100%; border-radius: 10px;">
+      </div>
+
+    </div>
+  </div>
+</div>
+
 {% else %}
     <p>You're already logged in and connot register. Would you like to <a href='{% url "logout" %}'>logout</a> ?</p>
 {% endif %}
