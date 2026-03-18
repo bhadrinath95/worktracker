@@ -187,6 +187,7 @@ class Document(models.Model):
         return self.filename
     
 class Prayer(models.Model):
+    god_id = models.IntegerField(null=True, blank=True)
     god_name = models.CharField(max_length=100)
     god_photo_url = models.URLField()
     god_audio_url = models.URLField()

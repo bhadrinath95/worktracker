@@ -587,7 +587,7 @@ class UpdateDeleteView(LoginRequiredMixin, DeleteView):
 
 @login_required(login_url='login')
 def prayer_list(request):
-    prayers = Prayer.objects.all()
+    prayers = Prayer.objects.all().order_by('god_id')
     return render(request, 'tracker/prayer_list.html', {'prayers': prayers})
 
 @login_required(login_url='login')
