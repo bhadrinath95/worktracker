@@ -5,14 +5,27 @@
 
     <!-- Filter Form -->
     <form method="get" class="row g-3 align-items-end mb-4">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="form-label">Start Date</label>
             <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="form-label">End Date</label>
             <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Task Type</label>
+            <select name="task_type" class="form-control">
+                <option value="">All</option>
+                {% for type in task_types %}
+                    <option value="{{ type.id }}"
+                        {% if type.id|stringformat:"s" == selected_task_type %}selected{% endif %}>
+                        {{ type.name }}
+                    </option>
+                {% endfor %}
+            </select>
         </div>
 
         <div class="col-md-2">
