@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+
+<h4 class="mb-3 text-danger">Delete Blog</h4>
+
+<p class="mb-4">
+    Are you sure you want to delete <strong>{{ blog.title }}</strong>?
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <a href="{% url 'blogs:blog_detail' blog.pk %}" class="btn btn-secondary">
+        Cancel
+    </a>
+    
+    <button type="submit" class="btn btn-danger">
+        Yes, Delete
+    </button>
+</form>
+{% endblock %}

@@ -48,8 +48,12 @@ def blog_update(request, pk):
 @login_required
 def blog_delete(request, pk):
     blog = get_object_or_404(Blog, pk=pk)
-    blog.delete()
-    return redirect('blogs:blog_list')
+
+    if request.method == "POST":
+        blog.delete()
+        return redirect('blogs:blog_list')
+
+    return render(request, 'blog/blog_confirm_delete.html', {'blog': blog})
 
 @login_required
 def word_list(request):
