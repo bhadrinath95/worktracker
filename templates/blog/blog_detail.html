@@ -5,10 +5,10 @@
 {% include "blog/blog_content.html" %}
 
 
-<a href="{% url 'blogs:blog_update' blog.id %}" class="btn btn-warning btn-sm">Edit</a>
-<a href="{% url 'blogs:blog_delete' blog.id %}" class="btn btn-danger btn-sm">Delete</a>
+<a href="{% url 'blogs:blog_update' blog.slug %}" class="btn btn-warning btn-sm">Edit</a>
+<a href="{% url 'blogs:blog_delete' blog.slug %}" class="btn btn-danger btn-sm">Delete</a>
 <a href="{% url 'blogs:blog_list' %}" class="btn btn-secondary btn-sm">Back</a>
-<a href="{% url 'blogs:blog_print' blog.id %}" 
+<a href="{% url 'blogs:blog_print' blog.slug %}" 
     class="btn btn-primary btn-sm">
     Export
 </a>

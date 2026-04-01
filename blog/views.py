@@ -3,6 +3,7 @@ from .models import Blog, Word, Tag
 from .forms import BlogForm, WordForm
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 
 @login_required
 def blog_list(request):
@@ -16,14 +17,15 @@ def blog_list(request):
     blogs = blogs.order_by('-pin', 'title', '-created_at')
     return render(request, 'blog/blog_list.html', {'blogs': blogs, 'query': query})
 
-@login_required
-def blog_detail(request, pk):
-    blog = get_object_or_404(Blog, pk=pk)
+def blog_detail(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)
+    if not blog.public and not request.user.is_authenticated:
+        return redirect_to_login(request.get_full_path())
     return render(request, 'blog/blog_detail.html', {'blog': blog})
 
 @login_required
-def blog_print(request, pk):
-    blog = get_object_or_404(Blog, pk=pk)
+def blog_print(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)
     return render(request, 'blog/blog_print.html', {'blog': blog})
 
 @login_required
@@ -36,18 +38,23 @@ def blog_create(request):
     return render(request, 'blog/blog_form.html', {'form': form, 'tags': tags})
 
 @login_required
-def blog_update(request, pk):
-    blog = get_object_or_404(Blog, pk=pk)
+def blog_update(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)
     tags = Tag.objects.all().order_by('name')
     form = BlogForm(request.POST or None, instance=blog)
+
     if form.is_valid():
-        form.save()
-        return redirect('blogs:blog_detail', pk=pk)
-    return render(request, 'blog/blog_form.html', {'form': form, 'tags': tags})
+        updated_blog = form.save()
+        return redirect('blogs:blog_detail', slug=updated_blog.slug)
+
+    return render(request, 'blog/blog_form.html', {
+        'form': form,
+        'tags': tags
+    })
 
 @login_required
-def blog_delete(request, pk):
-    blog = get_object_or_404(Blog, pk=pk)
+def blog_delete(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)
 
     if request.method == "POST":
         blog.delete()

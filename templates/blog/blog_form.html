@@ -34,7 +34,11 @@
       </div>
 
       <div class="form-check mt-3">
-        {{ form.pin }} <label class="form-check-label">Pin Blog</label>
+        <label class="form-check-label">Pin Blog</label>{{ form.pin }}
+      </div>
+
+      <div class="form-check mt-3">
+        <label class="form-check-label">Is public?</label>{{ form.public }}
       </div>
 
       <button type="submit" class="btn btn-success mt-3">Save</button>

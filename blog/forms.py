@@ -5,7 +5,7 @@ from .models import Blog, Word
 class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
-        fields = ['title', 'content', 'pin']
+        fields = ['title', 'content', 'pin', 'public']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control w-100'
@@ -15,6 +15,9 @@ class BlogForm(forms.ModelForm):
                 'rows': 15
             }),
             'pin': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+            'public': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
             }),
         }

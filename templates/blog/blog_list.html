@@ -2,6 +2,7 @@
 {% load blog_extras %}
 
 {% block content %}
+<br/ >
 <h1>Blog Feed</h1>
 
 <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
@@ -24,7 +25,7 @@
             <div class="card h-100 shadow-sm">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">
-                        <a href="{% url 'blogs:blog_detail' blog.id %}">
+                        <a href="{% url 'blogs:blog_detail' blog.slug %}">
                             {{ blog.title }}
                         </a>
                         {% if blog.pin %}<i class="bi bi-pin-fill text-warning ms-1"></i>{% endif %}
@@ -32,7 +33,7 @@
                     <div class="card-text mb-3">
                         {{ blog.content|remove_media|truncatewords_html:40|safe }}
                     </div>
-                    <a href="{% url 'blogs:blog_detail' blog.id %}" class="btn btn-outline-primary mt-auto">Read More</a>
+                    <a href="{% url 'blogs:blog_detail' blog.slug %}" class="btn btn-outline-primary mt-auto">Read More</a>
                 </div>
                 <div class="card-footer text-muted small">
                     {{ blog.created_at|date:"d M Y" }}
