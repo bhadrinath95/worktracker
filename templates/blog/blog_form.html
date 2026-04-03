@@ -33,13 +33,27 @@
         {{ form.content }}
       </div>
 
-      <div class="form-check mt-3">
-        <label class="form-check-label">Pin Blog</label>{{ form.pin }}
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-check mt-3">
+            <label class="form-check-label">Pin Blog</label>{{ form.pin }}
+          </div>
+        </div>
+              
+        <div class="col-md-4">
+          <div class="form-check mt-3">
+            <label class="form-check-label">Is public?</label>{{ form.public }}
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-check mt-3">
+            <label class="form-check-label">Is personal?</label>{{ form.personal }}
+          </div>
+        </div>
       </div>
+      
 
-      <div class="form-check mt-3">
-        <label class="form-check-label">Is public?</label>{{ form.public }}
-      </div>
+
 
       <button type="submit" class="btn btn-success mt-3">Save</button>
       <a href="{% url 'blogs:blog_list' %}" class="btn btn-secondary mt-3">Cancel</a>

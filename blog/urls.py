@@ -5,10 +5,11 @@ from . import views
 urlpatterns = [
 path('', views.blog_list, name='blog_list'),
 path('blog/create/', views.blog_create, name='blog_create'),
+path('blog/timeline/', views.personal_timeline, name='personal_timeline'),
 path('blog/<slug:slug>/', views.blog_detail, name='blog_detail'),
 path('blog/<slug:slug>/edit/', views.blog_update, name='blog_update'),
 path('blog/<slug:slug>/delete/', views.blog_delete, name='blog_delete'),
-path('blogs/<slug:slug>/print/', views.blog_print, name='blog_print'),
+path('blog/<slug:slug>/print/', views.blog_print, name='blog_print'),
 
 
 path('words/', views.word_list, name='word_list'),

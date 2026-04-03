@@ -14,7 +14,7 @@
     </blockquote>
   </div>
 
-  <h2 class="fw-bold text-success text-center mb-3">Life Principles</h2>
+  <h2 class="fw-bold text-success text-center mb-3" data-bs-toggle="modal" data-bs-target="#imageModal">Life Principles</h2>
 
   <div class="accordion" id="principlesAccordion">
 
@@ -66,4 +66,24 @@
 
 {% block static %}
 <script src="{% static 'js/principles.js' %}"></script>
+
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Life Principles</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <img src="https://raw.githubusercontent.com/tenctech10c/Images/main/lifeprinciple.jpeg"
+             alt="Full Image"
+             style="width: 100%; border-radius: 10px;">
+      </div>
+
+    </div>
+  </div>
+</div>
+
 {% endblock %}

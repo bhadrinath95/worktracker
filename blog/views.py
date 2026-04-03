@@ -8,7 +8,7 @@ from django.contrib.auth.views import redirect_to_login
 @login_required
 def blog_list(request):
     query = request.GET.get('q', '')
-    blogs = Blog.objects.all()
+    blogs = Blog.objects.filter(personal=False)
     if query:
         blogs = blogs.filter(
             Q(title__icontains=query) |
@@ -16,6 +16,25 @@ def blog_list(request):
         )
     blogs = blogs.order_by('-pin', 'title', '-created_at')
     return render(request, 'blog/blog_list.html', {'blogs': blogs, 'query': query})
+
+@login_required
+def personal_timeline(request):
+    query = request.GET.get('q', '')
+
+    blogs = Blog.objects.filter(personal=True)
+
+    if query:
+        blogs = blogs.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query)
+        )
+
+    blogs = blogs.order_by('-created_at')
+
+    return render(request, 'blog/personal_timeline.html', {
+        'blogs': blogs,
+        'query': query
+    })
 
 def blog_detail(request, slug):
     blog = get_object_or_404(Blog, slug=slug)

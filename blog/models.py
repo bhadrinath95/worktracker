@@ -8,6 +8,7 @@ class Blog(models.Model):
     pin = models.BooleanField(default=False)
     slug = models.SlugField(blank=True)
     public = models.BooleanField(default=False) 
+    personal = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.slug:

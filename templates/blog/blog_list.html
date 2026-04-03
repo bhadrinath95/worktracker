@@ -3,12 +3,14 @@
 
 {% block content %}
 <br/ >
+
 <h1>Blog Feed</h1>
 
 <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
     <div class="d-flex gap-2 mb-2">
         <a href="{% url 'blogs:blog_create' %}" class="btn btn-outline-primary">➕ Create Blog</a>
         <a href="{% url 'blogs:word_list' %}" class="btn btn-outline-secondary">📘 Dictionary</a>
+        <a href="{% url 'blogs:personal_timeline' %}" class="btn btn-outline-dark">📱 Personal Timeline</a>
     </div>
 
     <form method="get" class="d-flex align-items-center mb-2 ms-auto">
