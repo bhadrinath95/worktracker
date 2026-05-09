@@ -461,6 +461,7 @@ def update_status(update, status):
         update_copy = copy(update)
         update_copy.pk = None
         update_copy.date = today
+        update_copy.is_check_box = False
         update_copy.status = status
         update_copy.save()
 
