@@ -160,6 +160,11 @@
     {{ form.can_store_reminder }}
   </div>
 
+  <div class="mb-3">
+    {{ form.auto_reminder_handle.label_tag }}
+    {{ form.auto_reminder_handle }}
+  </div>
+
   <h4>Attach Documents</h4>
   <div id="formset">
     {{ formset.management_form }}
@@ -243,6 +248,12 @@
           <form method="POST" action="{% url 'tracker:update_complete' u.id %}">
             {% csrf_token %}
             <button class="btn btn-outline-success btn-sm">Complete</button>
+          </form>
+          <form method="POST" action="{% url 'tracker:update_onday_complete' u.id %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-info btn-sm">
+              On Day Complete
+            </button>
           </form>
           <form method="POST" action="{% url 'tracker:update_cancelled' u.id %}">
             {% csrf_token %}

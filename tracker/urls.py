@@ -18,7 +18,7 @@ urlpatterns = [
     path('update/<int:pk>/delete/', views.UpdateDeleteView.as_view(), name='update_delete'),
     path('update/<int:update_id>/complete/', views.UpdateCompleteView.as_view(), name='update_complete'),
     path('update/<int:update_id>/cancel/', views.UpdateCancelledView.as_view(), name='update_cancelled'),
-
+    path('update/<int:update_id>/onday-complete/', views.UpdateOnDayCompleteView.as_view(), name='update_onday_complete'),
     # path('prayer/', views.prayer, name='prayer'),
     path('prayer/', views.prayer_list, name='prayer'),
     path('prayer/<int:pk>/', views.prayer_detail, name='prayer_detail'),

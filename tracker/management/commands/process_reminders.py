@@ -20,6 +20,8 @@ class Command(BaseCommand):
             reminder_type__isnull=True
         ).exclude(
             reminder_type=""
+        ).exclude(
+            auto_reminder_handle=False
         )
 
         for update in updates:

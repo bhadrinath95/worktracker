@@ -417,12 +417,15 @@ class UpdateListView(LoginRequiredMixin, View):
                 update = Update(
                     task=task,
                     date=date,
+                    start_time = form.cleaned_data['start_time'],
+                    end_time = form.cleaned_data['end_time'],
                     description=form.cleaned_data['description'],
                     is_check_box=form.cleaned_data['is_check_box'],
                     status=form.cleaned_data['status'],
                     reminder_type=form.cleaned_data['reminder_type'],
-                    date_to_remind=form.cleaned_data['date_to_remind'],
                     can_store_reminder=form.cleaned_data['can_store_reminder'],
+                    date_to_remind=form.cleaned_data['date_to_remind'],
+                    auto_reminder_handle=form.cleaned_data['auto_reminder_handle'],
                 )
                 update.save()
                 updates.append(update)
@@ -458,7 +461,6 @@ def update_status(update, status):
         update_copy = copy(update)
         update_copy.pk = None
         update_copy.date = today
-        update_copy.is_check_box = False
         update_copy.status = status
         update_copy.save()
 
@@ -522,6 +524,15 @@ class UpdateCompleteView(LoginRequiredMixin, View):
         update_status(update, 'Completed')
         return redirect('tracker:update_list', task_id=update.task.id)
 
+class UpdateOnDayCompleteView(LoginRequiredMixin, View):
+    def post(self, request, update_id):
+        update = get_object_or_404(Update, pk=update_id)
+
+        update.status = 'Completed'
+        update.save()
+
+        return redirect('tracker:update_list', task_id=update.task.id)
+    
 class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         today = timezone.localdate()

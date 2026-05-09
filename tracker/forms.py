@@ -47,7 +47,7 @@ class UpdateForm(forms.ModelForm):
 
     class Meta:
         model = Update
-        fields = ['template', 'date', 'start_time',  'end_time', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder']
+        fields = ['template', 'date', 'start_time',  'end_time', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder', 'auto_reminder_handle']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
@@ -81,7 +81,7 @@ class MultipleUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Update
-        fields = ['template', 'dates', 'start_time', 'end_time', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder']
+        fields = ['template', 'dates', 'start_time', 'end_time', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder', 'auto_reminder_handle']
         widgets = {
             'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'end_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),

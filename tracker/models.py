@@ -94,6 +94,7 @@ class Update(models.Model):
     reminder_type = models.CharField(max_length=20, choices=REMINDER_CHOICE, null=True, blank=True)
     can_store_reminder = models.BooleanField(default=False)
     date_to_remind = models.IntegerField(null=True, blank=True)
+    auto_reminder_handle = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Update on {self.task.name}"
