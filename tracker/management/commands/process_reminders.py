@@ -15,13 +15,12 @@ class Command(BaseCommand):
 
         updates = Update.objects.filter(
             date=today,
-            status="Opened"
+            status="Opened",
+            auto_reminder_handle=True
         ).exclude(
             reminder_type__isnull=True
         ).exclude(
             reminder_type=""
-        ).exclude(
-            auto_reminder_handle=False
         )
 
         for update in updates:
