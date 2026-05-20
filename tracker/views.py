@@ -253,16 +253,16 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('tracker:task_list')
 
 @login_required
-@login_required
 def update_filter(request):
 
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     task_type_id = request.GET.get('task_type')
+    status = request.GET.get('status')
 
     updates = Update.objects.none()
 
-    if start_date or end_date or task_type_id:
+    if start_date or end_date or task_type_id or status:
         updates = (
             Update.objects
             .select_related('task', 'task__task_type')
@@ -282,12 +282,17 @@ def update_filter(request):
         if task_type_id:
             updates = updates.filter(task__task_type_id=task_type_id)
 
+        if status:
+            updates = updates.filter(status=status)
+
     context = {
         'updates': updates,
         'start_date': start_date or '',
         'end_date': end_date or '',
         'task_types': TaskType.objects.all(),
         'selected_task_type': task_type_id or '',
+        'statuses': Update.STATUS_CHOICES,
+        'selected_status': status or '',
     }
 
     return render(request, 'tracker/update_filter.html', context)

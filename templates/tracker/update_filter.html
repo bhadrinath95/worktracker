@@ -29,6 +29,20 @@
         </div>
 
         <div class="col-md-2">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-control">
+                <option value="">All</option>
+
+                {% for value, label in statuses %}
+                    <option value="{{ value }}"
+                        {% if value == selected_status %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2">
             <button type="submit" class="btn btn-primary w-100">Filter</button>
         </div>
 
@@ -61,7 +75,10 @@
             </thead>
             <tbody>
                 {% for update in updates %}
-                <tr>
+                <tr 
+                    onclick="window.location.href=`{% url 'tracker:update_list' update.task.id %}`"
+                    style="cursor:pointer;"
+                >
                     <td style="white-space: pre-line; word-break: break-word;">{{ update.description|linebreaks }}</td>
                     <td>{{ update.task.name }}</td>
                     <td>{{ update.date }}</td>
