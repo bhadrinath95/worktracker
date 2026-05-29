@@ -206,3 +206,21 @@ class Todo(models.Model):
 
     def __str__(self):
         return self.description
+    
+class Notification(models.Model):
+    description = models.TextField()
+    date = models.DateField()
+    is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.description
+
+    @property
+    def should_display(self):
+        today = timezone.localdate()
+        start_date = self.date - timedelta(days=7)
+
+        return (
+            not self.is_completed and
+            start_date <= today <= self.date
+        )

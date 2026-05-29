@@ -1,14 +1,19 @@
 /* Page background */
 body {
-    padding: 0 8px;
+    padding: 0 0px;
     padding-top: 50px;
     background-color: #f5f7fa;
     color: #212529;
 }
 
+body.has-notification {
+    padding-top: 80px;
+}
+
 /* Navbar */
 .custom-navbar {
     background-color: #1f3a5f;
+    z-index: 1050;
 }
 
 /* Navbar brand */
@@ -57,6 +62,41 @@ h1, h2, h3 {
 
 .navbar-toggler:hover {
     background-color: rgba(255,255,255,0.1);
+}
+
+.notification-bar {
+    position: fixed;
+    top: 56px;
+    width: 100%;
+    background: #dc3545;
+    color: white;
+    overflow: hidden;
+    z-index: 1040;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.notification-track {
+    display: inline-block;
+    white-space: nowrap;
+    padding-left: 100%;
+    animation: marquee 25s linear infinite;
+}
+
+.notification-item {
+    margin-right: 100px;
+    font-weight: 500;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 /* Mobile adjustments */

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Task, Update, TaskType, LifePrincipleTopic, LifePrinciple, Document, UpdateTemplate, FileType, Prayer
+from .models import Task, Update, TaskType, LifePrincipleTopic, LifePrinciple, Document, UpdateTemplate, FileType, Prayer, Notification
 
 
 class LifePrincipleTopicAdmin(admin.ModelAdmin):
@@ -21,6 +21,12 @@ class LifePrincipleAdmin(admin.ModelAdmin):
     def meaning_short(self, obj):
         return (obj.meaning[:50] + '...') if len(obj.meaning) > 50 else obj.meaning
     meaning_short.short_description = "Meaning"
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('description', 'date', 'is_completed')
+    list_filter = ('is_completed', 'date')
+    search_fields = ('description',)
+    ordering = ('date',)
     
 # Register your models here.
 admin.site.register(TaskType)
@@ -32,3 +38,4 @@ admin.site.register(FileType)
 admin.site.register(Document, DocumentAdmin)
 admin.site.register(UpdateTemplate)
 admin.site.register(Prayer)
+admin.site.register(Notification, NotificationAdmin)

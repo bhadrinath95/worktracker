@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   {% block style %}{% endblock %}
 </head>
-<body>
+<body class="{% if active_notifications %}has-notification{% endif %}">
 <nav class="navbar fixed-top navbar-expand-lg custom-navbar">
   <div class="container-fluid">
     <a class="navbar-brand text-light" href='{% url "tracker:task_list" %}'>Bhadri Tracker</a>
@@ -62,6 +62,21 @@
     </div>
   </div>
 </nav>
+
+{% if active_notifications %}
+<div class="notification-bar">
+    <div class="notification-track">
+
+        {% for notification in active_notifications %}
+            <span class="notification-item">
+                🔔 {{ notification.description }}
+                ({{ notification.date }})
+            </span>
+        {% endfor %}
+
+    </div>
+</div>
+{% endif %}
 
 <div class="container">
   <br />
