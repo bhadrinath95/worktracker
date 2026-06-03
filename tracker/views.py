@@ -458,14 +458,15 @@ class UpdateListView(LoginRequiredMixin, View):
                 return redirect("private_access", "tracker:task_list") 
             raise
 
-def update_status(update, status):
+def update_status(update, status, on_day=False):
     today = timezone.localdate()
 
     # ---- store completed copy ----
     if update.can_store_reminder:
         update_copy = copy(update)
         update_copy.pk = None
-        update_copy.date = today
+        if not on_day:
+            update_copy.date = today
         update_copy.is_check_box = False
         update_copy.status = status
         update_copy.save()
@@ -513,7 +514,8 @@ def update_status(update, status):
         update.date += timedelta(days=update.date_to_remind)
 
     else:
-        update.date = today
+        if not on_day:
+            update.date = today
         update.status = status
 
     update.save()
@@ -533,10 +535,7 @@ class UpdateCompleteView(LoginRequiredMixin, View):
 class UpdateOnDayCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
-
-        update.status = 'Completed'
-        update.save()
-
+        update_status(update, 'Completed', on_day=True)
         return redirect('tracker:update_list', task_id=update.task.id)
     
 class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
