@@ -1,0 +1,31 @@
+<li>
+    <div class="node node-{{ node.status|lower }}">
+        <strong>{{ node.title }}</strong>
+        {% if node.status == "CURRENT" %}
+            <span class="status-badge">
+                {{ node.get_status_display }}
+            </span>
+        {% endif %}
+        <br>
+
+        <a href="{% url 'statements:statement_create' %}?parent={{ node.id }}">
+            Add Child
+        </a>
+        |
+        <a href="{% url 'statements:statement_update' node.id %}">
+            Edit
+        </a>
+        |
+        <a href="{% url 'statements:statement_delete' node.id %}">
+            Delete
+        </a>
+    </div>
+
+    {% if node.children.all %}
+        <ul>
+            {% for child in node.children.all %}
+                {% include "statements/includes/node.html" with node=child %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</li>

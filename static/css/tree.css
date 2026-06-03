@@ -1,0 +1,140 @@
+.tree {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tree ul {
+    padding-top: 20px;
+    position: relative;
+    display: table;
+    margin: 0 auto;
+}
+
+.tree li {
+    list-style-type: none;
+    text-align: center;
+    position: relative;
+    padding: 20px 5px 0 5px;
+    display: table-cell;
+    vertical-align: top;
+}
+
+/* Horizontal connectors */
+.tree li::before,
+.tree li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 20px;
+    border-top: 1px solid #ccc;
+}
+
+.tree li::before {
+    right: 50%;
+}
+
+.tree li::after {
+    left: 50%;
+    border-left: 1px solid #ccc;
+}
+
+/* Remove connectors for only child */
+.tree li:only-child::before,
+.tree li:only-child::after {
+    display: none;
+}
+
+.tree li:only-child {
+    padding-top: 0;
+}
+
+/* Remove unnecessary connector ends */
+.tree li:first-child::before,
+.tree li:last-child::after {
+    border: 0 none;
+}
+
+/* Right-most vertical connector fix */
+.tree li:last-child::before {
+    border-right: 1px solid #ccc;
+    border-radius: 0 5px 0 0;
+}
+
+/* Left-most connector curve */
+.tree li:first-child::after {
+    border-radius: 5px 0 0 0;
+}
+
+/* Vertical line from parent */
+.tree ul ul::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    border-left: 1px solid #ccc;
+    width: 0;
+    height: 20px;
+}
+
+/* Node box */
+.node {
+    display: inline-block;
+    min-width: 180px;
+    padding: 10px 15px;
+    border: 1px solid #999;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all .2s ease;
+}
+
+.node:hover {
+    background: #f4f4f4;
+    transform: translateY(-2px);
+}
+
+/* Action links */
+.node a {
+    text-decoration: none;
+    font-size: 12px;
+    margin: 0 3px;
+}
+
+.node strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Open */
+.node-open {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+}
+
+/* Current */
+.node-current {
+    background-color: #d1e7dd;
+    border-color: #198754;
+    color: #0f5132;
+    font-weight: 600;
+}
+
+/* Cancelled */
+.node-cancelled {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    color: #842029;
+    opacity: 0.9;
+}
+
+.status-badge {
+    display: inline-block;
+    margin: 6px 0;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(0,0,0,0.08);
+}

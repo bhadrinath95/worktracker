@@ -1,41 +1,25 @@
 from django import forms
-from django.forms import inlineformset_factory
-from .models import Statement, StatementOption
+from .models import Statement, DecisionTree
 
 
+class DecisionTreeForm(forms.ModelForm):
+
+    class Meta:
+        model = DecisionTree
+
+        fields = [
+            "name",
+            "description"
+        ]
+        
 class StatementForm(forms.ModelForm):
+
     class Meta:
         model = Statement
         fields = [
+            "tree",
             "title",
-            "statement_text",
-            "conclusion",
+            "description",
+            "parent",   
             "status",
         ]
-
-
-class StatementOptionForm(forms.ModelForm):
-    class Meta:
-        model = StatementOption
-        fields = [
-            "option_description",
-            "decision",
-            "cancelled_principles",
-            "advice_from",
-            "advice_reason",
-            "advice_is_link"
-        ]
-        widgets = {
-            "cancelled_principles": forms.SelectMultiple(attrs={
-                "class": "select2-multi"
-            })
-        }
-
-
-StatementOptionFormSet = inlineformset_factory(
-    Statement,
-    StatementOption,
-    form=StatementOptionForm,
-    extra=1,
-    can_delete=True
-)

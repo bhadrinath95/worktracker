@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Decision Trees</h1>
+
+<p>
+    <a href="{% url 'statements:decision_tree_create' %}"
+         class="btn btn-outline-secondary">
+        🌳 Create Decision Tree
+    </a>
+</p>
+
+<table class="table table-bordered table-striped align-middle">
+    <thead class="table-success">
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    {% for tree in trees %}
+    <tr>
+        <td>
+            {{ tree.name }}
+        </td>
+        <td>
+            {{ tree.description }}
+        </td>
+        <td>
+            <a href="{% url 'statements:tree_view' tree.id %}" class="btn btn-sm btn-info">
+                View
+            </a>
+            <a href="{% url 'statements:decision_tree_update' tree.id %}" class="btn btn-sm btn-warning">
+                Edit
+            </a>
+            <a href="{% url 'statements:decision_tree_delete' tree.id %}" class="btn btn-sm btn-danger">
+                Delete
+            </a>
+        </td>
+    </tr>
+
+    {% empty %}
+
+    <tr>
+        <td colspan="3">
+            No Decision Trees Found
+        </td>
+    </tr>
+
+    {% endfor %}
+</table>
+
+{% endblock %}

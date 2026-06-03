@@ -1,146 +1,270 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from .models import Statement
-from .forms import StatementForm, StatementOptionFormSet
+from django.shortcuts import render
 from django.shortcuts import redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
+from django.shortcuts import get_object_or_404
+
+from .models import Statement, DecisionTree
+from .forms import StatementForm, DecisionTreeForm
 
 # Create your views here.
-class StatementListView(LoginRequiredMixin, ListView):
-    model = Statement
-    template_name = "statements/statement_list.html"
-    context_object_name = "statements"
+def tree_view(
+    request,
+    tree_id
+):
 
-    def get_queryset(self):
-        user_profile  = getattr(self.request.user, "userprofile", None)
-        if user_profile is None or not user_profile.special_privilege_password:
-            messages.error(self.request, "You do not have access to private tasks.")
-            return Statement.objects.none()
-        if not self.request.session.get("private_access"):
-            raise PermissionError("PRIVATE_ACCESS_REQUIRED")
-        queryset = Statement.objects.all().order_by(
-            'title',
-            'created_at'
+    tree = get_object_or_404(
+        DecisionTree,
+        pk=tree_id
+    )
+
+    roots = Statement.objects.filter(
+        tree=tree,
+        parent__isnull=True
+    )
+
+    return render(
+        request,
+        "statements/tree.html",
+        {
+            "tree": tree,
+            "roots": roots
+        }
+    )
+
+
+def statement_create(request):
+
+    initial = {}
+
+    tree = None
+
+    tree_id = request.GET.get("tree")
+    parent_id = request.GET.get("parent")
+
+    if parent_id:
+
+        parent = get_object_or_404(
+            Statement,
+            pk=parent_id
         )
-        return queryset
-    
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            return super().dispatch(request, *args, **kwargs)
-        except PermissionError as e:
-            if str(e) == "PRIVATE_ACCESS_REQUIRED":
-                return redirect("private_access", 'statements:statement_list')
-            raise
 
-class StatementDetailView(LoginRequiredMixin, DetailView):
-    model = Statement
-    template_name = "statements/statement_detail.html"
-    context_object_name = "statement"
-    
-    def get_context_data(self, **kwargs):
-        if not self.request.session.get("private_access"):
-            raise PermissionError("PRIVATE_ACCESS_REQUIRED")
-        context = super().get_context_data(**kwargs)
-        return context
-    
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            return super().dispatch(request, *args, **kwargs)
-        except PermissionError as e:
-            if str(e) == "PRIVATE_ACCESS_REQUIRED":
-                return redirect("private_access", 'statements:statement_list')
-            raise
+        tree = parent.tree
 
-class StatementCreateView(LoginRequiredMixin, CreateView):
-    model = Statement
-    form_class = StatementForm
-    template_name = "statements/statement_form.html"
+        initial["parent"] = parent.id
+        initial["tree"] = tree.id
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
+    elif tree_id:
 
-        formset = StatementOptionFormSet(self.request.POST, instance=self.object)
-        if formset.is_valid():
-            formset.save()
-        else:
-            return self.form_invalid(form)
+        tree = get_object_or_404(
+            DecisionTree,
+            pk=tree_id
+        )
 
-        return response
+        initial["tree"] = tree.id
 
-    def get_success_url(self):
-        return reverse_lazy("statements:statement_detail", args=[self.object.id])
+    if request.method == "POST":
 
-    def get_context_data(self, **kwargs):
-        if not self.request.session.get("private_access"):
-            raise PermissionError("PRIVATE_ACCESS_REQUIRED")
-        context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            context["formset"] = StatementOptionFormSet(self.request.POST)
-        else:
-            context["formset"] = StatementOptionFormSet()
-        return context
+        form = StatementForm(request.POST)
 
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            return super().dispatch(request, *args, **kwargs)
-        except PermissionError as e:
-            if str(e) == "PRIVATE_ACCESS_REQUIRED":
-                return redirect("private_access", 'statements:statement_list')
-            raise
-    
-class StatementUpdateView(LoginRequiredMixin, UpdateView):
-    model = Statement
-    form_class = StatementForm
-    template_name = "statements/statement_form.html"
+        if form.is_valid():
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
+            statement = form.save()
 
-        formset = StatementOptionFormSet(self.request.POST, instance=self.object)
-        if formset.is_valid():
-            formset.save()
-        else:
-            return self.form_invalid(form)
+            return redirect(
+                "statements:tree_view",
+                tree_id=statement.tree.id
+            )
 
-        return response
+    else:
 
-    def get_success_url(self):
-        return reverse_lazy("statements:statement_detail", args=[self.object.id])
+        form = StatementForm(initial=initial)
 
-    def get_context_data(self, **kwargs):
-        if not self.request.session.get("private_access"):
-            raise PermissionError("PRIVATE_ACCESS_REQUIRED")
-        context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            context["formset"] = StatementOptionFormSet(self.request.POST, instance=self.object)
-        else:
-            context["formset"] = StatementOptionFormSet(instance=self.object)
-        return context
-    
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            return super().dispatch(request, *args, **kwargs)
-        except PermissionError as e:
-            if str(e) == "PRIVATE_ACCESS_REQUIRED":
-                return redirect("private_access", 'statements:statement_list')
-            raise
+    return render(
+        request,
+        "statements/form.html",
+        {
+            "form": form,
+            "title": "Create Node",
+            "tree": tree,
+        }
+    )
 
-class StatementDeleteView(LoginRequiredMixin, DeleteView):
-    model = Statement
-    template_name = "statements/statement_confirm_delete.html"
-    success_url = reverse_lazy("statements:statement_list")
+def statement_update(
+    request,
+    pk
+):
 
-    def get_context_data(self, **kwargs):
-        if not self.request.session.get("private_access"):
-            raise PermissionError("PRIVATE_ACCESS_REQUIRED")
-        context = super().get_context_data(**kwargs)
-        return context
-    
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            return super().dispatch(request, *args, **kwargs)
-        except PermissionError as e:
-            if str(e) == "PRIVATE_ACCESS_REQUIRED":
-                return redirect("private_access", 'statements:statement_list')
-            raise
+    statement = get_object_or_404(
+        Statement,
+        pk=pk
+    )
+
+    tree = statement.tree
+
+    if request.method == "POST":
+
+        form = StatementForm(
+            request.POST,
+            instance=statement
+        )
+
+        if form.is_valid():
+
+            statement = form.save()
+
+            return redirect(
+                "statements:tree_view",
+                tree_id=statement.tree.id
+            )
+
+    else:
+
+        form = StatementForm(
+            instance=statement
+        )
+
+    return render(
+        request,
+        "statements/form.html",
+        {
+            "form": form,
+            "title": "Update Node",
+            "tree": tree,
+        }
+    )
+
+def statement_delete(
+    request,
+    pk
+):
+
+    statement = get_object_or_404(
+        Statement,
+        pk=pk
+    )
+
+    tree_id = statement.tree.id
+
+    if request.method == "POST":
+
+        statement.delete()
+
+        return redirect(
+            "statements:tree_view",
+            tree_id=tree_id
+        )
+
+    return render(
+        request,
+        "statements/delete.html",
+        {
+            "statement": statement,
+            "tree_id": tree_id
+        }
+    )
+
+def decision_tree_list(request):
+
+    trees = DecisionTree.objects.all()
+
+    return render(
+        request,
+        "statements/decision_tree_list.html",
+        {
+            "trees": trees
+        }
+    )
+
+def decision_tree_create(request):
+
+    if request.method == "POST":
+
+        form = DecisionTreeForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect(
+                "statements:decision_tree_list"
+            )
+
+    else:
+
+        form = DecisionTreeForm()
+
+    return render(
+        request,
+        "statements/decision_tree_form.html",
+        {
+            "form": form,
+            "title": "Create Decision Tree"
+        }
+    )
+
+def decision_tree_update(
+    request,
+    pk
+):
+
+    tree = get_object_or_404(
+        DecisionTree,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        form = DecisionTreeForm(
+            request.POST,
+            instance=tree
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect(
+                "statements:decision_tree_list"
+            )
+
+    else:
+
+        form = DecisionTreeForm(
+            instance=tree
+        )
+
+    return render(
+        request,
+        "statements/decision_tree_form.html",
+        {
+            "form": form,
+            "title": "Update Decision Tree"
+        }
+    )
+
+def decision_tree_delete(
+    request,
+    pk
+):
+
+    tree = get_object_or_404(
+        DecisionTree,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        tree.delete()
+
+        return redirect(
+            "statements:decision_tree_list"
+        )
+
+    return render(
+        request,
+        "statements/decision_tree_delete.html",
+        {
+            "tree": tree
+        }
+    )
