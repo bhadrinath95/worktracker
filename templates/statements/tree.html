@@ -48,7 +48,6 @@
     <br />
 </div>
 
-<!-- Node Details Modal -->
 <div
     class="modal fade"
     id="nodeModal"
@@ -83,21 +82,8 @@
     </div>
 </div>
 
-<script>
-function showNodeDetails(node) {
+{% endblock %}
 
-    document.getElementById("nodeTitle").textContent =
-        node.dataset.title;
-
-    document.getElementById("nodeDescription").textContent =
-        node.dataset.description || "No description available.";
-
-    const modal = new bootstrap.Modal(
-        document.getElementById("nodeModal")
-    );
-
-    modal.show();
-}
-</script>
-
+{% block static %}
+<script src="{% static 'js/tree.js' %}"></script>
 {% endblock %}
