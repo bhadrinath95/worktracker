@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/tree.css' %}">
 {% endblock %}
+
 {% block content %}
 
 <div class="card shadow-sm border-0 mb-4">
@@ -12,6 +14,7 @@
                 <h1 class="display-6 fw-bold mb-2">
                     {{ tree.name }}
                 </h1>
+
                 {% if tree.description %}
                     <p class="text-muted mb-0">
                         {{ tree.description }}
@@ -24,6 +27,7 @@
                    class="btn btn-outline-secondary me-2">
                     ← Back To Trees
                 </a>
+
                 <a href="{% url 'statements:statement_create' %}?tree={{ tree.id }}"
                    class="btn btn-success">
                     + Add Root Node
@@ -43,5 +47,57 @@
     </ul>
     <br />
 </div>
+
+<!-- Node Details Modal -->
+<div
+    class="modal fade"
+    id="nodeModal"
+    tabindex="-1"
+    aria-labelledby="nodeModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header">
+                <h4 id="nodeTitle" class="fw-bold mb-3"></h4>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div
+                        id="nodeDescription"
+                        class="p-3 rounded bg-light"
+                        style="white-space: pre-wrap; line-height: 1.8;">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+function showNodeDetails(node) {
+
+    document.getElementById("nodeTitle").textContent =
+        node.dataset.title;
+
+    document.getElementById("nodeDescription").textContent =
+        node.dataset.description || "No description available.";
+
+    const modal = new bootstrap.Modal(
+        document.getElementById("nodeModal")
+    );
+
+    modal.show();
+}
+</script>
 
 {% endblock %}

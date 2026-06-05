@@ -115,6 +115,13 @@
 
 /* Current */
 .node-current {
+    background-color: #cfe2ff;
+    border-color: #0d6efd;
+    color: #084298;
+    font-weight: 600;
+}
+
+.node-completed {
     background-color: #d1e7dd;
     border-color: #198754;
     color: #0f5132;
@@ -137,4 +144,13 @@
     font-size: 11px;
     font-weight: 600;
     background: rgba(0,0,0,0.08);
+}
+
+.cancelled-node {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.cancelled-node a {
+    text-decoration: line-through;
 }

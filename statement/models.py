@@ -22,6 +22,7 @@ class Statement(models.Model):
         OPEN = "OPEN", "Open"
         CURRENT = "CURRENT", "Current"
         CANCELLED = "CANCELLED", "Cancelled"
+        COMPLETED = "COMPLETED", "Completed"
 
     tree = models.ForeignKey(
         DecisionTree,
