@@ -1,53 +1,63 @@
 from django.urls import path
-from . import views
+
+from .views import (
+    TreeView,
+    StatementCreateView,
+    StatementUpdateView,
+    StatementDeleteView,
+    DecisionTreeListView,
+    DecisionTreeCreateView,
+    DecisionTreeUpdateView,
+    DecisionTreeDeleteView,
+)
 
 urlpatterns = [
 
     path(
         "",
-        views.decision_tree_list,
+        DecisionTreeListView.as_view(),
         name="decision_tree_list"
     ),
 
     path(
         "create/",
-        views.decision_tree_create,
+        DecisionTreeCreateView.as_view(),
         name="decision_tree_create"
     ),
 
     path(
         "<int:pk>/update/",
-        views.decision_tree_update,
+        DecisionTreeUpdateView.as_view(),
         name="decision_tree_update"
     ),
 
     path(
         "<int:pk>/delete/",
-        views.decision_tree_delete,
+        DecisionTreeDeleteView.as_view(),
         name="decision_tree_delete"
     ),
 
     path(
         "node/create/",
-        views.statement_create,
+        StatementCreateView.as_view(),
         name="statement_create"
     ),
 
     path(
         "node/<int:pk>/update/",
-        views.statement_update,
+        StatementUpdateView.as_view(),
         name="statement_update"
     ),
 
     path(
         "node/<int:pk>/delete/",
-        views.statement_delete,
+        StatementDeleteView.as_view(),
         name="statement_delete"
     ),
 
     path(
         "<int:tree_id>/",
-        views.tree_view,
+        TreeView.as_view(),
         name="tree_view"
     ),
 ]

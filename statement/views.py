@@ -1,270 +1,302 @@
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy, reverse
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import (
+    ListView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+    TemplateView,
+)
 
 from .models import Statement, DecisionTree
 from .forms import StatementForm, DecisionTreeForm
 
-# Create your views here.
-def tree_view(
-    request,
-    tree_id
-):
 
-    tree = get_object_or_404(
-        DecisionTree,
-        pk=tree_id
-    )
+class PrivateDecisionTreeMixin:
 
-    roots = Statement.objects.filter(
-        tree=tree,
-        parent__isnull=True
-    )
+    def dispatch(self, request, *args, **kwargs):
 
-    return render(
-        request,
-        "statements/tree.html",
-        {
-            "tree": tree,
-            "roots": roots
-        }
-    )
-
-
-def statement_create(request):
-
-    initial = {}
-
-    tree = None
-
-    tree_id = request.GET.get("tree")
-    parent_id = request.GET.get("parent")
-
-    if parent_id:
-
-        parent = get_object_or_404(
-            Statement,
-            pk=parent_id
+        user_profile = getattr(
+            request.user,
+            "userprofile",
+            None
         )
 
-        tree = parent.tree
+        if (
+            user_profile is None
+            or not user_profile.special_privilege_password
+        ):
+            messages.error(
+                request,
+                "You do not have access to Decision Trees."
+            )
+            return redirect("home")
 
-        initial["parent"] = parent.id
-        initial["tree"] = tree.id
+        if not request.session.get("private_access"):
+            return redirect(
+                "private_access",
+                "statements:decision_tree_list"
+            )
 
-    elif tree_id:
+        return super().dispatch(
+            request,
+            *args,
+            **kwargs
+        )
+
+
+class TreeView(
+    LoginRequiredMixin,
+    PrivateDecisionTreeMixin,
+    TemplateView
+):
+    template_name = "statements/tree.html"
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
 
         tree = get_object_or_404(
             DecisionTree,
-            pk=tree_id
+            pk=self.kwargs["tree_id"]
         )
 
-        initial["tree"] = tree.id
+        context["tree"] = tree
 
-    if request.method == "POST":
+        context["roots"] = Statement.objects.filter(
+            tree=tree,
+            parent__isnull=True
+        )
 
-        form = StatementForm(request.POST)
+        return context
 
-        if form.is_valid():
 
-            statement = form.save()
+class StatementCreateView(
+    LoginRequiredMixin,
+    PrivateDecisionTreeMixin,
+    CreateView
+):
+    model = Statement
+    form_class = StatementForm
+    template_name = "statements/form.html"
 
-            return redirect(
-                "statements:tree_view",
-                tree_id=statement.tree.id
+    def get_initial(self):
+
+        initial = super().get_initial()
+
+        tree_id = self.request.GET.get("tree")
+        parent_id = self.request.GET.get("parent")
+
+        if parent_id:
+
+            parent = get_object_or_404(
+                Statement,
+                pk=parent_id
             )
 
-    else:
+            initial["parent"] = parent.id
+            initial["tree"] = parent.tree.id
 
-        form = StatementForm(initial=initial)
+        elif tree_id:
 
-    return render(
-        request,
-        "statements/form.html",
-        {
-            "form": form,
-            "title": "Create Node",
-            "tree": tree,
-        }
-    )
-
-def statement_update(
-    request,
-    pk
-):
-
-    statement = get_object_or_404(
-        Statement,
-        pk=pk
-    )
-
-    tree = statement.tree
-
-    if request.method == "POST":
-
-        form = StatementForm(
-            request.POST,
-            instance=statement
-        )
-
-        if form.is_valid():
-
-            statement = form.save()
-
-            return redirect(
-                "statements:tree_view",
-                tree_id=statement.tree.id
+            tree = get_object_or_404(
+                DecisionTree,
+                pk=tree_id
             )
 
-    else:
+            initial["tree"] = tree.id
 
-        form = StatementForm(
-            instance=statement
-        )
+        return initial
 
-    return render(
-        request,
-        "statements/form.html",
-        {
-            "form": form,
-            "title": "Update Node",
-            "tree": tree,
-        }
-    )
+    def get_context_data(self, **kwargs):
 
-def statement_delete(
-    request,
-    pk
-):
+        context = super().get_context_data(**kwargs)
 
-    statement = get_object_or_404(
-        Statement,
-        pk=pk
-    )
+        tree = None
 
-    tree_id = statement.tree.id
+        tree_id = self.request.GET.get("tree")
+        parent_id = self.request.GET.get("parent")
 
-    if request.method == "POST":
+        if parent_id:
 
-        statement.delete()
+            tree = get_object_or_404(
+                Statement,
+                pk=parent_id
+            ).tree
 
-        return redirect(
+        elif tree_id:
+
+            tree = get_object_or_404(
+                DecisionTree,
+                pk=tree_id
+            )
+
+        context["title"] = "Create Node"
+        context["tree"] = tree
+
+        return context
+
+    def get_success_url(self):
+
+        return reverse(
             "statements:tree_view",
-            tree_id=tree_id
+            kwargs={
+                "tree_id": self.object.tree.id
+            }
         )
 
-    return render(
-        request,
-        "statements/delete.html",
-        {
-            "statement": statement,
-            "tree_id": tree_id
-        }
-    )
 
-def decision_tree_list(request):
+class StatementUpdateView(
+    LoginRequiredMixin,
+    PrivateDecisionTreeMixin,
+    UpdateView
+):
+    model = Statement
+    form_class = StatementForm
+    template_name = "statements/form.html"
 
-    trees = DecisionTree.objects.all()
+    def get_context_data(self, **kwargs):
 
-    return render(
-        request,
-        "statements/decision_tree_list.html",
-        {
-            "trees": trees
-        }
-    )
+        context = super().get_context_data(**kwargs)
 
-def decision_tree_create(request):
+        context["title"] = "Update Node"
+        context["tree"] = self.object.tree
 
-    if request.method == "POST":
+        return context
 
-        form = DecisionTreeForm(
-            request.POST
+    def get_success_url(self):
+
+        return reverse(
+            "statements:tree_view",
+            kwargs={
+                "tree_id": self.object.tree.id
+            }
         )
 
-        if form.is_valid():
 
-            form.save()
+class StatementDeleteView(
+    LoginRequiredMixin,
+    PrivateDecisionTreeMixin,
+    DeleteView
+):
+    model = Statement
+    template_name = "statements/delete.html"
 
-            return redirect(
-                "statements:decision_tree_list"
+    def get_success_url(self):
+
+        return reverse(
+            "statements:tree_view",
+            kwargs={
+                "tree_id": self.object.tree.id
+            }
+        )
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context["statement"] = self.object
+        context["tree_id"] = self.object.tree.id
+
+        return context
+
+
+class DecisionTreeListView(
+    LoginRequiredMixin,
+    PrivateDecisionTreeMixin,
+    ListView
+):
+    model = DecisionTree
+    template_name = "statements/decision_tree_list.html"
+    context_object_name = "trees"
+
+    def get_queryset(self):
+
+        queryset = DecisionTree.objects.all()
+
+        search_query = self.request.GET.get(
+            "search"
+        )
+
+        if search_query:
+
+            queryset = queryset.filter(
+                name__icontains=search_query
             )
 
-    else:
+        return queryset.order_by("name")
 
-        form = DecisionTreeForm()
+    def get_context_data(self, **kwargs):
 
-    return render(
-        request,
-        "statements/decision_tree_form.html",
-        {
-            "form": form,
-            "title": "Create Decision Tree"
-        }
-    )
+        context = super().get_context_data(**kwargs)
 
-def decision_tree_update(
-    request,
-    pk
+        context["search_query"] = self.request.GET.get(
+            "search",
+            ""
+        )
+
+        return context
+
+
+class DecisionTreeCreateView(
+    LoginRequiredMixin,
+    PrivateDecisionTreeMixin,
+    CreateView
 ):
-
-    tree = get_object_or_404(
-        DecisionTree,
-        pk=pk
+    model = DecisionTree
+    form_class = DecisionTreeForm
+    template_name = "statements/decision_tree_form.html"
+    success_url = reverse_lazy(
+        "statements:decision_tree_list"
     )
 
-    if request.method == "POST":
+    def get_context_data(self, **kwargs):
 
-        form = DecisionTreeForm(
-            request.POST,
-            instance=tree
-        )
+        context = super().get_context_data(**kwargs)
 
-        if form.is_valid():
+        context["title"] = "Create Decision Tree"
 
-            form.save()
+        return context
 
-            return redirect(
-                "statements:decision_tree_list"
-            )
 
-    else:
-
-        form = DecisionTreeForm(
-            instance=tree
-        )
-
-    return render(
-        request,
-        "statements/decision_tree_form.html",
-        {
-            "form": form,
-            "title": "Update Decision Tree"
-        }
-    )
-
-def decision_tree_delete(
-    request,
-    pk
+class DecisionTreeUpdateView(
+    LoginRequiredMixin,
+    PrivateDecisionTreeMixin,
+    UpdateView
 ):
-
-    tree = get_object_or_404(
-        DecisionTree,
-        pk=pk
+    model = DecisionTree
+    form_class = DecisionTreeForm
+    template_name = "statements/decision_tree_form.html"
+    success_url = reverse_lazy(
+        "statements:decision_tree_list"
     )
 
-    if request.method == "POST":
+    def get_context_data(self, **kwargs):
 
-        tree.delete()
+        context = super().get_context_data(**kwargs)
 
-        return redirect(
-            "statements:decision_tree_list"
-        )
+        context["title"] = "Update Decision Tree"
 
-    return render(
-        request,
-        "statements/decision_tree_delete.html",
-        {
-            "tree": tree
-        }
+        return context
+
+
+class DecisionTreeDeleteView(
+    LoginRequiredMixin,
+    PrivateDecisionTreeMixin,
+    DeleteView
+):
+    model = DecisionTree
+    template_name = "statements/decision_tree_delete.html"
+    success_url = reverse_lazy(
+        "statements:decision_tree_list"
     )
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context["tree"] = self.object
+
+        return context
