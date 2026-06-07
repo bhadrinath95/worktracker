@@ -174,7 +174,7 @@ class StatementUpdateView(
                 "tree_id": self.object.tree.id
             }
         )
-
+ 
 
 class StatementDeleteView(
     LoginRequiredMixin,
