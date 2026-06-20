@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 import os
+import re
 
 class TaskType(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -158,6 +159,11 @@ class Document(models.Model):
     is_web_link = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
+        self.fileurl = re.sub(
+            r'[\u200e\u200f\u202a-\u202e]',
+            '',
+            self.fileurl
+        )
         ext = os.path.splitext(self.fileurl)[1].lower()
         self.filetype = self.detect_file_type(ext)
         super().save(*args, **kwargs)

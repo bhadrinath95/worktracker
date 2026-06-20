@@ -195,78 +195,7 @@
   </thead>
   <tbody>
     {% for u in checkbox_updates %}
-    <tr>
-      <td>{{ u.description|linebreaks }}</td>
-      <td>
-        {% if u.documents.exists %}
-          <div class="mt-2 d-flex flex-wrap gap-2">
-            {% for doc in u.documents.all %}
-              {% with ft=doc.filetype %}
-                {% if ft %}
-                  {% if ft.icon_class %}
-                    <!-- Icon button -->
-                    <a href="{% url 'tracker:document_view' doc.id %}"
-                      class="btn d-flex align-items-center"  title="{{ doc.filename }}">
-                      <i class="bi {{ ft.icon_class }}"></i>
-                    </a>
-                  {% else %}
-                    <!-- Thumbnail -->
-                    <a href="{% url 'tracker:document_view' doc.id %}" 
-                      class="btn d-flex align-items-center"  
-                      title="{{ doc.filename }}">
-                      <i class="bi bi-image-fill"></i>
-                    </a>
-                  {% endif %}
-                {% else %}
-                  <!-- Fallback -->
-                  <a href="{{ doc.github_url }}" 
-                    class="btn  d-flex align-items-center" 
-                    title="{{ doc.filename }}">
-                    <i class="bi bi-file-earmark-fill"></i>
-                  </a>
-                {% endif %}
-              {% endwith %}
-            {% endfor %}
-          </div>
-        {% endif %}
-      </td>
-      <td>{{ u.date|date:"d-m-Y" }}</td>
-      <td>{% if u.start_time %}{{ u.start_time|time:"h:i A" }}{% endif %}{% if u.end_time %} - {{ u.end_time|time:"h:i A" }}{% endif %}</td>
-      <td>
-        {% if u.status == 'Completed' %}
-          <p class="text-success">{{ u.status }}</p>
-        {% elif u.status == 'InProgress' %}
-          <p class="text-warning">{{ u.status }}</p>
-        {% elif u.status == 'Cancelled' %}
-          <p class="text-danger">{{ u.status }}</p>
-        {% endif %}
-      
-      </td>
-      <td>
-        <div class="d-flex flex-wrap align-items-center gap-2">
-          {% if u.status != 'Completed' and u.status != 'Cancelled' %}
-          <form method="POST" action="{% url 'tracker:update_complete' u.id %}">
-            {% csrf_token %}
-            <button class="btn btn-outline-success btn-sm">Complete</button>
-          </form>
-          <form method="POST" action="{% url 'tracker:update_onday_complete' u.id %}">
-            {% csrf_token %}
-            <button class="btn btn-outline-info btn-sm">
-              On Day Complete
-            </button>
-          </form>
-          <form method="POST" action="{% url 'tracker:update_cancelled' u.id %}">
-            {% csrf_token %}
-            <button class="btn btn-outline-warning btn-sm">Cancelled</button>
-          </form>
-          {% endif %}
-          <a href="{% url 'tracker:update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
-          <a href="{% url 'tracker:update_delete' u.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
-        </div>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="6"><center>No checklist items.</center></td></tr>
+        {% include "tracker/partials/update_row.html" with u=u %}
     {% endfor %}
   </tbody>
 </table>
@@ -337,8 +266,20 @@
       </td>
       <td>
         <div class="d-flex flex-wrap align-items-center gap-2">
-          <a href="{% url 'tracker:update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
-          <a href="{% url 'tracker:update_delete' u.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+          <a href="{% url 'tracker:update_edit' u.id %}"
+            class="btn btn-sm btn-outline-primary">
+              Edit
+          </a>
+
+          <button
+              type="button"
+              hx-post="{% url 'tracker:update_delete' u.id %}"
+              hx-confirm="Delete this update?"
+              hx-target="closest tr"
+              hx-swap="outerHTML"
+              class="btn btn-sm btn-outline-danger">
+              Delete
+          </button>
         </div>
       </td>
       </tr>
@@ -365,8 +306,20 @@
         </span>
       {% endif %}
       <div class="float-end">
-        <a href="{% url 'tracker:update_edit' u.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
-        <a href="{% url 'tracker:update_delete' u.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        <a href="{% url 'tracker:update_edit' u.id %}"
+          class="btn btn-sm btn-outline-primary">
+            Edit
+        </a>
+
+        <button
+            type="button"
+            hx-post="{% url 'tracker:update_delete' u.id %}"
+            hx-confirm="Delete this update?"
+            hx-target="closest li"
+            hx-swap="outerHTML"
+            class="btn btn-sm btn-outline-danger">
+            Delete
+    </button>
       </div>
       <br>
       {{ u.description|linebreaks }}

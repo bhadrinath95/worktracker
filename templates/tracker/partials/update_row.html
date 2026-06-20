@@ -1,0 +1,86 @@
+<tr id="update-row-{{ u.id }}">
+    <td>{{ u.description|linebreaks }}</td>
+
+    <td>
+        {% if u.documents.exists %}
+            <div class="mt-2 d-flex flex-wrap gap-2">
+                {% for doc in u.documents.all %}
+                    <a href="{% url 'tracker:document_view' doc.id %}">
+                        {{ doc.filename }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </td>
+
+    <td>{{ u.date|date:"d-m-Y" }}</td>
+
+    <td>
+        {% if u.start_time %}
+            {{ u.start_time|time:"h:i A" }}
+        {% endif %}
+        {% if u.end_time %}
+            - {{ u.end_time|time:"h:i A" }}
+        {% endif %}
+    </td>
+
+    <td>
+        {% if u.status == 'Completed' %}
+            <span class="text-success">{{ u.status }}</span>
+        {% elif u.status == 'Cancelled' %}
+            <span class="text-danger">{{ u.status }}</span>
+        {% elif u.status == 'InProgress' %}
+            <span class="text-warning">{{ u.status }}</span>
+        {% else %}
+            {{ u.status }}
+        {% endif %}
+    </td>
+
+    <td>
+        <div class="d-flex flex-wrap gap-2">
+
+            {% if u.status != 'Completed' and u.status != 'Cancelled' %}
+
+            <button
+                hx-post="{% url 'tracker:update_complete' u.id %}"
+                hx-target="closest tr"
+                hx-swap="outerHTML"
+                class="btn btn-outline-success btn-sm">
+                Complete
+            </button>
+
+            <button
+                hx-post="{% url 'tracker:update_onday_complete' u.id %}"
+                hx-target="#update-row-{{ u.id }}"
+                hx-swap="outerHTML"
+                class="btn btn-outline-info btn-sm">
+                On Day Complete
+            </button>
+
+            <button
+                hx-post="{% url 'tracker:update_cancelled' u.id %}"
+                hx-target="#update-row-{{ u.id }}"
+                hx-swap="outerHTML"
+                class="btn btn-outline-warning btn-sm">
+                Cancelled
+            </button>
+
+            {% endif %}
+
+            <a href="{% url 'tracker:update_edit' u.id %}"
+               class="btn btn-outline-primary btn-sm">
+                Edit
+            </a>
+
+            <button
+                hx-post="{% url 'tracker:update_delete' u.id %}"
+                hx-target="#update-row-{{ u.id }}"
+                hx-swap="outerHTML"
+                hx-confirm="Are you sure you want to delete this update?"
+                class="btn btn-sm btn-outline-danger">
+                Delete
+            </button>
+
+        </div>
+    </td>
+</tr>

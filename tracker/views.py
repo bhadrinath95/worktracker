@@ -19,6 +19,8 @@ from calendar import monthrange
 from django.db import transaction
 from copy import copy
 from django.utils.dateparse import parse_date
+from django.http import HttpResponse
+
 
 # -------------------------
 # TASK VIEWS
@@ -523,20 +525,54 @@ def update_status(update, status, on_day=False):
 class UpdateCancelledView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
+
         update_status(update, 'Cancelled')
-        return redirect('tracker:update_list', task_id=update.task.id)
+
+        update.refresh_from_db()
+
+        if request.headers.get("HX-Request"):
+            return render(
+                request,
+                "tracker/partials/update_row.html",
+                {"u": update}
+            )
+
+        return redirect(
+            'tracker:update_list',
+            task_id=update.task.id
+        )
 
 class UpdateCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
         update_status(update, 'Completed')
-        return redirect('tracker:update_list', task_id=update.task.id)
+        update.refresh_from_db()
+        if request.headers.get("HX-Request"):
+            return render(
+                request,
+                "tracker/partials/update_row.html",
+                {"u": update}
+            )
+        return redirect(
+            'tracker:update_list',
+            task_id=update.task.id
+        )
 
 class UpdateOnDayCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
         update = get_object_or_404(Update, pk=update_id)
         update_status(update, 'Completed', on_day=True)
-        return redirect('tracker:update_list', task_id=update.task.id)
+        update.refresh_from_db()
+        if request.headers.get("HX-Request"):
+            return render(
+                request,
+                "tracker/partials/update_row.html",
+                {"u": update}
+            )
+        return redirect(
+            'tracker:update_list',
+            task_id=update.task.id
+        )
     
 class TodayTaskUpdatesCompleteView(LoginRequiredMixin, View):
     def post(self, request, pk):
@@ -593,13 +629,21 @@ class UpdateEditView(LoginRequiredMixin, View):
         })
 
 
-class UpdateDeleteView(LoginRequiredMixin, DeleteView):
-    model = Update
-    template_name = 'tracker/update_confirm_delete.html'
+class UpdateDeleteView(LoginRequiredMixin, View):
 
-    def get_success_url(self):
-        return reverse('tracker:update_list', kwargs={'task_id': self.object.task.id})
+    def post(self, request, pk):
+        update = get_object_or_404(Update, pk=pk)
 
+        task_id = update.task.id
+        update.delete()
+
+        if request.headers.get("HX-Request"):
+            return HttpResponse("")
+
+        return redirect(
+            "tracker:update_list",
+            task_id=task_id
+        )
 
 # -------------------------
 # OTHER STATIC VIEWS
