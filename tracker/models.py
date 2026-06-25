@@ -120,9 +120,9 @@ class Update(models.Model):
         start_str = timezone.make_aware(start_dt).strftime("%Y%m%dT%H%M%S")
         end_str = timezone.make_aware(end_dt).strftime("%Y%m%dT%H%M%S")
 
-        # "https://calendar.google.com/calendar/u/0/r/eventedit"
+        # "https://calendar.google.com/calendar/render"
         return (
-            "https://calendar.google.com/calendar/render"
+            "https://calendar.google.com/calendar/u/0/r/eventedit"
             f"?action=TEMPLATE"
             f"?text={quote_plus(self.name or self.task.name or '')}"
             f"&dates={start_str}/{end_str}"
