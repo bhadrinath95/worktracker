@@ -124,11 +124,10 @@ class Update(models.Model):
         return (
             "https://calendar.google.com/calendar/u/0/r/eventedit"
             f"?action=TEMPLATE"
-            f"?text={quote_plus(self.name or self.task.name or '')}"
+            f"?text={quote_plus(self.name or '')}"
             f"&dates={start_str}/{end_str}"
             f"&details={quote_plus(self.description or '')}"
             f"&ctz=Asia/Kolkata"
-            "#Intent;scheme=https;package=com.google.android.calendar;end"
         )
     
 class LifePrincipleTopic(models.Model):
