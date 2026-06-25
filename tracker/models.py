@@ -3,6 +3,8 @@ from django.utils import timezone
 from datetime import timedelta
 import os
 import re
+from urllib.parse import quote_plus
+from datetime import datetime
 
 class TaskType(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -99,6 +101,31 @@ class Update(models.Model):
 
     def __str__(self):
         return f"Update on {self.task.name}"
+    
+    def get_google_calendar_url(self):
+        if not self.date:
+            return ""
+
+        start_dt = datetime.combine(
+            self.date,
+            self.start_time or datetime.min.time()
+        )
+
+        end_dt = datetime.combine(
+            self.date,
+            self.end_time or self.start_time or datetime.min.time()
+        )
+
+        start_str = timezone.make_aware(start_dt).strftime("%Y%m%dT%H%M%S")
+        end_str = timezone.make_aware(end_dt).strftime("%Y%m%dT%H%M%S")
+
+        return (
+            "https://calendar.google.com/calendar/u/0/r/eventedit"
+            f"?text={quote_plus(self.task.name)}"
+            f"&dates={start_str}/{end_str}"
+            f"&details={quote_plus(self.description)}"
+            f"&ctz=Asia/Kolkata"
+        )
     
 class LifePrincipleTopic(models.Model):
     topic = models.CharField(max_length=200, null=True, blank=True)

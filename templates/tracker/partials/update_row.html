@@ -72,6 +72,13 @@
                 Edit
             </a>
 
+            <a href="{{ u.get_google_calendar_url }}"
+            target="_blank"
+            class="btn btn-sm"
+            style="border:1px solid #6610f2; color:#6610f2;">
+                Add to Calendar
+            </a>
+
             <button
                 hx-post="{% url 'tracker:update_delete' u.id %}"
                 hx-target="#update-row-{{ u.id }}"

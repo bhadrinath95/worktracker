@@ -187,7 +187,7 @@
     <tr>
       <th>Description</th>
       <th>Document</th>
-      <th>Target / Completed Date</th>
+      <th>Date</th>
       <th>Time</th>
       <th>Status</th>
       <th>Action</th>
@@ -309,6 +309,13 @@
         <a href="{% url 'tracker:update_edit' u.id %}"
           class="btn btn-sm btn-outline-primary">
             Edit
+        </a>
+
+        <a href="{{ u.get_google_calendar_url }}"
+            target="_blank"
+            class="btn btn-sm"
+            style="border:1px solid #6610f2; color:#6610f2;">
+                Add to Calendar
         </a>
 
         <button
