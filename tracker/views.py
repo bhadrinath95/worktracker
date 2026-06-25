@@ -398,6 +398,7 @@ class UpdateListView(LoginRequiredMixin, View):
                 update = Update(
                     task=task,
                     date=None,
+                    name=form.cleaned_data['name'],
                     description=form.cleaned_data['description'],
                     is_check_box=form.cleaned_data['is_check_box'],
                     status=form.cleaned_data['status'],
@@ -423,6 +424,7 @@ class UpdateListView(LoginRequiredMixin, View):
             for date in dates:
                 update = Update(
                     task=task,
+                    name=form.cleaned_data['name'],
                     date=date,
                     start_time = form.cleaned_data['start_time'],
                     end_time = form.cleaned_data['end_time'],
