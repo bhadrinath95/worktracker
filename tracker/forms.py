@@ -47,8 +47,9 @@ class UpdateForm(forms.ModelForm):
 
     class Meta:
         model = Update
-        fields = ['template', 'date', 'start_time',  'end_time', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder', 'auto_reminder_handle']
+        fields = ['template', 'name', 'date', 'start_time',  'end_time', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder', 'auto_reminder_handle']
         widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'end_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
@@ -81,8 +82,9 @@ class MultipleUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Update
-        fields = ['template', 'dates', 'start_time', 'end_time', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder', 'auto_reminder_handle']
+        fields = ['template', 'name', 'dates', 'start_time', 'end_time', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder', 'auto_reminder_handle']
         widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
             'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'end_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),

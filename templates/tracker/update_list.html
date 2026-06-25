@@ -104,6 +104,11 @@
   {% csrf_token %}
 
   <div class="mb-3">
+    {{ form.name.label_tag }}
+    {{ form.name }}
+  </div>
+
+  <div class="mb-3">
     <label class="form-label">Dates</label>
     <input type="date" id="date-picker" class="form-control">
     {{ form.dates }}   <!-- ONLY ONCE -->
@@ -222,7 +227,7 @@
     <tbody>
       {% for u in completed_checkbox_updates %}
       <tr>
-      <td>{{ u.description|linebreaks }}</td>
+      {% if u.name %}<td><b><u>{{ u.name }}</u></b><br />{% endif %}{{ u.description|linebreaks }}</td>
       <td>
       {% if u.documents.exists %}
           <div class="mt-2 d-flex flex-wrap gap-2">
@@ -329,6 +334,7 @@
     </button>
       </div>
       <br>
+      {% if u.name %}<td><b><u>{{ u.name }}</u></b><br />{% endif %}
       {{ u.description|linebreaks }}
       {% if u.status == 'Completed' %}
         <p class="text-success fw-bold">— {{ u.status }}</p>

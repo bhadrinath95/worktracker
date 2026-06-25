@@ -1,5 +1,5 @@
 <tr id="update-row-{{ u.id }}">
-    <td>{{ u.description|linebreaks }}</td>
+    <td>{% if u.name %}<td><b><u>{{ u.name }}</u></b><br />{% endif %}{{ u.description|linebreaks }}</td>
 
     <td>
         {% if u.documents.exists %}

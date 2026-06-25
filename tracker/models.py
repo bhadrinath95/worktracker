@@ -87,6 +87,7 @@ class Update(models.Model):
         ('Monthly', 'Monthly'),
         ('Yearly', 'Yearly'),
     ]
+    name = models.CharField(max_length=200, null=True, blank=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='updates')
     date = models.DateField(default=timezone.localtime(), null=True, blank=True)
     start_time = models.TimeField(null=True, blank=True)
@@ -121,9 +122,9 @@ class Update(models.Model):
 
         return (
             "https://calendar.google.com/calendar/u/0/r/eventedit"
-            f"?text={quote_plus(self.task.name)}"
+            f"?text={quote_plus(self.name or self.task.name or '')}"
             f"&dates={start_str}/{end_str}"
-            f"&details={quote_plus(self.description)}"
+            f"&details={quote_plus(self.description or '')}"
             f"&ctz=Asia/Kolkata"
         )
     
