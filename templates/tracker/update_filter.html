@@ -79,7 +79,8 @@
                     onclick="window.location.href=`{% url 'tracker:update_list' update.task.id %}`"
                     style="cursor:pointer;"
                 >
-                    <td style="white-space: pre-line; word-break: break-word;">{{ update.description|linebreaks }}</td>
+                    <td style="white-space: pre-line; word-break: break-word;">
+                        {% if update.name %}<b><u>{{ update.name }}</u></b><br />{% endif %}{{ update.description|linebreaks }}</td>
                     <td>{{ update.task.name }}</td>
                     <td>{{ update.date }}</td>
                     <td>
