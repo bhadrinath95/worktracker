@@ -193,6 +193,7 @@ class TaskFromTemplateCreateView(LoginRequiredMixin, FormView):
             Update.objects.bulk_create([
                 Update(
                     task=new_task,
+                    name=upd.name,
                     description=upd.description,
                     date=upd.date,
                     is_check_box=upd.is_check_box,
