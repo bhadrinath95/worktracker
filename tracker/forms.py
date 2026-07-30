@@ -48,6 +48,7 @@ class UpdateForm(forms.ModelForm):
     class Meta:
         model = Update
         fields = ['template', 'name', 'date', 'start_time',  'end_time', 'description', 'is_check_box', 'status', 'reminder_type', 'date_to_remind', 'can_store_reminder', 'auto_reminder_handle']
+
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -59,7 +60,7 @@ class UpdateForm(forms.ModelForm):
             'date_to_remind': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Days to remind',
-                'min': 1,
+                'min': 0,
                 'max': 31,
                 'step': 1
             }),
