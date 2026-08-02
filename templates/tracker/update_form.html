@@ -21,6 +21,22 @@
     </div>
   </details>
 
+  <details class="mb-3">
+    <summary class="text-primary">
+        <i class="bi bi-clipboard-fill"></i> Symbols Helper
+    </summary>
+
+    <div class="mt-2 d-flex flex-wrap gap-2">
+        {% for symbol in symbols %}
+            <button type="button" class="symbol-btn">
+              {{ symbol.symbol }}
+          </button>
+        {% endfor %}
+    </div>
+
+    <small id="copy-message" class="text-success"></small>
+  </details>
+
 
   <h4>Edit Documents</h4>
   <div id="formset">
@@ -42,4 +58,5 @@
 {% block static %}
 <script src="{% static 'js/update.js' %}"></script>
 <script src="{% static 'js/template.js' %}"></script>
+<script src="{% static 'js/symbols.js' %}"></script>
 {% endblock %}

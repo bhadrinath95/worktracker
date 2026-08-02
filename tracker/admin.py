@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Task, Update, TaskType, LifePrincipleTopic, LifePrinciple, Document, UpdateTemplate, FileType, Prayer, Notification
+from .models import Task, Update, TaskType, LifePrincipleTopic, LifePrinciple, Document, UpdateTemplate, FileType, Prayer, Notification, Symbol
 
 
 class LifePrincipleTopicAdmin(admin.ModelAdmin):
@@ -39,3 +39,4 @@ admin.site.register(Document, DocumentAdmin)
 admin.site.register(UpdateTemplate)
 admin.site.register(Prayer)
 admin.site.register(Notification, NotificationAdmin)
+admin.site.register(Symbol)

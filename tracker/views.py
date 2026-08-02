@@ -6,7 +6,7 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy, reverse
 from django.db.models import F, Q
-from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic, Prayer, Todo
+from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic, Prayer, Todo, Symbol
 from .forms import TaskForm, UpdateForm, DocumentFormSet, TaskFromTemplateForm, MultipleUpdateForm, TodoForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -374,6 +374,8 @@ class UpdateListView(LoginRequiredMixin, View):
         form = MultipleUpdateForm()
         formset = DocumentFormSet(queryset=Document.objects.none())
 
+        symbols = Symbol.objects.filter(is_active=True)
+
         return render(request, 'tracker/update_list.html', {
             'task': task,
             'checkbox_updates': checkbox_updates,
@@ -383,6 +385,7 @@ class UpdateListView(LoginRequiredMixin, View):
             'normal_updates_count': normal_updates_count,
             'form': form,
             'formset': formset,
+            'symbols': symbols
         })
 
     def post(self, request, task_id):
@@ -448,11 +451,14 @@ class UpdateListView(LoginRequiredMixin, View):
             return redirect('tracker:update_list', task_id=task_id)
 
         updates = task.updates.order_by('-date')
+        symbols = Symbol.objects.filter(is_active=True)
+
         return render(request, 'tracker/update_list.html', {
             'task': task,
             'updates': updates,
             'form': form,
             'formset': formset,
+            'symbols': symbols
         })
     
     def dispatch(self, request, *args, **kwargs):
@@ -602,10 +608,13 @@ class UpdateEditView(LoginRequiredMixin, View):
         update = get_object_or_404(Update, pk=pk)
         form = UpdateForm(instance=update)
         formset = DocumentFormSet(queryset=update.documents.all())
+        symbols = Symbol.objects.filter(is_active=True)
+        
         return render(request, 'tracker/update_form.html', {
             'form': form,
             'formset': formset,
             'update': update,
+            'symbols': symbols
         })
 
     def post(self, request, pk):
@@ -625,10 +634,13 @@ class UpdateEditView(LoginRequiredMixin, View):
                         doc.save()
             return redirect('tracker:update_list', task_id=update.task.id)
 
+        symbols = Symbol.objects.filter(is_active=True)
+        
         return render(request, 'tracker/update_form.html', {
             'form': form,
             'formset': formset,
             'update': update,
+            'symbols': symbols
         })
 
 
