@@ -1,5 +1,7 @@
+{% load markdown_extras %}
+
 <tr id="update-row-{{ u.id }}">
-    <td>{% if u.name %}<b><u>{{ u.name }}</u></b><br />{% endif %}{{ u.description|linebreaks }}</td>
+    <td>{% if u.name %}<b><u>{{ u.name }}</u></b><br />{% endif %}{{ u.description|markdown }}</td>
 
     <td>
         {% if u.documents.exists %}

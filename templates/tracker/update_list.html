@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load markdown_extras %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/update.css' %}">
+{% endblock %}
+
 {% block content %}
 <h1>{{ task.name }}</h1>
 
@@ -257,7 +263,7 @@
     <tbody>
       {% for u in completed_checkbox_updates %}
       <tr>
-        <td>{% if u.name %}<b><u>{{ u.name }}</u></b><br />{% endif %}{{ u.description|linebreaks }}</td>
+        <td>{% if u.name %}<b><u>{{ u.name }}</u></b><br />{% endif %}{{ u.description|markdown }}</td>
         <td>
           {% if u.documents.exists %}
             <div class="mt-2 d-flex flex-wrap gap-2">
@@ -369,7 +375,7 @@
       </div>
       <br>
       {% if u.name %}<td><b><u>{{ u.name }}</u></b><br />{% endif %}
-      {{ u.description|linebreaks }}
+      {{ u.description|markdown }}
       {% if u.status == 'Completed' %}
         <p class="text-success fw-bold">— {{ u.status }}</p>
       {% elif u.status == 'InProgress' %}
