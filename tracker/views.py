@@ -6,7 +6,7 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy, reverse
 from django.db.models import F, Q
-from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic, Prayer, Todo, Symbol
+from .models import Task, Update, TaskType, LifePrinciple, Document, LifePrincipleTopic, Prayer, Todo, Symbol, Note
 from .forms import TaskForm, UpdateForm, DocumentFormSet, TaskFromTemplateForm, MultipleUpdateForm, TodoForm
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -20,6 +20,7 @@ from django.db import transaction
 from copy import copy
 from django.utils.dateparse import parse_date
 from django.http import HttpResponse
+import markdown
 
 
 # -------------------------
@@ -733,3 +734,45 @@ def todo_toggle(request, pk):
     todo.is_completed = not todo.is_completed
     todo.save()
     return redirect('tracker:todo_list')
+
+@login_required(login_url='login')
+def note_view(request):
+    note = Note.objects.first()
+
+    if not note:
+        note = Note.objects.create()
+
+    rendered_content = markdown.markdown(
+        note.content,
+        extensions=[
+            "fenced_code",
+            "tables",
+        ],
+    )
+
+    return render(
+        request,
+        "tracker/note.html",
+        {
+            "note": note,
+            "rendered_content": rendered_content,
+        },
+    )
+
+
+@login_required(login_url='login')
+def save_note(request):
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    note = Note.objects.first()
+
+    if not note:
+        note = Note.objects.create()
+
+    note.content = request.POST.get("content", "")
+    note.save()
+
+    return HttpResponse(
+        '<span class="text-success">✓ Saved</span>'
+    )

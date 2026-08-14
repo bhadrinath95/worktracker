@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/note.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="note-page">
+
+    <!-- Header -->
+    <div class="note-header">
+        <div class="note-title">
+            <i class="bi bi-journal-text"></i>
+            My Note
+        </div>
+        <div id="save-status" class="save-status text-success">
+            <i class="bi bi-check-circle"></i>
+            Saved
+        </div>
+    </div>
+
+<!-- Editor / Preview -->
+<div class="row g-3">
+
+    <!-- Markdown Editor -->
+    <div class="col-lg-6">
+        <div class="editor-label">
+            <i class="bi bi-pencil"></i>
+            Markdown
+        </div>
+        <form id="note-form">
+            {% csrf_token %}
+            <textarea
+                id="note-content"
+                name="content"
+                class="note-editor"
+                hx-post="{% url 'tracker:save_note' %}"
+                hx-trigger="keyup changed delay:800ms"
+                hx-target="#save-status"
+                hx-swap="innerHTML"
+                hx-on::before-request="document.getElementById('save-status').innerHTML = '<span class=\'text-warning\'><i class=\'bi bi-cloud-arrow-up\'></i> Saving...</span>';"
+                placeholder="# My Note
+```
+
+Write your note here...
+
+## Example
+
+You can use **Markdown**.
+
+* Item 1
+* Item 2
+
+> Important note
+
+````python
+print('Hello World')
+```"
+                >{{ note.content }}</textarea>
+            </form>
+        </div>
+
+        <!-- Markdown Preview -->
+        <div class="col-lg-6">
+            <div class="preview-label">
+                <i class="bi bi-eye"></i>
+                Preview
+            </div>
+            <div
+                id="markdown-preview"
+                class="note-preview"
+            ></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block static %}
+
+<!-- Marked.js -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<!-- Note JavaScript -->
+<script src="{% static 'js/note.js' %}"></script>
+
+{% endblock %}

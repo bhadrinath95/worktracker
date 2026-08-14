@@ -268,3 +268,10 @@ class Symbol(models.Model):
 
     def __str__(self):
         return self.symbol
+
+class Note(models.Model):
+    content = models.TextField(blank=True, default="")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "My Note"

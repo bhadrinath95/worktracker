@@ -1,0 +1,196 @@
+.note-page {
+    margin-top: 20px;
+}
+
+.note-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.note-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.save-status {
+    font-size: 14px;
+    min-width: 100px;
+    text-align: right;
+}
+
+.editor-label,
+.preview-label {
+    padding: 9px 14px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.editor-label {
+    border-radius: 8px 8px 0 0;
+}
+
+.preview-label {
+    border-radius: 8px 8px 0 0;
+}
+
+.note-editor {
+    display: block;
+    width: 100%;
+    height: 70vh;
+    min-height: 500px;
+    padding: 18px;
+    resize: none;
+
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+
+    outline: none;
+
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 15px;
+    line-height: 1.7;
+
+    background: #fff;
+}
+
+.note-editor:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
+}
+
+.note-preview {
+    height: 70vh;
+    min-height: 500px;
+    padding: 20px;
+
+    overflow-y: auto;
+
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+
+    background: #fff;
+}
+
+/* Markdown styling */
+
+.note-preview h1 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.note-preview h2 {
+    font-size: 1.6rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.note-preview h3 {
+    font-size: 1.3rem;
+    margin-top: 1.4rem;
+    margin-bottom: .8rem;
+}
+
+.note-preview p {
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.note-preview ul,
+.note-preview ol {
+    padding-left: 25px;
+    margin-bottom: 1rem;
+}
+
+.note-preview li {
+    margin-bottom: 5px;
+}
+
+.note-preview blockquote {
+    margin: 1rem 0;
+    padding: 10px 15px;
+    border-left: 4px solid #adb5bd;
+    background: #f8f9fa;
+    color: #6c757d;
+}
+
+.note-preview code {
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: #f1f3f5;
+    font-family: Consolas, Monaco, monospace;
+}
+
+.note-preview pre {
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 6px;
+    background: #f8f9fa;
+    overflow-x: auto;
+}
+
+.note-preview pre code {
+    padding: 0;
+    background: transparent;
+}
+
+.note-preview img {
+    max-width: 100%;
+    height: auto;
+}
+
+.note-preview a {
+    text-decoration: none;
+}
+
+.note-preview a:hover {
+    text-decoration: underline;
+}
+
+.note-preview hr {
+    margin: 1.5rem 0;
+    border: 0;
+    border-top: 1px solid #dee2e6;
+}
+
+.note-preview table {
+    width: 100%;
+    margin: 1rem 0;
+    border-collapse: collapse;
+}
+
+.note-preview th,
+.note-preview td {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+}
+
+.note-preview th {
+    background: #f8f9fa;
+        font-weight: 600;
+    }
+
+    /* Mobile */
+
+    @media (max-width: 991px) {
+
+        .note-editor,
+        .note-preview {
+            height: 50vh;
+            min-height: 350px;
+        }
+
+        .note-header {
+            margin-bottom: 12px;
+        }
+
+        .note-title {
+            font-size: 1.3rem;
+        }
+    }

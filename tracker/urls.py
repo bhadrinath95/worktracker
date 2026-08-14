@@ -32,4 +32,7 @@ urlpatterns = [
     path('todo/edit/<int:pk>/', views.todo_edit, name='todo_edit'),
     path('todo/delete/<int:pk>/', views.todo_delete, name='todo_delete'),
     path('todo/<int:pk>/toggle/', views.todo_toggle, name='todo_toggle'),
+
+    path("note/", views.note_view, name="note"),
+    path("note/save/", views.save_note, name="save_note"),
 ]
