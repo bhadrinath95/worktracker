@@ -1,0 +1,262 @@
+.music-page {
+    padding-top: 35px;
+    padding-bottom: 130px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.music-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.music-title {
+    font-weight: 700;
+    margin: 0;
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+.filter-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+}
+
+.filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   MUSIC CARD
+========================================================= */
+
+.music-card {
+    border: none;
+    border-radius: 15px;
+    margin-bottom: 12px;
+
+    box-shadow:
+        0 2px 10px rgba(0, 0, 0, 0.08);
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.music-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.12);
+}
+
+
+.music-icon {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #212529;
+    color: white;
+
+    font-size: 22px;
+
+    flex-shrink: 0;
+}
+
+
+.song-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 3px;
+}
+
+
+.song-artist {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+
+.song-category {
+    font-size: 12px;
+    border-radius: 20px;
+}
+
+
+/* =========================================================
+   PLAY BUTTON
+========================================================= */
+
+.play-button {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* =========================================================
+   ACTIVE SONG
+========================================================= */
+
+.active-song {
+    border: 2px solid #212529 !important;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+    text-align: center;
+    padding: 70px 20px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+
+/* =========================================================
+   MUSIC PLAYER
+========================================================= */
+
+.music-player {
+    position: fixed;
+
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    background: #212529;
+    color: white;
+
+    z-index: 1050;
+
+    padding: 12px 20px;
+
+    box-shadow:
+        0 -4px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+.player-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+
+.player-song {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+
+.player-artist {
+    font-size: 12px;
+    color: #adb5bd;
+}
+
+
+.player-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+
+.player-btn {
+    border: none;
+    background: transparent;
+    color: white;
+
+    font-size: 20px;
+}
+
+
+.player-main-btn {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+    border: none;
+
+    font-size: 18px;
+}
+
+
+.player-progress {
+    width: 100%;
+}
+
+
+.player-time {
+    font-size: 11px;
+    color: #adb5bd;
+}
+
+
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+
+#volume-control {
+    max-width: 120px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .music-page {
+        padding-top: 20px;
+    }
+
+    .player-volume {
+        display: none;
+    }
+
+    .music-player {
+        padding: 10px;
+    }
+
+}

@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h2>
+                    <i class="bi bi-music-note-beamed"></i>
+                    {{ title }}
+                </h2>
+
+                <a href="{% url 'music:music_list' %}"
+                   class="btn btn-outline-secondary">
+
+                    <i class="bi bi-arrow-left"></i>
+                    Back
+
+                </a>
+
+            </div>
+
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body p-4">
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+
+                            <div class="alert alert-danger">
+
+                                {{ form.non_field_errors }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- Title -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Song Title
+
+                            </label>
+
+                            {{ form.title }}
+
+                            {% for error in form.title.errors %}
+
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Artist -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Artists
+                            </label>
+
+                            {{ form.artists }}
+
+                            {% for error in form.artists.errors %}
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Category -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Category
+
+                            </label>
+
+                            {{ form.category }}
+
+                            {% for error in form.category.errors %}
+
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- GitHub URL -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+
+                                GitHub Audio URL
+
+                            </label>
+
+                            {{ form.fileurl }}
+
+
+                            {% for error in form.fileurl.errors %}
+
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Description -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+
+                                Description
+
+                            </label>
+
+                            {{ form.description }}
+
+                            {% for error in form.description.errors %}
+
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="d-flex justify-content-end gap-2">
+
+                            <a href="{% url 'music:music_list' %}"
+                               class="btn btn-outline-secondary">
+
+                                Cancel
+
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-dark">
+
+                                <i class="bi bi-check-lg"></i>
+
+                                Save Song
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block static %}
+
+<script>
+$(document).ready(function () {
+
+    $(".music-artists").select2({
+        placeholder: "Select artists",
+        allowClear: true,
+        width: "100%"
+    });
+
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,530 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/music.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="music-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="music-header">
+
+        <div>
+            <h2 class="music-title">
+                🎵 Music Library
+            </h2>
+
+            <small class="text-muted">
+                {{ songs|length }}
+                song{{ songs|length|pluralize }}
+            </small>
+        </div>
+
+
+        <div class="d-flex gap-2 flex-wrap">
+
+            <a href="{% url 'music:artist_list' %}"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-mic"></i>
+                Artists
+
+            </a>
+
+
+            <a href="{% url 'music:category_list' %}"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-tags"></i>
+                Categories
+
+            </a>
+
+
+            <a href="{% url 'music:music_create' %}"
+               class="btn btn-dark">
+
+                <i class="bi bi-plus-lg"></i>
+                Add Song
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTERS
+    ====================================================== -->
+
+    <div class="card filter-card">
+
+        <div class="card-body">
+
+            <form method="GET"
+                  action="{% url 'music:music_list' %}">
+
+                <div class="row g-3 align-items-end">
+
+
+                    <!-- =================================================
+                         ARTIST FILTER
+                         Single artist only
+                    ================================================== -->
+
+                    <div class="col-md-5">
+
+                        <label for="artist-filter"
+                               class="filter-label">
+
+                            Artist
+
+                        </label>
+
+
+                        <select id="artist-filter"
+                                name="artist"
+                                class="form-select">
+
+                            <option value="">
+                                Everything
+                            </option>
+
+
+                            {% for artist in artists %}
+
+                                <option value="{{ artist.id }}"
+                                    {% if selected_artist == artist.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ artist.name }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         CATEGORY FILTER
+                    ================================================== -->
+
+                    <div class="col-md-5">
+
+                        <label for="category-filter"
+                               class="filter-label">
+
+                            Category
+
+                        </label>
+
+
+                        <select id="category-filter"
+                                name="category"
+                                class="form-select">
+
+                            <option value="">
+                                Everything
+                            </option>
+
+
+                            {% for category in categories %}
+
+                                <option value="{{ category.id }}"
+                                    {% if selected_category == category.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ category.name }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         FILTER BUTTON
+                    ================================================== -->
+
+                    <div class="col-md-2 d-grid">
+
+                        <button type="submit"
+                                class="btn btn-dark">
+
+                            <i class="bi bi-funnel"></i>
+                            Filter
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SONG LIST
+    ====================================================== -->
+
+    {% if songs %}
+
+        <div id="song-list">
+
+            {% for song in songs %}
+
+                <div class="card music-card song-item"
+
+                     data-song-id="{{ song.id }}"
+
+                     data-title="{{ song.title }}"
+
+                     data-artists="{% for artist in song.artists.all %}{{ artist.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"
+
+                     data-category="{{ song.category.name }}"
+
+                     data-url="{{ song.github_url }}">
+
+
+                    <div class="card-body">
+
+                        <div class="d-flex align-items-center gap-3">
+
+
+                            <!-- =================================================
+                                 MUSIC ICON
+                            ================================================== -->
+
+                            <div class="music-icon">
+
+                                <i class="bi bi-music-note-beamed"></i>
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 SONG INFORMATION
+                            ================================================== -->
+
+                            <div class="flex-grow-1">
+
+
+                                <!-- Song title -->
+
+                                <div class="song-title">
+
+                                    {{ song.title }}
+
+                                </div>
+
+
+                                <!-- Multiple artists -->
+
+                                <div class="song-artist">
+
+                                    {% for artist in song.artists.all %}
+
+                                        {{ artist.name }}
+
+                                        {% if not forloop.last %}
+                                            ,
+                                        {% endif %}
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <!-- Category -->
+
+                                <span class="badge text-bg-secondary song-category">
+
+                                    {{ song.category.name }}
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- =================================================
+                                 ACTIONS
+                            ================================================== -->
+
+                            <div class="d-flex align-items-center gap-2">
+
+
+                                <!-- Play -->
+
+                                <button type="button"
+                                        class="btn btn-dark play-button play-song"
+                                        aria-label="Play {{ song.title }}">
+
+                                    <i class="bi bi-play-fill"></i>
+
+                                </button>
+
+
+                                <!-- Edit -->
+
+                                <a href="{% url 'music:music_update' song.id %}"
+                                   class="btn btn-outline-secondary"
+                                   aria-label="Edit {{ song.title }}">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </a>
+
+
+                                <!-- Delete -->
+
+                                <a href="{% url 'music:music_delete' song.id %}"
+                                   class="btn btn-outline-danger"
+                                   aria-label="Delete {{ song.title }}">
+
+                                    <i class="bi bi-trash"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+
+        <!-- =====================================================
+             EMPTY STATE
+        ====================================================== -->
+
+        <div class="card music-card">
+
+            <div class="empty-state">
+
+                <i class="bi bi-music-note-list"></i>
+
+
+                <h4>
+                    No songs found
+                </h4>
+
+
+                <p>
+                    There are no songs matching the selected filters.
+                </p>
+
+
+                <a href="{% url 'music:music_list' %}"
+                   class="btn btn-outline-secondary me-2">
+
+                    Clear Filters
+
+                </a>
+
+
+                <a href="{% url 'music:music_create' %}"
+                   class="btn btn-dark">
+
+                    <i class="bi bi-plus-lg"></i>
+                    Add Song
+
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =========================================================
+     MUSIC PLAYER
+========================================================== -->
+
+<div class="music-player">
+
+    <div class="player-container">
+
+        <div class="row align-items-center g-2">
+
+
+            <!-- =================================================
+                 CURRENT SONG
+            ================================================== -->
+
+            <div class="col-md-3">
+
+                <div id="player-title"
+                     class="player-song">
+
+                    Nothing playing
+
+                </div>
+
+
+                <div id="player-artist"
+                     class="player-artist">
+
+                    Select a song to play
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PLAYER CONTROLS
+            ================================================== -->
+
+            <div class="col-md-6">
+
+                <div class="player-controls">
+
+
+                    <!-- Previous -->
+
+                    <button type="button"
+                            id="previous-button"
+                            class="player-btn"
+                            aria-label="Previous song">
+
+                        <i class="bi bi-skip-start-fill"></i>
+
+                    </button>
+
+
+                    <!-- Play / Pause -->
+
+                    <button type="button"
+                            id="player-play-button"
+                            class="player-main-btn"
+                            aria-label="Play or pause">
+
+                        <i class="bi bi-play-fill"></i>
+
+                    </button>
+
+
+                    <!-- Next -->
+
+                    <button type="button"
+                            id="next-button"
+                            class="player-btn"
+                            aria-label="Next song">
+
+                        <i class="bi bi-skip-end-fill"></i>
+
+                    </button>
+
+                </div>
+
+
+                <!-- Progress -->
+
+                <div class="d-flex align-items-center gap-2">
+
+
+                    <span id="current-time"
+                          class="player-time">
+
+                        0:00
+
+                    </span>
+
+
+                    <input type="range"
+                           id="progress-bar"
+                           class="form-range player-progress"
+                           value="0"
+                           min="0"
+                           max="100">
+
+
+                    <span id="duration"
+                          class="player-time">
+
+                        0:00
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 VOLUME
+            ================================================== -->
+
+            <div class="col-md-3 player-volume">
+
+                <div class="volume-container justify-content-end">
+
+                    <i class="bi bi-volume-up"></i>
+
+
+                    <input type="range"
+                           id="volume-control"
+                           class="form-range"
+                           min="0"
+                           max="1"
+                           step="0.01"
+                           value="1">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     AUDIO ELEMENT
+========================================================== -->
+
+<audio id="audio-player"></audio>
+
+
+{% endblock %}
+
+
+{% block static %}
+
+<script src="{% static 'js/music.js' %}"></script>
+
+{% endblock %}

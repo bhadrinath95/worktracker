@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>
+                <i class="bi bi-tags"></i>
+                Categories
+            </h2>
+
+            <small class="text-muted">
+
+                {{ categories|length }}
+                categor{{ categories|length|pluralize:"y,ies" }}
+
+            </small>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a href="{% url 'music:music_list' %}"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-music-note-beamed"></i>
+                Music
+
+            </a>
+
+            <a href="{% url 'music:category_create' %}"
+               class="btn btn-dark">
+
+                <i class="bi bi-plus-lg"></i>
+                Add Category
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {% if categories %}
+
+        <div class="row g-3">
+
+            {% for category in categories %}
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                <div class="rounded-circle bg-dark text-white
+                                            d-flex align-items-center justify-content-center"
+                                     style="width:50px;height:50px;">
+
+                                    <i class="bi bi-tag"></i>
+
+                                </div>
+
+                                <div class="flex-grow-1">
+
+                                    <h5 class="mb-1">
+
+                                        {{ category.name }}
+
+                                    </h5>
+
+                                    <small class="text-muted">
+
+                                        {{ category.songs.count }}
+                                        song{{ category.songs.count|pluralize }}
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            {% if category.description %}
+
+                                <p class="text-muted mt-3">
+
+                                    {{ category.description }}
+
+                                </p>
+
+                            {% endif %}
+
+
+                            <div class="d-flex gap-2 mt-3">
+
+                                <a href="{% url 'music:category_update' category.id %}"
+                                   class="btn btn-sm btn-outline-secondary">
+
+                                    <i class="bi bi-pencil"></i>
+                                    Edit
+
+                                </a>
+
+                                <a href="{% url 'music:category_delete' category.id %}"
+                                   class="btn btn-sm btn-outline-danger">
+
+                                    <i class="bi bi-trash"></i>
+                                    Delete
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="text-center py-5">
+
+            <i class="bi bi-tags"
+               style="font-size:60px;"></i>
+
+            <h4 class="mt-3">
+                No categories yet
+            </h4>
+
+            <a href="{% url 'music:category_create' %}"
+               class="btn btn-dark">
+
+                Add Category
+
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
