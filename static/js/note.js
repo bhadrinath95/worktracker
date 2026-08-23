@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 <meta charset="UTF-8">
 
-                <title>My Note</title>
+                <title>BhadriNote</title>
 
                 <style>
 
