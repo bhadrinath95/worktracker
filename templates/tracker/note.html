@@ -64,9 +64,20 @@ print('Hello World')
 
         <!-- Markdown Preview -->
         <div class="col-lg-6">
-            <div class="preview-label">
-                <i class="bi bi-eye"></i>
-                Preview
+            <div class="preview-label d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-eye"></i>
+                    Preview
+                </span>
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    onclick="exportNotePDF()"
+                >
+                    <i class="bi bi-file-earmark-pdf"></i>
+                    Export PDF
+                </button>
             </div>
             <div
                 id="markdown-preview"
