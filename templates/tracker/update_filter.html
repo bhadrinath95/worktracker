@@ -1,10 +1,11 @@
 {% extends "base.html" %}
-{% block content %}
-
+{% load static %}
+{% load markdown_extras %}
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/update.css' %}">
 {% endblock %}
 
+{% block content %}
 <div class="container mt-4">
     <h3 class="mb-3">Update List</h3>
 
@@ -85,7 +86,7 @@
                     style="cursor:pointer;"
                 >
                     <td style="white-space: pre-line; word-break: break-word;">
-                        {% if update.name %}<b><u>{{ update.name }}</u></b><br />{% endif %}{{ update.description|markdown|linebreaks }}</td>
+                        {% if update.name %}<b><u>{{ update.name }}</u></b><br />{% endif %}{{ update.description|markdown }}</td>
                     <td>{{ update.task.name }}</td>
                     <td>{{ update.date }}</td>
                     <td>
