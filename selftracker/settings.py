@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,6 +45,7 @@ INSTALLED_APPS = [
     'statement',
     'blog',
     'music',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -138,6 +142,23 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = 'task_list'   # Redirect here after login
 LOGOUT_REDIRECT_URL = '/accounts/login' 
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Local development
+local_env = BASE_DIR / ".env"
+
+# PythonAnywhere
+pythonanywhere_env = Path("/home/bhadritracker/config/.env")
+
+if pythonanywhere_env.exists():
+    env_file = pythonanywhere_env
+else:
+    env_file = local_env
+
+load_dotenv(env_file)
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
