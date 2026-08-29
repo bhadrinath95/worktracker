@@ -23,6 +23,6 @@ urlpatterns = [
     path('statements/', include(('statement.urls', 'statements'), namespace='statements')),
     path('blogs/', include(('blog.urls', 'blogs'), namespace='blogs')),
     path('music/', include(('music.urls', 'music'), namespace='music')),
-    path('chat/', include(('chat.urls', 'chat'), namespace='chat')),
+    # path('chat/', include(('chat.urls', 'chat'), namespace='chat')),
     path('', include(('tracker.urls', 'tracker'), namespace='tracker')),
 ]

@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'statement',
     'blog',
     'music',
-    'chat',
+    # 'chat',
 ]
 
 MIDDLEWARE = [

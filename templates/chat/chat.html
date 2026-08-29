@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% load markdown_extras %}
+
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 {% endblock %}
@@ -219,7 +221,7 @@
 
                         <div class="message-bubble">
 
-                            {{ message.content|linebreaksbr }}
+                            {{ message.content|markdown }}
 
                         </div>
 
