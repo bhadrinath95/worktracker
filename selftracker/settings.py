@@ -160,6 +160,8 @@ env = dotenv_values(env_file)
 
 GEMINI_API_KEY = env.get("GEMINI_API_KEY")
 GROQ_API_KEY = env.get("GROQ_API_KEY")
+GROQ_MODEL = "openai/gpt-oss-20b"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

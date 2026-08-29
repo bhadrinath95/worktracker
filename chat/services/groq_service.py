@@ -11,7 +11,7 @@ AI_NAME = "Luna"
 
 GROQ_API_KEY = settings.GROQ_API_KEY
 
-GROQ_MODEL = "openai/gpt-oss-20b"
+GROQ_MODEL = settings.GROQ_MODEL
 
 
 PROMPT_FILE = Path(__file__).resolve().parent.parent / "prompts" / "luna_system_prompt.txt"
