@@ -612,7 +612,7 @@ document.addEventListener("DOMContentLoaded", function () {
             * Display only the actual message.
             */
             bubble.innerHTML =
-                formatMessage(lunaResponse);
+                data.html || "Luna did not return a response.";
 
 
             scrollToBottom();

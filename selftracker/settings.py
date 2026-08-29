@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from pathlib import Path
-from dotenv import load_dotenv
+from dotenv import dotenv_values, load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'statement',
     'blog',
     'music',
-    # 'chat',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -146,7 +146,7 @@ LOGOUT_REDIRECT_URL = '/accounts/login'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Local development
-local_env = BASE_DIR / ".env"
+local_env = BASE_DIR.parent / "config" / ".env"
 
 # PythonAnywhere
 pythonanywhere_env = Path("/home/bhadritracker/config/.env")
@@ -156,10 +156,10 @@ if pythonanywhere_env.exists():
 else:
     env_file = local_env
 
-load_dotenv(env_file)
+env = dotenv_values(env_file)
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
+GEMINI_API_KEY = env.get("GEMINI_API_KEY")
+GROQ_API_KEY = env.get("GROQ_API_KEY")
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

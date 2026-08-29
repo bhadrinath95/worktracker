@@ -2,3 +2,5 @@ django
 python-dateutil
 Markdown 
 bleach
+python-dotenv 
+groq

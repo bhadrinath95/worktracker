@@ -1,12 +1,13 @@
 from django.contrib import messages as django_messages
 from django.core.serializers import python
-from django.http import JsonResponse, StreamingHttpResponse
+from django.http import JsonResponse, StreamingHttpResponse, request
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .services.gemini_service import gemini_service, SYSTEM_PROMPT
+from .services.groq_service import AI_NAME, groq_service, SYSTEM_PROMPT_TEMPLATE
 from .models import Conversation, Message
 from django.contrib.auth.decorators import login_required
+from tracker.templatetags.markdown_extras import markdown_filter
 
 
 @login_required
@@ -108,6 +109,11 @@ def chat_message(request, slug):
     history to Gemini and return the assistant response.
     """
 
+    user_name = request.user.get_full_name().strip()
+
+    if not user_name:
+        user_name = request.user.username
+        
     conversation = get_object_or_404(
         Conversation,
         slug=slug,
@@ -133,14 +139,14 @@ def chat_message(request, slug):
     # 2. Build conversation history
     db_messages = conversation.messages.all()
 
-    gemini_messages = [
+    groq_messages = [
         {
             "role": "system",
-            "content": SYSTEM_PROMPT,
+            "content": SYSTEM_PROMPT_TEMPLATE.format(AI_NAME=AI_NAME, USER_NAME=user_name),
         }
     ]
 
-    gemini_messages.extend(
+    groq_messages.extend(
         {
             "role": message.role,
             "content": message.content,
@@ -150,9 +156,10 @@ def chat_message(request, slug):
 
     try:
 
-        # 3. Generate response using Gemini
-        assistant_content = gemini_service.generate(
-            gemini_messages
+        # 3. Generate response using Groq
+        assistant_content = groq_service.generate(
+            groq_messages,
+            user_name=user_name
         )
 
         # 4. Save assistant response
@@ -169,13 +176,14 @@ def chat_message(request, slug):
         # 5. Return response
         return JsonResponse(
             {
-                "response": assistant_content
+                "response": assistant_content,
+                "html": markdown_filter(assistant_content),
             }
         )
 
     except Exception as exc:
 
-        print(f"Gemini generation error: {exc}")
+        print(f"Groq generation error: {exc}")
 
         return JsonResponse(
             {
