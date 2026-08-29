@@ -109,12 +109,18 @@ class GroqService:
                     }
                 )
 
-            response = self.client.chat.completions.create(
-                model=GROQ_MODEL,
-                messages=groq_messages,
-                temperature=0.7,
-                max_tokens=1024
-            )
+            try:
+                response = self.client.chat.completions.create(
+                    model=GROQ_MODEL,
+                    messages=groq_messages,
+                    temperature=0.7,
+                    max_completion_tokens=512,
+                    reasoning_effort="low",
+                )
+
+            except Exception as e:
+                print("GROQ ERROR:", repr(e))
+                raise
 
             if not response.choices:
                 return "Sorry, I couldn't generate a response."
