@@ -4,7 +4,7 @@ from django.http import JsonResponse, StreamingHttpResponse, request
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .services.groq_service import AI_NAME, groq_service, SYSTEM_PROMPT_TEMPLATE
+from .services.groq_service import groq_service
 from .models import Conversation, Message
 from django.contrib.auth.decorators import login_required
 from tracker.templatetags.markdown_extras import markdown_filter
@@ -104,22 +104,21 @@ def conversation_delete(request, slug):
 @require_POST
 @login_required
 def chat_message(request, slug):
-    """
-    Receive a user message, store it, send conversation
-    history to Gemini and return the assistant response.
-    """
 
     user_name = request.user.get_full_name().strip()
 
     if not user_name:
         user_name = request.user.username
-        
+
     conversation = get_object_or_404(
         Conversation,
         slug=slug,
     )
 
-    user_content = request.POST.get("message", "").strip()
+    user_content = request.POST.get(
+        "message",
+        ""
+    ).strip()
 
     if not user_content:
         return JsonResponse(
@@ -139,26 +138,20 @@ def chat_message(request, slug):
     # 2. Build conversation history
     db_messages = conversation.messages.all()
 
-    groq_messages = [
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT_TEMPLATE.format(AI_NAME=AI_NAME, USER_NAME=user_name),
-        }
-    ]
-
-    groq_messages.extend(
+    messages = [
         {
             "role": message.role,
             "content": message.content,
         }
         for message in db_messages
-    )
+    ]
 
     try:
 
         # 3. Generate response using Groq
+        # The service gets the Luna prompt from the database
         assistant_content = groq_service.generate(
-            groq_messages,
+            messages,
             user_name=user_name
         )
 
@@ -183,7 +176,9 @@ def chat_message(request, slug):
 
     except Exception as exc:
 
-        print(f"Groq generation error: {exc}")
+        print(
+            f"Groq generation error: {exc}"
+        )
 
         return JsonResponse(
             {

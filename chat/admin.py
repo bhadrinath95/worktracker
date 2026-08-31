@@ -19,3 +19,27 @@ class MessageAdmin(admin.ModelAdmin):
         "role",
         "created_at",
     )
+
+from django.contrib import admin
+from .models import LunaPrompt
+
+
+@admin.register(LunaPrompt)
+class LunaPromptAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "order",
+        "title",
+        "is_active",
+    )
+
+    list_editable = (
+        "order",
+        "is_active",
+    )
+
+    list_display_links = (
+        "title",
+    )
+
+    ordering = ("order",)

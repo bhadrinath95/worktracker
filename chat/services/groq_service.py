@@ -5,6 +5,7 @@ from anyio import Path
 from django.conf import settings
 from groq import Groq
 from pathlib import Path
+from chat.models import LunaPrompt
 
 
 AI_NAME = "Luna"
@@ -12,12 +13,6 @@ AI_NAME = "Luna"
 GROQ_API_KEY = settings.GROQ_API_KEY
 
 GROQ_MODEL = settings.GROQ_MODEL
-
-
-PROMPT_FILE = Path(__file__).resolve().parent.parent / "prompts" / "luna_system_prompt.txt"
-
-with open(PROMPT_FILE, "r", encoding="utf-8") as f:
-    SYSTEM_PROMPT_TEMPLATE = f.read()
 
 
 class GroqService:
@@ -53,13 +48,28 @@ class GroqService:
         )
 
 
+    def get_system_prompt(self, user_name=""):
+
+        sections = LunaPrompt.objects.filter(
+            is_active=True
+        ).order_by("order")
+
+        system_prompt = "\n\n".join(
+            f"## {section.title}\n\n{section.content}"
+            for section in sections
+        )
+
+        return system_prompt.format(
+            AI_NAME=AI_NAME,
+            USER_NAME=user_name
+        )
+    
     def generate(self, messages, user_name=""):
     
         try:
 
-            system_prompt = SYSTEM_PROMPT_TEMPLATE.format(
-                AI_NAME=AI_NAME,
-                USER_NAME=user_name
+            system_prompt = self.get_system_prompt(
+                user_name=user_name
             )
 
             groq_messages = [
