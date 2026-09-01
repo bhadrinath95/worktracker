@@ -5,10 +5,10 @@
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/chat.css' %}">
 {% endblock %}
+
 {% block content %}
 
 <div class="chat-container">
-
 
 <div class="row g-0 h-100">
 
@@ -150,25 +150,15 @@
                 </button>
 
 
-                <form
-                    method="post"
-                    action="{% url 'chat:conversation_delete' conversation.slug %}"
-                    class="d-inline"
-                    onsubmit="return confirm('Delete this conversation?');"
+                <!-- Delete -->
+                <a
+                    href="{% url 'chat:conversation_delete_confirm' conversation.slug %}"
+                    class="chat-action-btn delete-btn"
+                    title="Delete conversation"
                 >
-
-                    {% csrf_token %}
-
-                    <button
-                        type="submit"
-                        class="chat-action-btn delete-btn"
-                        title="Delete conversation"
-                    >
-                        <span class="action-icon">⌫</span>
-                        <span class="action-text">Delete</span>
-                    </button>
-
-                </form>
+                    <span class="action-icon">⌫</span>
+                    <span class="action-text">Delete</span>
+                </a>
 
             </div>
 
@@ -291,8 +281,8 @@
 
 </div>
 
-
 </div>
+
 
 <!-- =========================================================
      RENAME MODAL
@@ -393,6 +383,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageInput = document.getElementById("messageInput");
     const messagesArea = document.getElementById("messages");
     const sendButton = chatForm.querySelector(".send-btn");
+
 
     /*
      * IMPORTANT
@@ -578,10 +569,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
             } catch (error) {
-                console.error("Error reading error response:", error);
+                console.error(
+                    "Error reading error response:",
+                    error
+                );
             }
 
-            bubble.innerHTML = formatMessage(errorText);
+            bubble.innerHTML =
+                formatMessage(errorText);
 
             return;
         }
@@ -590,29 +585,32 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
 
             /*
-            * Django returns JSON:
-            *
-            * {
-            *     "response": "Hi! 👋 ..."
-            * }
-            *
-            * Parse the JSON first.
-            */
-            const data = await response.json();
+             * Django returns JSON:
+             *
+             * {
+             *     "response": "Hi! 👋 ..."
+             * }
+             *
+             * Parse the JSON first.
+             */
+            const data =
+                await response.json();
 
 
             /*
-            * Extract only the response text.
-            */
+             * Extract only the response text.
+             */
             const lunaResponse =
-                data.response || "Luna did not return a response.";
+                data.response ||
+                "Luna did not return a response.";
 
 
             /*
-            * Display only the actual message.
-            */
+             * Display only the actual message.
+             */
             bubble.innerHTML =
-                data.html || "Luna did not return a response.";
+                data.html ||
+                "Luna did not return a response.";
 
 
             scrollToBottom();
@@ -765,7 +763,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /*
-                 * Stream Luna response.
+                 * Display Luna response.
                  */
                 await streamResponse(
                     response,

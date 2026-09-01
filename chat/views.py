@@ -87,6 +87,25 @@ def conversation_update(request, slug):
     )
 
 
+@login_required
+def conversation_delete_confirm(request, slug):
+    """
+    Display confirmation page before deleting a conversation.
+    """
+    conversation = get_object_or_404(
+        Conversation,
+        slug=slug,
+    )
+
+    return render(
+        request,
+        "chat/conversation_delete_confirm.html",
+        {
+            "conversation": conversation,
+        },
+    )
+
+
 @require_POST
 @login_required
 def conversation_delete(request, slug):
@@ -97,9 +116,10 @@ def conversation_delete(request, slug):
         Conversation,
         slug=slug,
     )
-    conversation.delete()
-    return redirect("chat:conversation_list")
 
+    conversation.delete()
+
+    return redirect("chat:conversation_list")
 
 @require_POST
 @login_required

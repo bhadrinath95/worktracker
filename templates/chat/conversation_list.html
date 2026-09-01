@@ -727,23 +727,13 @@
 
                             <!-- Delete -->
 
-                            <form
-                                method="post"
-                                action="{% url 'chat:conversation_delete' conversation.slug %}"
-                                onsubmit="return confirm('Delete this conversation?');"
+                            <a
+                                href="{% url 'chat:conversation_delete_confirm' conversation.slug %}"
+                                class="conversation-action delete-action"
+                                title="Delete conversation"
                             >
-
-                                {% csrf_token %}
-
-                                <button
-                                    type="submit"
-                                    class="conversation-action delete-action"
-                                    title="Delete conversation"
-                                >
-                                    🗑
-                                </button>
-
-                            </form>
+                                🗑
+                            </a>
 
                         </div>
 

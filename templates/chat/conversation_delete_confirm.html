@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body text-center p-5">
+
+                    <div class="mb-4">
+                        <div
+                            style="
+                                font-size: 3rem;
+                                color: #dc3545;
+                            "
+                        >
+                            ⚠
+                        </div>
+                    </div>
+
+                    <h3 class="mb-3">
+                        Delete Conversation?
+                    </h3>
+
+                    <p class="text-muted mb-2">
+                        Are you sure you want to delete this conversation?
+                    </p>
+
+                    <p class="fw-semibold mb-4">
+                        "{{ conversation.title }}"
+                    </p>
+
+                    <div class="alert alert-warning text-start">
+                        <strong>Warning:</strong>
+                        This will permanently delete the conversation
+                        and all of its messages.
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-2 mt-4">
+
+                        <a
+                            href="{% url 'chat:conversation_detail' conversation.slug %}"
+                            class="btn btn-light px-4"
+                        >
+                            Cancel
+                        </a>
+
+                        <form
+                            method="post"
+                            action="{% url 'chat:conversation_delete' conversation.slug %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger px-4"
+                            >
+                                Delete Conversation
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
