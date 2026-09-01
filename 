@@ -1,0 +1,108 @@
+/* Page background */
+body {
+    padding: 0 0px;
+    padding-top: 50px;
+    background-color: #f5f7fa;
+    color: #212529;
+}
+
+body.has-notification {
+    padding-top: 80px;
+}
+
+/* Navbar */
+.custom-navbar {
+    background-color: #1f3a5f;
+    z-index: 1050;
+}
+
+/* Navbar brand */
+.custom-navbar .navbar-brand {
+    font-weight: 600;
+    color: #ffffff !important;
+}
+
+/* Navbar links */
+.custom-navbar .nav-link {
+    color: #e0e6ed !important;
+    font-weight: 500;
+}
+
+/* Hover & active state */
+.custom-navbar .nav-link:hover,
+.custom-navbar .nav-link:focus {
+    color: #8fd3f4 !important;
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: #1f3a5f;
+    font-weight: 600;
+}
+
+/* Tables */
+.table td, .table th {
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+/* Cards */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-toggler {
+    border-color: rgba(255,255,255,0.6);
+}
+
+.navbar-toggler:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.notification-bar {
+    position: fixed;
+    top: 56px;
+    width: 100%;
+    background: #dc3545;
+    color: white;
+    overflow: hidden;
+    z-index: 1040;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.notification-track {
+    display: inline-block;
+    white-space: nowrap;
+    padding-left: 100%;
+    animation: marquee 25s linear infinite;
+}
+
+.notification-item {
+    margin-right: 100px;
+    font-weight: 500;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .navbar a {
+        font-size: 0.9rem;
+        padding: 4px 6px !important;
+    }
+}
