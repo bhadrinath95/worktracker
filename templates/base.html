@@ -13,63 +13,104 @@
 <body class="{% if active_notifications %}has-notification{% endif %}">
 <nav class="navbar fixed-top navbar-expand-lg custom-navbar">
   <div class="container-fluid">
-    <a class="navbar-brand text-light" href='{% url "tracker:task_list" %}'>Bhadri Tracker</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+    <!-- Brand -->
+    <a class="navbar-brand text-light"
+       href="{% url 'tracker:task_list' %}">
+      Bhadri Tracker
+    </a>
+
+    <!-- Mobile Menu Button -->
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    {% if request.user.is_authenticated %}
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'tracker:task_list' %}">Task</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'statements:decision_tree_list' %}">Decision</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'tracker:quotes' %}">Quotes</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'music:music_list' %}">Music</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'tracker:prayer' %}">Prayer</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'chat:conversation_list' %}">Luna</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'blogs:blog_list' %}">Blog</a>
-          </li>
-        </ul>
-      </div>
-    {% endif %}
 
+    <!-- ONE collapse container only -->
     <div class="collapse navbar-collapse" id="navbarNav">
+
+      <!-- Left / Main Menu -->
+      {% if request.user.is_authenticated %}
+      <ul class="navbar-nav me-auto">
+
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'tracker:task_list' %}">
+            Task
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'statements:decision_tree_list' %}">
+            Decision
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'tracker:quotes' %}">
+            Quotes
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'music:music_list' %}">
+            Music
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'tracker:prayer' %}">
+            Prayer
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'chat:conversation_list' %}">
+            Luna
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"
+             href="{% url 'blogs:blog_list' %}">
+            Blog
+          </a>
+        </li>
+
+      </ul>
+      {% endif %}
+
       <!-- Right Side -->
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav ms-auto">
+
         {% if request.user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href='{% url "logout" %}'>Logout</a>
+          <a class="nav-link"
+             href="{% url 'logout' %}">
+            Logout
+          </a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href='{% url "login" %}'>Login</a>
+          <a class="nav-link"
+             href="{% url 'login' %}">
+            Login
+          </a>
         </li>
         {% endif %}
+
       </ul>
+
     </div>
   </div>
 </nav>
