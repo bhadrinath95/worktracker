@@ -3,20 +3,27 @@
 {% block content %}
 
 {% if messages %}
+
   <div class="container mt-3">
     {% for message in messages %}
-          <div class="alert
+      <div class="alert
         {% if message.tags == 'error' %}
-            alert-danger
+          alert-danger
         {% else %}
-            alert-{{ message.tags }}
+          alert-{{ message.tags }}
         {% endif %}
         alert-dismissible fade show"
         role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    {% endfor %}
+
+    {{ message }}
+
+    <button type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"></button>
+  </div>
+{% endfor %}
+
   </div>
 {% endif %}
 
@@ -24,57 +31,86 @@
 
 <div class="container mt-5" style="max-width: 400px;">
 
-    <h3 class="mb-3 text-center">Login</h4>
+<h3 class="mb-3 text-center">Login</h3>
 
-    <form method="post" class="card shadow p-4">
-        <div class="text-center mb-3">
-            <img src="https://raw.githubusercontent.com/tenctech10c/Document/main/Logo.png"
-                 alt="logo"
-                 style="max-width: 120px; cursor: pointer;"
-                 data-bs-toggle="modal"
-                 data-bs-target="#imageModal">
-        </div>
-        {% csrf_token %}
+<form method="post" class="card shadow p-4">
 
-        <table class="w-100">
-            {% for field in form %}
-            <tr>
-                <th style="width: 30%;"><label class="form-label">{{ field.label }}</label></th>
-                <td style="width: 70%;">{{ field }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="text-center mb-3">
+        <img src="https://raw.githubusercontent.com/tenctech10c/Document/main/Logo.png"
+             alt="logo"
+             style="max-width: 120px; cursor: pointer;"
+             data-bs-toggle="modal"
+             data-bs-target="#imageModal">
+    </div>
 
-        {% if next %}
-        <input type="hidden" name="next" value="{{ next }}">
-        {% endif %}
+    {% csrf_token %}
 
-        <button type="submit" class="btn btn-primary w-100 mt-3">
-            Login
-        </button>
-    </form>
+    <table class="w-100">
+        {% for field in form %}
+        <tr>
+            <th style="width: 30%;">
+                <label class="form-label">{{ field.label }}</label>
+            </th>
+            <td style="width: 70%;">
+                {{ field }}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary w-100 mt-3">
+        Login
+    </button>
+
+</form>
+
+<!-- Android App Download -->
+<div class="text-center mt-3">
+    <div class="text-muted small mb-2">
+        Using Android?
+    </div>
+
+    <a href="https://github.com/tenctech10c/APK/raw/main/BhadriTracker.apk"
+       target="_blank"
+       rel="noopener"
+       class="btn btn-outline-primary w-100">
+        <i class="bi bi-android2 me-1"></i>
+        Download Bhadri Tracker APK
+    </a>
 </div>
+
+</div>
+
+<!-- Logo Modal -->
 
 <div class="modal fade" id="imageModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-transparent border-0 text-center">
-      
-      <div class="modal-body p-0" data-bs-dismiss="modal">
-        <img src="https://raw.githubusercontent.com/tenctech10c/Document/main/iconfullimage.jpg"
-             alt="Full Image"
-             style="width: 100%; border-radius: 10px;">
-      </div>
 
-    </div>
+  <div class="modal-body p-0" data-bs-dismiss="modal">
+    <img src="https://raw.githubusercontent.com/tenctech10c/Document/main/iconfullimage.jpg"
+         alt="Full Image"
+         style="width: 100%; border-radius: 10px;">
+  </div>
+
+</div>
+
   </div>
 </div>
 
 {% else %}
+
 <div class="container mt-5">
     <div class="alert alert-info text-center">
         You're already logged in.
         <a href="{% url 'logout' %}">Logout?</a>
     </div>
 </div>
+
 {% endif %}
+
 {% endblock content %}
