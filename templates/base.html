@@ -135,6 +135,17 @@
   {% block content %}{% endblock %}
   <br />
 </div>
+
+<!-- Floating Back Button - Mobile -->
+<button id="floatingBackBtn"
+        class="floating-back-btn"
+        type="button"
+        aria-label="Go Back">
+    <i class="bi bi-arrow-left"></i>
+</button>
+
+
+
 {% block static %}{% endblock %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -145,6 +156,150 @@ document.body.addEventListener('htmx:configRequest', function (event) {
     if (csrfToken) {
         event.detail.headers['X-CSRFToken'] = csrfToken.value;
     }
+});
+const backBtn = document.getElementById("floatingBackBtn");
+
+let isDragging = false;
+let hasMoved = false;
+
+let startX = 0;
+let startY = 0;
+
+let startLeft = 0;
+let startTop = 0;
+
+
+/* ============================
+   Restore previous position
+   ============================ */
+
+const savedLeft = localStorage.getItem("backButtonLeft");
+const savedTop = localStorage.getItem("backButtonTop");
+
+if (savedLeft !== null && savedTop !== null) {
+    backBtn.style.left = savedLeft + "px";
+    backBtn.style.top = savedTop + "px";
+
+    backBtn.style.right = "auto";
+    backBtn.style.bottom = "auto";
+}
+
+
+/* ============================
+   Touch / Mouse start
+   ============================ */
+
+backBtn.addEventListener("pointerdown", function (e) {
+
+    isDragging = true;
+    hasMoved = false;
+
+    backBtn.classList.add("dragging");
+
+    backBtn.setPointerCapture(e.pointerId);
+
+    const rect = backBtn.getBoundingClientRect();
+
+    startX = e.clientX;
+    startY = e.clientY;
+
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    e.preventDefault();
+});
+
+
+/* ============================
+   Drag
+   ============================ */
+
+backBtn.addEventListener("pointermove", function (e) {
+
+    if (!isDragging) return;
+
+    const deltaX = e.clientX - startX;
+    const deltaY = e.clientY - startY;
+
+    /* Ignore tiny movements */
+    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+        hasMoved = true;
+    }
+
+    if (!hasMoved) return;
+
+    let newLeft = startLeft + deltaX;
+    let newTop = startTop + deltaY;
+
+    /* Keep inside screen */
+
+    const maxLeft =
+        window.innerWidth - backBtn.offsetWidth;
+
+    const maxTop =
+        window.innerHeight - backBtn.offsetHeight;
+
+    newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+    newTop = Math.max(0, Math.min(newTop, maxTop));
+
+    backBtn.style.left = newLeft + "px";
+    backBtn.style.top = newTop + "px";
+
+    backBtn.style.right = "auto";
+    backBtn.style.bottom = "auto";
+});
+
+
+/* ============================
+   Release
+   ============================ */
+
+backBtn.addEventListener("pointerup", function () {
+
+    if (!isDragging) return;
+
+    isDragging = false;
+
+    backBtn.classList.remove("dragging");
+
+    /* Save position */
+
+    if (hasMoved) {
+
+        const rect = backBtn.getBoundingClientRect();
+
+        localStorage.setItem(
+            "backButtonLeft",
+            rect.left
+        );
+
+        localStorage.setItem(
+            "backButtonTop",
+            rect.top
+        );
+    }
+});
+
+
+/* ============================
+   Back action
+   ============================ */
+
+backBtn.addEventListener("click", function (e) {
+
+    /*
+     * If user dragged the button,
+     * don't go back.
+     */
+    if (hasMoved) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        hasMoved = false;
+        return;
+    }
+
+    window.history.back();
 });
 </script>
 </body>
