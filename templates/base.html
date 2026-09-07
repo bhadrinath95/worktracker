@@ -172,44 +172,60 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+/* ==========================================
+   HTMX CSRF
+   ========================================== */
+
 document.body.addEventListener('htmx:configRequest', function (event) {
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+
+    const csrfToken =
+        document.querySelector('[name=csrfmiddlewaretoken]');
 
     if (csrfToken) {
-        event.detail.headers['X-CSRFToken'] = csrfToken.value;
+        event.detail.headers['X-CSRFToken'] =
+            csrfToken.value;
     }
 });
 
 
-/* ============================
+/* ==========================================
    Floating Action Menu
-   ============================ */
+   ========================================== */
 
-const floatingMenu = document.getElementById("floatingActionMenu");
-const menuBtn = document.getElementById("floatingMenuBtn");
-const backBtn = document.getElementById("floatingBackBtn");
-const refreshBtn = document.getElementById("floatingRefreshBtn");
+const floatingMenu =
+    document.getElementById("floatingActionMenu");
+
+const menuBtn =
+    document.getElementById("floatingMenuBtn");
+
+const backBtn =
+    document.getElementById("floatingBackBtn");
+
+const refreshBtn =
+    document.getElementById("floatingRefreshBtn");
+
 
 let isMenuOpen = false;
 
 
-/* ============================
-   Menu Open / Close
-   ============================ */
+/* ==========================================
+   Menu Toggle
+   ========================================== */
 
-menuBtn.addEventListener("click", function (e) {
-
-    e.stopPropagation();
+function toggleMenu() {
 
     isMenuOpen = !isMenuOpen;
 
-    floatingMenu.classList.toggle("open", isMenuOpen);
-});
+    floatingMenu.classList.toggle(
+        "open",
+        isMenuOpen
+    );
+}
 
 
-/* ============================
-   Back Action
-   ============================ */
+/* ==========================================
+   Back
+   ========================================== */
 
 backBtn.addEventListener("click", function (e) {
 
@@ -219,9 +235,9 @@ backBtn.addEventListener("click", function (e) {
 });
 
 
-/* ============================
-   Refresh Action
-   ============================ */
+/* ==========================================
+   Refresh
+   ========================================== */
 
 refreshBtn.addEventListener("click", function (e) {
 
@@ -231,10 +247,9 @@ refreshBtn.addEventListener("click", function (e) {
 });
 
 
-/* ============================
-   Close menu when clicking
-   outside
-   ============================ */
+/* ==========================================
+   Click Outside
+   ========================================== */
 
 document.addEventListener("click", function (e) {
 
@@ -247,114 +262,176 @@ document.addEventListener("click", function (e) {
 });
 
 
-/* ============================
-   Dragging
-   ============================ */
+/* ==========================================
+   Drag Variables
+   ========================================== */
 
-let isDragging = false;
-let hasMoved = false;
+let dragging = false;
+let moved = false;
 
 let startX = 0;
 let startY = 0;
 
-let startLeft = 0;
-let startTop = 0;
+let originalLeft = 0;
+let originalTop = 0;
 
 
-/* ============================
-   Restore previous position
-   ============================ */
+/* ==========================================
+   Restore Saved Position
+   ========================================== */
 
-const savedLeft = localStorage.getItem("floatingMenuLeft");
-const savedTop = localStorage.getItem("floatingMenuTop");
+const savedLeft =
+    localStorage.getItem("floatingMenuLeft");
+
+const savedTop =
+    localStorage.getItem("floatingMenuTop");
+
 
 if (savedLeft !== null && savedTop !== null) {
 
-    floatingMenu.style.left = savedLeft + "px";
-    floatingMenu.style.top = savedTop + "px";
+    floatingMenu.style.left =
+        savedLeft + "px";
+
+    floatingMenu.style.top =
+        savedTop + "px";
 
     floatingMenu.style.right = "auto";
     floatingMenu.style.bottom = "auto";
 }
 
 
-/* ============================
-   Drag Start
-   ============================ */
+/* ==========================================
+   Mouse / Touch Start
+   ========================================== */
 
-menuBtn.addEventListener("pointerdown", function (e) {
+menuBtn.addEventListener("mousedown", function (e) {
 
-    isDragging = true;
-    hasMoved = false;
-
-    menuBtn.classList.add("dragging");
-
-    menuBtn.setPointerCapture(e.pointerId);
-
-    const rect = floatingMenu.getBoundingClientRect();
+    dragging = true;
+    moved = false;
 
     startX = e.clientX;
     startY = e.clientY;
 
-    startLeft = rect.left;
-    startTop = rect.top;
+    const rect =
+        floatingMenu.getBoundingClientRect();
+
+    originalLeft = rect.left;
+    originalTop = rect.top;
 
     e.preventDefault();
 });
 
 
-/* ============================
-   Drag
-   ============================ */
+/* ==========================================
+   Mouse Move
+   ========================================== */
 
-menuBtn.addEventListener("pointermove", function (e) {
+document.addEventListener("mousemove", function (e) {
 
-    if (!isDragging) return;
-
-    const deltaX = e.clientX - startX;
-    const deltaY = e.clientY - startY;
-
-    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-        hasMoved = true;
+    if (!dragging) {
+        return;
     }
 
-    if (!hasMoved) return;
 
-    let newLeft = startLeft + deltaX;
-    let newTop = startTop + deltaY;
+    const deltaX =
+        e.clientX - startX;
+
+    const deltaY =
+        e.clientY - startY;
+
+
+    /* Detect actual movement */
+
+    if (
+        Math.abs(deltaX) > 5 ||
+        Math.abs(deltaY) > 5
+    ) {
+
+        moved = true;
+
+        menuBtn.classList.add("dragging");
+    }
+
+
+    if (!moved) {
+        return;
+    }
+
+
+    /* ======================================
+       Calculate Position
+       ====================================== */
+
+    let newLeft =
+        originalLeft + deltaX;
+
+    let newTop =
+        originalTop + deltaY;
+
+
+    /* ======================================
+       Keep Inside Screen
+       ====================================== */
 
     const maxLeft =
-        window.innerWidth - floatingMenu.offsetWidth;
+        window.innerWidth -
+        floatingMenu.offsetWidth;
 
     const maxTop =
-        window.innerHeight - floatingMenu.offsetHeight;
+        window.innerHeight -
+        floatingMenu.offsetHeight;
 
-    newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-    newTop = Math.max(0, Math.min(newTop, maxTop));
 
-    floatingMenu.style.left = newLeft + "px";
-    floatingMenu.style.top = newTop + "px";
+    newLeft =
+        Math.max(
+            0,
+            Math.min(newLeft, maxLeft)
+        );
+
+    newTop =
+        Math.max(
+            0,
+            Math.min(newTop, maxTop)
+        );
+
+
+    /* ======================================
+       Apply Position
+       ====================================== */
+
+    floatingMenu.style.left =
+        newLeft + "px";
+
+    floatingMenu.style.top =
+        newTop + "px";
 
     floatingMenu.style.right = "auto";
     floatingMenu.style.bottom = "auto";
 });
 
 
-/* ============================
-   Drag Release
-   ============================ */
+/* ==========================================
+   Mouse Up
+   ========================================== */
 
-menuBtn.addEventListener("pointerup", function () {
+document.addEventListener("mouseup", function () {
 
-    if (!isDragging) return;
+    if (!dragging) {
+        return;
+    }
 
-    isDragging = false;
+
+    dragging = false;
 
     menuBtn.classList.remove("dragging");
 
-    if (hasMoved) {
 
-        const rect = floatingMenu.getBoundingClientRect();
+    /* Save only after actual drag */
+
+    if (moved) {
+
+        const rect =
+            floatingMenu.getBoundingClientRect();
 
         localStorage.setItem(
             "floatingMenuLeft",
@@ -369,25 +446,174 @@ menuBtn.addEventListener("pointerup", function () {
 });
 
 
-/* ============================
-   Menu Button Click
-   ============================ */
+/* ==========================================
+   Menu Click
+   ========================================== */
 
 menuBtn.addEventListener("click", function (e) {
 
-    if (hasMoved) {
+    e.stopPropagation();
 
-        e.preventDefault();
-        e.stopPropagation();
 
-        hasMoved = false;
+    /*
+     * If the user dragged the button,
+     * ignore the click generated by mouseup.
+     */
+
+    if (moved) {
+
+        moved = false;
 
         return;
     }
 
-    isMenuOpen = !isMenuOpen;
 
-    floatingMenu.classList.toggle("open", isMenuOpen);
+    /* Normal click */
+
+    toggleMenu();
+});
+
+
+/* ==========================================
+   Touch Support
+   ========================================== */
+
+let touchDragging = false;
+
+let touchMoved = false;
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+let touchOriginalLeft = 0;
+let touchOriginalTop = 0;
+
+
+menuBtn.addEventListener("touchstart", function (e) {
+
+    const touch = e.touches[0];
+
+    touchDragging = true;
+    touchMoved = false;
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+
+    const rect =
+        floatingMenu.getBoundingClientRect();
+
+    touchOriginalLeft = rect.left;
+    touchOriginalTop = rect.top;
+
+}, { passive: false });
+
+
+document.addEventListener("touchmove", function (e) {
+
+    if (!touchDragging) {
+        return;
+    }
+
+
+    const touch = e.touches[0];
+
+    const deltaX =
+        touch.clientX - touchStartX;
+
+    const deltaY =
+        touch.clientY - touchStartY;
+
+
+    if (
+        Math.abs(deltaX) > 5 ||
+        Math.abs(deltaY) > 5
+    ) {
+
+        touchMoved = true;
+
+        menuBtn.classList.add("dragging");
+    }
+
+
+    if (!touchMoved) {
+        return;
+    }
+
+
+    e.preventDefault();
+
+
+    let newLeft =
+        touchOriginalLeft + deltaX;
+
+    let newTop =
+        touchOriginalTop + deltaY;
+
+
+    const maxLeft =
+        window.innerWidth -
+        floatingMenu.offsetWidth;
+
+    const maxTop =
+        window.innerHeight -
+        floatingMenu.offsetHeight;
+
+
+    newLeft =
+        Math.max(
+            0,
+            Math.min(newLeft, maxLeft)
+        );
+
+    newTop =
+        Math.max(
+            0,
+            Math.min(newTop, maxTop)
+        );
+
+
+    floatingMenu.style.left =
+        newLeft + "px";
+
+    floatingMenu.style.top =
+        newTop + "px";
+
+    floatingMenu.style.right = "auto";
+    floatingMenu.style.bottom = "auto";
+
+}, { passive: false });
+
+
+document.addEventListener("touchend", function () {
+
+    if (!touchDragging) {
+        return;
+    }
+
+
+    touchDragging = false;
+
+    menuBtn.classList.remove("dragging");
+
+
+    if (touchMoved) {
+
+        const rect =
+            floatingMenu.getBoundingClientRect();
+
+        localStorage.setItem(
+            "floatingMenuLeft",
+            rect.left
+        );
+
+        localStorage.setItem(
+            "floatingMenuTop",
+            rect.top
+        );
+    }
+
+
+    touchMoved = false;
 });
 </script>
 </body>
