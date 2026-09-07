@@ -136,13 +136,34 @@
   <br />
 </div>
 
-<!-- Floating Back Button - Mobile -->
-<button id="floatingBackBtn"
-        class="floating-back-btn"
-        type="button"
-        aria-label="Go Back">
-    <i class="bi bi-arrow-left"></i>
-</button>
+<!-- Floating Menu - Mobile -->
+<div id="floatingActionMenu" class="floating-action-menu">
+
+    <!-- Back -->
+    <button id="floatingBackBtn"
+            class="floating-action-btn action-back"
+            type="button"
+            aria-label="Go Back">
+        <i class="bi bi-arrow-left"></i>
+    </button>
+
+    <!-- Refresh -->
+    <button id="floatingRefreshBtn"
+            class="floating-action-btn action-refresh"
+            type="button"
+            aria-label="Refresh Page">
+        <i class="bi bi-arrow-clockwise"></i>
+    </button>
+
+    <!-- Main Menu -->
+    <button id="floatingMenuBtn"
+            class="floating-menu-btn"
+            type="button"
+            aria-label="Open Menu">
+        <i class="bi bi-three-dots-vertical"></i>
+    </button>
+
+</div>
 
 
 
@@ -153,11 +174,82 @@
 <script>
 document.body.addEventListener('htmx:configRequest', function (event) {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+
     if (csrfToken) {
         event.detail.headers['X-CSRFToken'] = csrfToken.value;
     }
 });
+
+
+/* ============================
+   Floating Action Menu
+   ============================ */
+
+const floatingMenu = document.getElementById("floatingActionMenu");
+const menuBtn = document.getElementById("floatingMenuBtn");
 const backBtn = document.getElementById("floatingBackBtn");
+const refreshBtn = document.getElementById("floatingRefreshBtn");
+
+let isMenuOpen = false;
+
+
+/* ============================
+   Menu Open / Close
+   ============================ */
+
+menuBtn.addEventListener("click", function (e) {
+
+    e.stopPropagation();
+
+    isMenuOpen = !isMenuOpen;
+
+    floatingMenu.classList.toggle("open", isMenuOpen);
+});
+
+
+/* ============================
+   Back Action
+   ============================ */
+
+backBtn.addEventListener("click", function (e) {
+
+    e.stopPropagation();
+
+    window.history.back();
+});
+
+
+/* ============================
+   Refresh Action
+   ============================ */
+
+refreshBtn.addEventListener("click", function (e) {
+
+    e.stopPropagation();
+
+    window.location.reload();
+});
+
+
+/* ============================
+   Close menu when clicking
+   outside
+   ============================ */
+
+document.addEventListener("click", function (e) {
+
+    if (!floatingMenu.contains(e.target)) {
+
+        isMenuOpen = false;
+
+        floatingMenu.classList.remove("open");
+    }
+});
+
+
+/* ============================
+   Dragging
+   ============================ */
 
 let isDragging = false;
 let hasMoved = false;
@@ -173,32 +265,33 @@ let startTop = 0;
    Restore previous position
    ============================ */
 
-const savedLeft = localStorage.getItem("backButtonLeft");
-const savedTop = localStorage.getItem("backButtonTop");
+const savedLeft = localStorage.getItem("floatingMenuLeft");
+const savedTop = localStorage.getItem("floatingMenuTop");
 
 if (savedLeft !== null && savedTop !== null) {
-    backBtn.style.left = savedLeft + "px";
-    backBtn.style.top = savedTop + "px";
 
-    backBtn.style.right = "auto";
-    backBtn.style.bottom = "auto";
+    floatingMenu.style.left = savedLeft + "px";
+    floatingMenu.style.top = savedTop + "px";
+
+    floatingMenu.style.right = "auto";
+    floatingMenu.style.bottom = "auto";
 }
 
 
 /* ============================
-   Touch / Mouse start
+   Drag Start
    ============================ */
 
-backBtn.addEventListener("pointerdown", function (e) {
+menuBtn.addEventListener("pointerdown", function (e) {
 
     isDragging = true;
     hasMoved = false;
 
-    backBtn.classList.add("dragging");
+    menuBtn.classList.add("dragging");
 
-    backBtn.setPointerCapture(e.pointerId);
+    menuBtn.setPointerCapture(e.pointerId);
 
-    const rect = backBtn.getBoundingClientRect();
+    const rect = floatingMenu.getBoundingClientRect();
 
     startX = e.clientX;
     startY = e.clientY;
@@ -214,14 +307,13 @@ backBtn.addEventListener("pointerdown", function (e) {
    Drag
    ============================ */
 
-backBtn.addEventListener("pointermove", function (e) {
+menuBtn.addEventListener("pointermove", function (e) {
 
     if (!isDragging) return;
 
     const deltaX = e.clientX - startX;
     const deltaY = e.clientY - startY;
 
-    /* Ignore tiny movements */
     if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
         hasMoved = true;
     }
@@ -231,50 +323,46 @@ backBtn.addEventListener("pointermove", function (e) {
     let newLeft = startLeft + deltaX;
     let newTop = startTop + deltaY;
 
-    /* Keep inside screen */
-
     const maxLeft =
-        window.innerWidth - backBtn.offsetWidth;
+        window.innerWidth - floatingMenu.offsetWidth;
 
     const maxTop =
-        window.innerHeight - backBtn.offsetHeight;
+        window.innerHeight - floatingMenu.offsetHeight;
 
     newLeft = Math.max(0, Math.min(newLeft, maxLeft));
     newTop = Math.max(0, Math.min(newTop, maxTop));
 
-    backBtn.style.left = newLeft + "px";
-    backBtn.style.top = newTop + "px";
+    floatingMenu.style.left = newLeft + "px";
+    floatingMenu.style.top = newTop + "px";
 
-    backBtn.style.right = "auto";
-    backBtn.style.bottom = "auto";
+    floatingMenu.style.right = "auto";
+    floatingMenu.style.bottom = "auto";
 });
 
 
 /* ============================
-   Release
+   Drag Release
    ============================ */
 
-backBtn.addEventListener("pointerup", function () {
+menuBtn.addEventListener("pointerup", function () {
 
     if (!isDragging) return;
 
     isDragging = false;
 
-    backBtn.classList.remove("dragging");
-
-    /* Save position */
+    menuBtn.classList.remove("dragging");
 
     if (hasMoved) {
 
-        const rect = backBtn.getBoundingClientRect();
+        const rect = floatingMenu.getBoundingClientRect();
 
         localStorage.setItem(
-            "backButtonLeft",
+            "floatingMenuLeft",
             rect.left
         );
 
         localStorage.setItem(
-            "backButtonTop",
+            "floatingMenuTop",
             rect.top
         );
     }
@@ -282,24 +370,24 @@ backBtn.addEventListener("pointerup", function () {
 
 
 /* ============================
-   Back action
+   Menu Button Click
    ============================ */
 
-backBtn.addEventListener("click", function (e) {
+menuBtn.addEventListener("click", function (e) {
 
-    /*
-     * If user dragged the button,
-     * don't go back.
-     */
     if (hasMoved) {
+
         e.preventDefault();
         e.stopPropagation();
 
         hasMoved = false;
+
         return;
     }
 
-    window.history.back();
+    isMenuOpen = !isMenuOpen;
+
+    floatingMenu.classList.toggle("open", isMenuOpen);
 });
 </script>
 </body>

@@ -106,3 +106,168 @@ h1, h2, h3 {
         padding: 4px 6px !important;
     }
 }
+
+
+/* =================================
+   Floating Action Menu - Desktop
+   ================================= */
+
+.floating-action-menu {
+    display: none;
+}
+
+
+/* =================================
+   Mobile
+   ================================= */
+
+@media (max-width: 768px) {
+
+    .floating-action-menu {
+        display: flex;
+
+        position: fixed;
+
+        right: 20px;
+        bottom: 100px;
+
+        width: 50px;
+        height: 50px;
+
+        z-index: 99999;
+
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    /* =================================
+       Main Menu Button
+       ================================= */
+
+    .floating-menu-btn {
+
+        position: absolute;
+
+        width: 50px;
+        height: 50px;
+
+        padding: 0;
+        margin: 0;
+
+        border: none;
+        border-radius: 50%;
+
+        background-color: #1f3a5f;
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 22px;
+
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+        cursor: grab;
+
+        user-select: none;
+        touch-action: none;
+
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+
+        transition: transform 0.2s ease;
+    }
+
+
+    .floating-menu-btn.dragging {
+        cursor: grabbing;
+        transform: scale(0.95);
+    }
+
+
+    /* =================================
+       Action Buttons
+       ================================= */
+
+    .floating-action-btn {
+
+        position: absolute;
+
+        width: 42px;
+        height: 42px;
+
+        padding: 0;
+        margin: 0;
+
+        border: none;
+        border-radius: 50%;
+
+        background-color: #1f3a5f;
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 18px;
+
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+
+        opacity: 0;
+
+        pointer-events: none;
+
+        transition:
+            transform 0.25s ease,
+            opacity 0.2s ease;
+    }
+
+
+    /* =================================
+       Closed Position
+       ================================= */
+
+    .action-back {
+        transform: translateY(0);
+    }
+
+    .action-refresh {
+        transform: translateY(0);
+    }
+
+
+    /* =================================
+       Open Position
+       ================================= */
+
+    .floating-action-menu.open .action-back {
+
+        opacity: 1;
+        pointer-events: auto;
+
+        transform: translateY(-60px);
+    }
+
+
+    .floating-action-menu.open .action-refresh {
+
+        opacity: 1;
+        pointer-events: auto;
+
+        transform: translateY(-110px);
+    }
+
+
+    /* =================================
+       Hover
+       ================================= */
+
+    .floating-action-btn:hover,
+    .floating-menu-btn:hover {
+
+        background-color: #294d78;
+    }
+
+}
