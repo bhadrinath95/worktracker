@@ -78,14 +78,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'selftracker.wsgi.application'
 
+# Local development
+local_config_dir = BASE_DIR.parent / "config"
+local_database_dir = BASE_DIR.parent / "database"
+
+# PythonAnywhere
+pythonanywhere_base = Path("/home/bhadritracker")
+pythonanywhere_config_dir = pythonanywhere_base / "config"
+pythonanywhere_database_dir = pythonanywhere_base / "database"
+
+# Detect environment
+if pythonanywhere_base.exists():
+    config_dir = pythonanywhere_config_dir
+    database_dir = pythonanywhere_database_dir
+else:
+    config_dir = local_config_dir
+    database_dir = local_database_dir
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+db_file = database_dir / "db.sqlite3"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': db_file,
     }
 }
 
@@ -146,16 +163,17 @@ LOGOUT_REDIRECT_URL = '/accounts/login'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Local development
-local_env = BASE_DIR.parent / "config" / ".env"
+# local_env = BASE_DIR.parent / "config" / ".env"
 
 # PythonAnywhere
-pythonanywhere_env = Path("/home/bhadritracker/config/.env")
+# pythonanywhere_env = Path("/home/bhadritracker/config/.env")
 
-if pythonanywhere_env.exists():
-    env_file = pythonanywhere_env
-else:
-    env_file = local_env
+# if pythonanywhere_env.exists():
+    # env_file = pythonanywhere_env
+# else:
+    # env_file = local_env
 
+env_file = config_dir / ".env"
 env = dotenv_values(env_file)
 
 GEMINI_API_KEY = env.get("GEMINI_API_KEY")
