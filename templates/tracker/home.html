@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="home-page">
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <div class="home-hero">
+
+        <div class="home-logo">
+            <i class="bi bi-grid-1x2-fill"></i>
+        </div>
+
+        <h1>Bhadri Tracker</h1>
+
+        <p>
+            Your personal space to organize, think, create and grow.
+        </p>
+
+    </div>
+
+
+    {% if request.user.is_authenticated %}
+
+    <!-- =====================================================
+         APPLICATIONS
+         ===================================================== -->
+
+    <div class="home-section">
+
+        <div class="home-section-title">
+            <i class="bi bi-grid"></i>
+            <span>Applications</span>
+        </div>
+
+
+        <div class="home-grid">
+
+            <!-- =================================================
+                 1. TASK
+                 ================================================= -->
+
+            <a href="{% url 'tracker:task_list' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="bi bi-check2-square"></i>
+                </div>
+
+                <div class="home-title">
+                    Task
+                </div>
+
+                <div class="home-description">
+                    Manage your tasks
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 2. TODO
+                 ================================================= -->
+
+            <a href="{% url 'tracker:todo_list' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="fa fa-list-check"></i>
+                </div>
+
+                <div class="home-title">
+                    ToDo
+                </div>
+
+                <div class="home-description">
+                    Manage ToDo lists
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 3. NOTE
+                 ================================================= -->
+
+            <a href="{% url 'tracker:note' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+
+                <div class="home-title">
+                    Note
+                </div>
+
+                <div class="home-description">
+                    Jot down
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 4. DECISION
+                 ================================================= -->
+
+            <a href="{% url 'statements:decision_tree_list' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="bi bi-diagram-3"></i>
+                </div>
+
+                <div class="home-title">
+                    Decision
+                </div>
+
+                <div class="home-description">
+                    Think & decide
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 5. QUOTES
+                 ================================================= -->
+
+            <a href="{% url 'tracker:quotes' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="bi bi-chat-quote"></i>
+                </div>
+
+                <div class="home-title">
+                    Quotes
+                </div>
+
+                <div class="home-description">
+                    Words that inspire
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 6. MUSIC
+                 ================================================= -->
+
+            <a href="{% url 'music:music_list' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="bi bi-music-note-beamed"></i>
+                </div>
+
+                <div class="home-title">
+                    Music
+                </div>
+
+                <div class="home-description">
+                    Listen & relax
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 7. PRAYER
+                 ================================================= -->
+
+            <a href="{% url 'tracker:prayer' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="fa fa-gopuram"></i>
+                </div>
+
+                <div class="home-title">
+                    Prayer
+                </div>
+
+                <div class="home-description">
+                    Peace & devotion
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 8. LUNA
+                 ================================================= -->
+
+            <a href="{% url 'chat:conversation_list' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="bi bi-chat-heart"></i>
+                </div>
+
+                <div class="home-title">
+                    Luna
+                </div>
+
+                <div class="home-description">
+                    Your AI companion
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 9. BLOG
+                 ================================================= -->
+
+            <a href="{% url 'blogs:blog_list' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="bi bi-journal-richtext"></i>
+                </div>
+
+                <div class="home-title">
+                    Blog
+                </div>
+
+                <div class="home-description">
+                    Write & remember
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 10. DICTIONARY
+                 ================================================= -->
+
+            <a href="{% url 'blogs:word_list' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="fa fa-spell-check"></i>
+                </div>
+
+                <div class="home-title">
+                    Dictionary
+                </div>
+
+                <div class="home-description">
+                    Look up words
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 11. TIMELINE
+                 ================================================= -->
+
+            <a href="{% url 'blogs:personal_timeline' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="fa fa-user-tie"></i>
+                </div>
+
+                <div class="home-title">
+                    Timeline
+                </div>
+
+                <div class="home-description">
+                    Your personal timeline
+                </div>
+
+            </a>
+
+
+            <!-- =================================================
+                 12. ADMIN
+                 ================================================= -->
+
+            <a href="{% url 'admin:index' %}"
+               class="home-card">
+
+                <div class="home-icon">
+                    <i class="bi bi-person-gear"></i>
+                </div>
+
+                <div class="home-title">
+                    Admin
+                </div>
+
+                <div class="home-description">
+                    Manage the application
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

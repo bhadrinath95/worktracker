@@ -23,6 +23,10 @@ from django.http import HttpResponse
 import markdown
 
 
+class HomeView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'tracker/home.html')
+    
 # -------------------------
 # TASK VIEWS
 # -------------------------

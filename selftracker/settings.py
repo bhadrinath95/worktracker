@@ -157,7 +157,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = 'task_list'   # Redirect here after login
+LOGIN_REDIRECT_URL = 'tracker:home'   # Redirect here after login
 LOGOUT_REDIRECT_URL = '/accounts/login' 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

@@ -7,6 +7,8 @@ class LifePrincipleTopicAdmin(admin.ModelAdmin):
 
 class DocumentAdmin(admin.ModelAdmin):
     list_display = ('id', 'filename', 'fileurl', 'filetype')
+    list_editable = ('filename', 'fileurl', 'filetype')
+    list_filter = ('filetype',)
 
 
 class LifePrincipleAdmin(admin.ModelAdmin):

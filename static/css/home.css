@@ -1,0 +1,350 @@
+/* =========================================================
+   BHADRI TRACKER — HOME PAGE
+   ========================================================= */
+
+.home-page {
+    min-height: calc(100vh - 90px);
+    padding: 35px 15px 70px;
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* ---------------------------------------------------------
+   BACKGROUND DECORATION
+   --------------------------------------------------------- */
+
+.home-page::before,
+.home-page::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(2px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.home-page::before {
+    width: 280px;
+    height: 280px;
+    top: -100px;
+    right: -100px;
+    background: rgba(108, 99, 255, 0.08);
+}
+
+.home-page::after {
+    width: 220px;
+    height: 220px;
+    bottom: -80px;
+    left: -80px;
+    background: rgba(13, 202, 240, 0.07);
+}
+
+
+/* ---------------------------------------------------------
+   HERO
+   --------------------------------------------------------- */
+
+.home-hero {
+    position: relative;
+    z-index: 1;
+    max-width: 950px;
+    margin: 0 auto 40px;
+    padding: 42px 30px;
+    text-align: center;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.95),
+            rgba(248, 249, 252, 0.92)
+        );
+
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.08);
+}
+
+.home-logo {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 24px;
+
+    background: linear-gradient(
+        135deg,
+        #212529,
+        #495057
+    );
+
+    color: white;
+    font-size: 36px;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.18);
+}
+
+.home-hero h1 {
+    margin: 0;
+    font-size: 2.35rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.home-hero p {
+    margin: 10px 0 0;
+    color: #777;
+    font-size: 1rem;
+}
+
+
+/* ---------------------------------------------------------
+   SECTION
+   --------------------------------------------------------- */
+
+.home-section {
+    position: relative;
+    z-index: 1;
+    max-width: 950px;
+    margin: 0 auto;
+}
+
+.home-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 18px;
+
+    color: #555;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+.home-section-title i {
+    font-size: 1rem;
+}
+
+
+/* ---------------------------------------------------------
+   GRID
+   --------------------------------------------------------- */
+
+.home-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+
+/* ---------------------------------------------------------
+   HOME CARD
+   --------------------------------------------------------- */
+
+.home-card {
+    position: relative;
+    overflow: hidden;
+
+    min-height: 170px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px 15px;
+
+    text-decoration: none;
+    color: #212529;
+
+    background: rgba(255, 255, 255, 0.92);
+
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 22px;
+
+    box-shadow:
+        0 7px 25px rgba(0, 0, 0, 0.055);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.home-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 100px;
+    height: 100px;
+
+    top: -55px;
+    right: -55px;
+
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.025);
+
+    transition: transform 0.3s ease;
+}
+
+.home-card:hover {
+    color: #212529;
+
+    transform: translateY(-6px);
+
+    border-color: rgba(0, 0, 0, 0.12);
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.11);
+}
+
+.home-card:hover::before {
+    transform: scale(2);
+}
+
+
+/* ---------------------------------------------------------
+   ICON
+   --------------------------------------------------------- */
+
+.home-icon {
+    width: 68px;
+    height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 16px;
+
+    border-radius: 20px;
+
+    background: #f4f5f7;
+    color: #343a40;
+
+    font-size: 30px;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
+}
+
+.home-card:hover .home-icon {
+    transform: scale(1.08);
+    background: #e9ecef;
+}
+
+
+/* ---------------------------------------------------------
+   TITLE
+   --------------------------------------------------------- */
+
+.home-title {
+    font-size: 1.05rem;
+    font-weight: 650;
+}
+
+
+/* ---------------------------------------------------------
+   DESCRIPTION
+   --------------------------------------------------------- */
+
+.home-description {
+    margin-top: 5px;
+    color: #8a8a8a;
+    font-size: 0.78rem;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 767px) {
+
+    .home-page {
+        padding: 22px 8px 60px;
+    }
+
+    .home-hero {
+        padding: 32px 20px;
+        margin-bottom: 30px;
+        border-radius: 24px;
+    }
+
+    .home-logo {
+        width: 68px;
+        height: 68px;
+        border-radius: 21px;
+        font-size: 30px;
+    }
+
+    .home-hero h1 {
+        font-size: 1.85rem;
+    }
+
+    .home-hero p {
+        font-size: 0.9rem;
+    }
+
+    .home-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 13px;
+    }
+
+    .home-card {
+        min-height: 145px;
+        padding: 18px 10px;
+        border-radius: 18px;
+    }
+
+    .home-icon {
+        width: 57px;
+        height: 57px;
+        margin-bottom: 12px;
+        border-radius: 17px;
+        font-size: 25px;
+    }
+
+    .home-title {
+        font-size: 0.95rem;
+    }
+
+    .home-description {
+        font-size: 0.7rem;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   VERY SMALL SCREENS
+   --------------------------------------------------------- */
+
+@media (max-width: 380px) {
+
+    .home-grid {
+        gap: 10px;
+    }
+
+    .home-card {
+        min-height: 135px;
+    }
+
+    .home-icon {
+        width: 52px;
+        height: 52px;
+        font-size: 23px;
+    }
+}

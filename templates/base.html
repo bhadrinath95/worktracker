@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="https://kit.fontawesome.com/c356210af1.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   {% block style %}{% endblock %}
 </head>
@@ -16,7 +17,7 @@
 
     <!-- Brand -->
     <a class="navbar-brand text-light"
-       href="{% url 'tracker:task_list' %}">
+       href="{% url 'tracker:home' %}">
       Bhadri Tracker
     </a>
 
