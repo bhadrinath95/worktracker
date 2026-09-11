@@ -30,7 +30,7 @@ def login_view(request):
                 require_https=request.is_secure(),
             ):
                 return redirect(next_url)
-            return redirect('tracker:task_list')
+            return redirect('tracker:home')
         else:
             messages.error(request, "Incorrect username or password. Try again.")
     else:
