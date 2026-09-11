@@ -237,12 +237,16 @@ h1, h2, h3 {
         transform: translateY(0);
     }
 
+    .action-home {
+        transform: translateY(0);
+    }
+
 
     /* =================================
        Open Position
        ================================= */
 
-    .floating-action-menu.open .action-back {
+    .floating-action-menu.open .action-home {
 
         opacity: 1;
         pointer-events: auto;
@@ -251,7 +255,7 @@ h1, h2, h3 {
     }
 
 
-    .floating-action-menu.open .action-refresh {
+    .floating-action-menu.open .action-back {
 
         opacity: 1;
         pointer-events: auto;
@@ -259,6 +263,14 @@ h1, h2, h3 {
         transform: translateY(-110px);
     }
 
+
+    .floating-action-menu.open .action-refresh {
+
+        opacity: 1;
+        pointer-events: auto;
+
+        transform: translateY(-160px);
+    }
 
     /* =================================
        Hover
