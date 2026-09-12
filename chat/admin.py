@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Conversation, Message
+from .models import (
+    Conversation,
+    Message,
+    LunaPrompt,
+    LunaImagePrompt,
+)
 
 @admin.register(Conversation)
 class ConversationAdmin(admin.ModelAdmin):
@@ -43,3 +48,38 @@ class LunaPromptAdmin(admin.ModelAdmin):
     )
 
     ordering = ("order",)
+
+@admin.register(LunaImagePrompt)
+class LunaImagePromptAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "id",
+        "prompt",
+        "image_google_id",
+        "is_active",
+        "created_at",
+        "updated_at",
+    )
+
+    list_editable = (
+        "prompt",
+        "image_google_id",
+        "is_active",
+    )
+
+    list_display_links = (
+        "id",
+    )
+
+    list_filter = (
+        "is_active",
+    )
+
+    search_fields = (
+        "prompt",
+        "image_google_id",
+    )
+
+    ordering = (
+        "id",
+    )

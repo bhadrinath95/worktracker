@@ -5,7 +5,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .services.groq_service import groq_service
-from .models import Conversation, Message
+from .models import (
+    Conversation,
+    Message,
+    LunaImagePrompt,
+)
 from django.contrib.auth.decorators import login_required
 from tracker.templatetags.markdown_extras import markdown_filter
 
@@ -125,22 +129,38 @@ def conversation_delete(request, slug):
 @login_required
 def chat_message(request, slug):
 
+    # -----------------------------------------
+    # USER NAME
+    # -----------------------------------------
+
     user_name = request.user.get_full_name().strip()
 
     if not user_name:
         user_name = request.user.username
+
+
+    # -----------------------------------------
+    # GET CONVERSATION
+    # -----------------------------------------
 
     conversation = get_object_or_404(
         Conversation,
         slug=slug,
     )
 
+
+    # -----------------------------------------
+    # GET USER MESSAGE
+    # -----------------------------------------
+
     user_content = request.POST.get(
         "message",
         ""
     ).strip()
 
+
     if not user_content:
+
         return JsonResponse(
             {
                 "error": "Message cannot be empty."
@@ -148,15 +168,24 @@ def chat_message(request, slug):
             status=400,
         )
 
-    # 1. Save user's message
+
+    # -----------------------------------------
+    # SAVE USER MESSAGE
+    # -----------------------------------------
+
     Message.objects.create(
         conversation=conversation,
         role="user",
         content=user_content,
     )
 
-    # 2. Build conversation history
+
+    # -----------------------------------------
+    # BUILD CONVERSATION HISTORY
+    # -----------------------------------------
+
     db_messages = conversation.messages.all()
+
 
     messages = [
         {
@@ -166,39 +195,98 @@ def chat_message(request, slug):
         for message in db_messages
     ]
 
+
     try:
 
-        # 3. Generate response using Groq
-        # The service gets the Luna prompt from the database
-        assistant_content = groq_service.generate(
+        # -----------------------------------------
+        # GENERATE LUNA RESPONSE
+        # -----------------------------------------
+
+        result = groq_service.generate(
             messages,
             user_name=user_name
         )
 
-        # 4. Save assistant response
+
+        assistant_content = result.get(
+            "text",
+            ""
+        )
+
+
+        image_id = result.get(
+            "image_id"
+        )
+
+
+        # -----------------------------------------
+        # FIND SELECTED IMAGE
+        # -----------------------------------------
+
+        image_prompt = None
+
+
+        if image_id:
+
+            image_prompt = (
+                LunaImagePrompt.objects.filter(
+                    id=image_id,
+                    is_active=True
+                ).first()
+            )
+
+
+        # -----------------------------------------
+        # SAVE ASSISTANT MESSAGE
+        # -----------------------------------------
+
         if assistant_content.strip():
 
             Message.objects.create(
                 conversation=conversation,
                 role="assistant",
                 content=assistant_content,
+                image_google_id=(
+                    image_prompt.image_google_id
+                    if image_prompt
+                    else None
+                ),
             )
 
             conversation.save()
 
-        # 5. Return response
+
+        # -----------------------------------------
+        # RESPONSE
+        # -----------------------------------------
+
         return JsonResponse(
             {
                 "response": assistant_content,
-                "html": markdown_filter(assistant_content),
+
+                "html": markdown_filter(
+                    assistant_content
+                ),
+
+                "image": (
+                    {
+                        "image_google_id": (
+                            image_prompt.image_google_id
+                        ),
+                    }
+                    if image_prompt
+                    else None
+                ),
             }
         )
+
 
     except Exception as exc:
 
         print(
             f"Groq generation error: {exc}"
         )
+
 
         return JsonResponse(
             {

@@ -41,6 +41,17 @@ class Message(models.Model):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    image_google_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
+
+    image_alt = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
 
     class Meta:
         ordering = ["created_at"]
@@ -61,3 +72,35 @@ class LunaPrompt(models.Model):
 
     def __str__(self):
         return self.title
+
+class LunaImagePrompt(models.Model):
+
+    prompt = models.TextField(
+        help_text="Describe when this image should be used."
+    )
+
+    image_google_id = models.CharField(
+        max_length=255,
+        help_text="Google Drive image file ID."
+    )
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["id"]
+
+        verbose_name = "Luna Image Prompt"
+        verbose_name_plural = "Luna Image Prompts"
+
+    def __str__(self):
+        return f"{self.prompt} → {self.image_google_id}"

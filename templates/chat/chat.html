@@ -3,97 +3,323 @@
 {% load markdown_extras %}
 
 {% block style %}
+
 <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+
+<style>
+/* Luna icon beside Luna name */
+.luna-message-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.luna-message-icon {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    background: #e9e6ff;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.luna-message-header .message-name {
+    line-height: 1;
+}
+</style>
+
 {% endblock %}
+
 
 {% block content %}
 
 <div class="chat-container">
 
-<div class="row g-0 h-100">
+    <div class="row g-0 h-100">
 
-    <!-- =================================================
-         SIDEBAR
-         ================================================= -->
 
-    <div class="col-md-3 chat-sidebar">
+        <!-- =================================================
+             SIDEBAR
+             ================================================= -->
 
-        <div class="sidebar-inner">
+        <div class="col-md-3 chat-sidebar">
 
-            <!-- Sidebar Header -->
-            <div class="sidebar-header">
+            <div class="sidebar-inner">
 
-                <div>
-                    <span class="sidebar-eyebrow">
-                        LUNA
-                    </span>
+                <!-- Sidebar Header -->
 
-                    <h5 class="sidebar-title">
-                        Conversations
-                    </h5>
+                <div class="sidebar-header">
+
+                    <div>
+
+                        <span class="sidebar-eyebrow">
+                            LUNA
+                        </span>
+
+                        <h5 class="sidebar-title">
+                            Conversations
+                        </h5>
+
+                    </div>
+
+
+                    <a
+                        href="{% url 'chat:conversation_list' %}"
+                        class="new-chat-btn"
+                        title="New conversation"
+                    >
+                        <span>+</span>
+                    </a>
+
                 </div>
 
-                <a
-                    href="{% url 'chat:conversation_list' %}"
-                    class="new-chat-btn"
-                    title="New conversation"
-                >
-                    <span>+</span>
-                </a>
+
+                <!-- Conversation List -->
+
+                <div class="conversation-list">
+
+                    {% for item in conversations %}
+
+                        <a
+                            href="{% url 'chat:conversation_detail' item.slug %}"
+                            class="conversation-item
+                                   {% if item.slug == conversation.slug %}
+                                       active
+                                   {% endif %}"
+                        >
+
+                            <div class="conversation-icon">
+
+                                {% if item.slug == conversation.slug %}
+                                    ✦
+                                {% else %}
+                                    💬
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="conversation-info">
+
+                                <div class="conversation-title">
+                                    {{ item.title }}
+                                </div>
+
+                            </div>
+
+
+                            {% if item.slug == conversation.slug %}
+
+                                <div class="active-dot"></div>
+
+                            {% endif %}
+
+                        </a>
+
+                    {% empty %}
+
+                        <div class="empty-conversations">
+
+                            <div class="empty-icon">
+                                💬
+                            </div>
+
+                            <p>
+                                No conversations yet
+                            </p>
+
+                            <small>
+                                Start a new conversation
+                            </small>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CHAT MAIN
+             ================================================= -->
+
+        <div class="col-md-9 chat-main">
+
+
+            <!-- Chat Header -->
+
+            <div class="chat-header">
+
+                <div class="chat-header-left">
+
+                    <div class="luna-avatar">
+                        🌙
+                    </div>
+
+
+                    <div class="chat-title-area">
+
+                        <h4 class="chat-title">
+                            {{ conversation.title }}
+                        </h4>
+
+
+                        <span class="chat-status">
+
+                            <span class="status-dot"></span>
+
+                            Luna is online
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chat-actions">
+
+                    <!-- Rename -->
+
+                    <button
+                        class="chat-action-btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#renameModal"
+                        title="Rename conversation"
+                    >
+
+                        <span class="action-icon">
+                            ✎
+                        </span>
+
+                        <span class="action-text">
+                            Update
+                        </span>
+
+                    </button>
+
+
+                    <!-- Delete -->
+
+                    <a
+                        href="{% url 'chat:conversation_delete_confirm' conversation.slug %}"
+                        class="chat-action-btn delete-btn"
+                        title="Delete conversation"
+                    >
+
+                        <span class="action-icon">
+                            ⌫
+                        </span>
+
+                        <span class="action-text">
+                            Delete
+                        </span>
+
+                    </a>
+
+                </div>
 
             </div>
 
 
-            <!-- Conversation List -->
-            <div class="conversation-list">
+            <!-- =================================================
+                 MESSAGES
+                 ================================================= -->
 
-                {% for item in conversations %}
+            <div
+                id="messages"
+                class="messages-area"
+            >
 
-                    <a
-                        href="{% url 'chat:conversation_detail' item.slug %}"
-                        class="conversation-item
-                               {% if item.id == conversation.slug %}
-                                   active
+                {% for message in messages %}
+
+                    <div
+                        class="message-row
+                               {% if message.role == 'user' %}
+                                   user-message
+                               {% else %}
+                                   ai-message
                                {% endif %}"
                     >
 
-                        <div class="conversation-icon">
-                            {% if item.slug == conversation.slug %}
-                                ✦
-                            {% else %}
-                                💬
-                            {% endif %}
-                        </div>
+                        <div class="message-wrapper">
 
-                        <div class="conversation-info">
+                            <!-- Message Name -->
 
-                            <div class="conversation-title">
-                                {{ item.title }}
+                            <div class="message-meta">
+
+                                {% if message.role == "user" %}
+
+                                    <strong class="message-name">
+                                        You
+                                    </strong>
+
+                                {% else %}
+
+                                    <div class="luna-message-header">
+
+                                        <span class="luna-message-icon">
+                                            🌙
+                                        </span>
+
+                                        <strong class="message-name">
+                                            Luna
+                                        </strong>
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- Message Content -->
+
+                            <div class="message-bubble">
+
+                                {{ message.content|markdown }}
+
+
+                                <!-- =================================
+                                     SAVED LUNA IMAGE
+                                     ================================= -->
+
+                                {% if message.image_google_id %}
+
+                                    <div class="chat-image-container">
+
+                                        <img
+                                            src="https://drive.google.com/thumbnail?id={{ message.image_google_id }}&sz=w1200"
+                                            alt="Luna"
+                                            class="chat-image"
+                                            loading="lazy"
+                                        >
+
+                                    </div>
+
+                                {% endif %}
+
                             </div>
 
                         </div>
 
-                        {% if item.slug == conversation.slug %}
-                            <div class="active-dot"></div>
+
+                        <!-- User Avatar -->
+
+                        {% if message.role == "user" %}
+
+                            <div class="message-avatar user-avatar">
+                                👤
+                            </div>
+
                         {% endif %}
-
-                    </a>
-
-                {% empty %}
-
-                    <div class="empty-conversations">
-
-                        <div class="empty-icon">
-                            💬
-                        </div>
-
-                        <p>
-                            No conversations yet
-                        </p>
-
-                        <small>
-                            Start a new conversation
-                        </small>
 
                     </div>
 
@@ -101,185 +327,63 @@
 
             </div>
 
-        </div>
 
-    </div>
+            <!-- =================================================
+                 INPUT
+                 ================================================= -->
 
+            <div class="chat-input-area">
 
-    <!-- =================================================
-         CHAT MAIN
-         ================================================= -->
+                <form id="chatForm">
 
-    <div class="col-md-9 chat-main">
-
-        <!-- Chat Header -->
-        <div class="chat-header">
-
-            <div class="chat-header-left">
-
-                <div class="luna-avatar">
-                    🌙
-                </div>
-
-                <div class="chat-title-area">
-
-                    <h4 class="chat-title">
-                        {{ conversation.title }}
-                    </h4>
-
-                    <span class="chat-status">
-                        <span class="status-dot"></span>
-                        Luna is online
-                    </span>
-
-                </div>
-
-            </div>
+                    {% csrf_token %}
 
 
-            <div class="chat-actions">
+                    <div class="chat-input-wrapper">
 
-                <button
-                    class="chat-action-btn"
-                    data-bs-toggle="modal"
-                    data-bs-target="#renameModal"
-                    title="Rename conversation"
-                >
-                    <span class="action-icon">✎</span>
-                    <span class="action-text">Update</span>
-                </button>
-
-
-                <!-- Delete -->
-                <a
-                    href="{% url 'chat:conversation_delete_confirm' conversation.slug %}"
-                    class="chat-action-btn delete-btn"
-                    title="Delete conversation"
-                >
-                    <span class="action-icon">⌫</span>
-                    <span class="action-text">Delete</span>
-                </a>
-
-            </div>
-
-        </div>
+                        <textarea
+                            id="messageInput"
+                            name="message"
+                            class="chat-textarea"
+                            rows="2"
+                            placeholder="Message Luna..."
+                            required
+                        ></textarea>
 
 
-        <!-- =================================================
-             MESSAGES
-             ================================================= -->
+                        <div class="input-bottom">
 
-        <div
-            id="messages"
-            class="messages-area"
-        >
-
-            {% for message in messages %}
-
-                <div
-                    class="message-row
-                           {% if message.role == 'user' %}
-                               user-message
-                           {% else %}
-                               ai-message
-                           {% endif %}"
-                >
-
-                    {% if message.role != "user" %}
-
-                        <div class="message-avatar">
-                            🌙
-                        </div>
-
-                    {% endif %}
+                            <span class="input-hint">
+                                Press Enter to send
+                            </span>
 
 
-                    <div class="message-wrapper">
+                            <button
+                                type="submit"
+                                class="send-btn"
+                            >
 
-                        <div class="message-meta">
+                                <span>
+                                    Send
+                                </span>
 
-                            <strong class="message-name">
-                                {% if message.role == "user" %}
-                                    You
-                                {% else %}
-                                    Luna
-                                {% endif %}
-                            </strong>
+                                <span class="send-icon">
+                                    ➤
+                                </span>
 
-                        </div>
-
-
-                        <div class="message-bubble">
-
-                            {{ message.content|markdown }}
+                            </button>
 
                         </div>
 
                     </div>
 
+                </form>
 
-                    {% if message.role == "user" %}
-
-                        <div class="message-avatar user-avatar">
-                            👤
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-            {% endfor %}
-
-        </div>
-
-
-        <!-- =================================================
-             INPUT
-             ================================================= -->
-
-        <div class="chat-input-area">
-
-            <form id="chatForm">
-
-                {% csrf_token %}
-
-                <div class="chat-input-wrapper">
-
-                    <textarea
-                        id="messageInput"
-                        name="message"
-                        class="chat-textarea"
-                        rows="2"
-                        placeholder="Message Luna..."
-                        required
-                    ></textarea>
-
-
-                    <div class="input-bottom">
-
-                        <span class="input-hint">
-                            Press Enter to send
-                        </span>
-
-                        <button
-                            type="submit"
-                            class="send-btn"
-                        >
-                            <span>Send</span>
-                            <span class="send-icon">➤</span>
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </form>
+            </div>
 
         </div>
 
     </div>
-
-</div>
 
 </div>
 
@@ -295,545 +399,708 @@
     aria-hidden="true"
 >
 
-<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered">
 
-    <div class="modal-content rename-modal">
+        <div class="modal-content rename-modal">
 
-        <form
-            method="post"
-            action="{% url 'chat:conversation_update' conversation.slug %}"
-        >
+            <form
+                method="post"
+                action="{% url 'chat:conversation_update' conversation.slug %}"
+            >
 
-            {% csrf_token %}
+                {% csrf_token %}
 
-            <div class="modal-header rename-header">
 
-                <div>
+                <div class="modal-header rename-header">
 
-                    <span class="modal-eyebrow">
-                        CONVERSATION
-                    </span>
+                    <div>
 
-                    <h5 class="modal-title">
-                        Rename Conversation
-                    </h5>
+                        <span class="modal-eyebrow">
+                            CONVERSATION
+                        </span>
+
+                        <h5 class="modal-title">
+                            Rename Conversation
+                        </h5>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
 
                 </div>
 
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                ></button>
 
-            </div>
+                <div class="modal-body">
+
+                    <label class="rename-label">
+                        Conversation name
+                    </label>
 
 
-            <div class="modal-body">
+                    <input
+                        type="text"
+                        name="title"
+                        value="{{ conversation.title }}"
+                        maxlength="200"
+                        class="form-control rename-input"
+                        required
+                    >
 
-                <label class="rename-label">
-                    Conversation name
-                </label>
-
-                <input
-                    type="text"
-                    name="title"
-                    value="{{ conversation.title }}"
-                    maxlength="200"
-                    class="form-control rename-input"
-                    required
-                >
-
-            </div>
+                </div>
 
 
-            <div class="modal-footer rename-footer">
+                <div class="modal-footer rename-footer">
 
-                <button
-                    type="button"
-                    class="btn btn-light cancel-btn"
-                    data-bs-dismiss="modal"
-                >
-                    Cancel
-                </button>
+                    <button
+                        type="button"
+                        class="btn btn-light cancel-btn"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
 
-                <button
-                    type="submit"
-                    class="btn btn-primary save-btn"
-                >
-                    Save Changes
-                </button>
 
-            </div>
+                    <button
+                        type="submit"
+                        class="btn btn-primary save-btn"
+                    >
+                        Save Changes
+                    </button>
 
-        </form>
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 
 </div>
 
-</div>
-
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
 
-    const chatForm = document.getElementById("chatForm");
-    const messageInput = document.getElementById("messageInput");
-    const messagesArea = document.getElementById("messages");
-    const sendButton = chatForm.querySelector(".send-btn");
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-
-    /*
-     * IMPORTANT
-     * This URL must match your Django URL name.
-     */
-    const chatUrl =
-        "{% url 'chat:chat_message' conversation.slug %}";
-
-
-    /* =====================================================
-       ESCAPE HTML
-       ===================================================== */
-
-    function escapeHtml(text) {
-
-        const div = document.createElement("div");
-
-        div.textContent = text;
-
-        return div.innerHTML;
-    }
-
-
-    /* =====================================================
-       FORMAT MESSAGE
-       ===================================================== */
-
-    function formatMessage(text) {
-
-        return escapeHtml(text)
-            .replace(/\r\n/g, "\n")
-            .replace(/\r/g, "\n")
-            .replace(/\n/g, "<br>");
-    }
-
-
-    /* =====================================================
-       SCROLL TO BOTTOM
-       ===================================================== */
-
-    function scrollToBottom() {
-
-        messagesArea.scrollTop =
-            messagesArea.scrollHeight;
-    }
-
-
-    /* =====================================================
-       CREATE USER MESSAGE
-       ===================================================== */
-
-    function createUserMessage(content) {
-
-        const row =
-            document.createElement("div");
-
-        row.className =
-            "message-row user-message";
-
-
-        row.innerHTML = `
-
-            <div class="message-wrapper">
-
-                <div class="message-meta">
-
-                    <strong class="message-name">
-                        You
-                    </strong>
-
-                </div>
-
-                <div class="message-bubble">
-                    ${formatMessage(content)}
-                </div>
-
-            </div>
-
-            <div class="message-avatar user-avatar">
-                👤
-            </div>
-
-        `;
-
-
-        messagesArea.appendChild(row);
-
-        return row;
-    }
-
-
-    /* =====================================================
-       CREATE LUNA MESSAGE
-       ===================================================== */
-
-    function createLunaMessage() {
-
-        const row =
-            document.createElement("div");
-
-        row.className =
-            "message-row ai-message";
-
-
-        row.innerHTML = `
-
-            <div class="message-avatar">
-                🌙
-            </div>
-
-            <div class="message-wrapper">
-
-                <div class="message-meta">
-
-                    <strong class="message-name">
-                        Luna
-                    </strong>
-
-                </div>
-
-                <div class="message-bubble">
-                </div>
-
-            </div>
-
-        `;
-
-
-        messagesArea.appendChild(row);
-
-        return row;
-    }
-
-
-    /* =====================================================
-       TYPING INDICATOR
-       ===================================================== */
-
-    function showTyping(bubble) {
-
-        bubble.innerHTML = `
-
-            <span class="typing-indicator">
-
-                <span></span>
-                <span></span>
-                <span></span>
-
-            </span>
-
-        `;
-    }
-
-
-    function removeTyping(bubble) {
-
-        const indicator =
-            bubble.querySelector(
-                ".typing-indicator"
+        const chatForm =
+            document.getElementById(
+                "chatForm"
             );
 
-        if (indicator) {
-            indicator.remove();
-        }
-    }
+
+        const messageInput =
+            document.getElementById(
+                "messageInput"
+            );
 
 
-    /* =====================================================
-       STREAM LUNA RESPONSE
-       ===================================================== */
+        const messagesArea =
+            document.getElementById(
+                "messages"
+            );
 
-    async function streamResponse(response, bubble) {
 
-        if (!response.ok) {
+        const sendButton =
+            chatForm.querySelector(
+                ".send-btn"
+            );
 
-            let errorText = "Unable to connect to Luna.";
 
-            try {
-                const data = await response.json();
+        /*
+         * Chat URL
+         */
 
-                if (data.error) {
-                    errorText = data.error;
-                }
+        const chatUrl =
+            "{% url 'chat:chat_message' conversation.slug %}";
 
-            } catch (error) {
-                console.error(
-                    "Error reading error response:",
-                    error
+
+        /* =====================================================
+           ESCAPE HTML
+           ===================================================== */
+
+        function escapeHtml(text) {
+
+            const div =
+                document.createElement(
+                    "div"
                 );
+
+            div.textContent =
+                text;
+
+            return div.innerHTML;
+        }
+
+
+        /* =====================================================
+           FORMAT MESSAGE
+           ===================================================== */
+
+        function formatMessage(text) {
+
+            return escapeHtml(text)
+                .replace(
+                    /\r\n/g,
+                    "\n"
+                )
+                .replace(
+                    /\r/g,
+                    "\n"
+                )
+                .replace(
+                    /\n/g,
+                    "<br>"
+                );
+        }
+
+
+        /* =====================================================
+           SCROLL
+           ===================================================== */
+
+        function scrollToBottom() {
+
+            messagesArea.scrollTop =
+                messagesArea.scrollHeight;
+        }
+
+
+        /* =====================================================
+           CREATE USER MESSAGE
+           ===================================================== */
+
+        function createUserMessage(
+            content
+        ) {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "message-row user-message";
+
+
+            row.innerHTML = `
+
+                <div class="message-wrapper">
+
+                    <div class="message-meta">
+
+                        <strong class="message-name">
+                            You
+                        </strong>
+
+                    </div>
+
+
+                    <div class="message-bubble">
+
+                        ${formatMessage(content)}
+
+                    </div>
+
+                </div>
+
+
+                <div class="message-avatar user-avatar">
+                    👤
+                </div>
+
+            `;
+
+
+            messagesArea.appendChild(
+                row
+            );
+
+
+            return row;
+        }
+
+
+        /* =====================================================
+           CREATE LUNA MESSAGE
+           ===================================================== */
+
+        function createLunaMessage() {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "message-row ai-message";
+
+
+            row.innerHTML = `
+
+                <div class="message-wrapper">
+
+                    <div class="message-meta">
+
+                        <div class="luna-message-header">
+
+                            <span class="luna-message-icon">
+                                🌙
+                            </span>
+
+                            <strong class="message-name">
+                                Luna
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="message-bubble">
+                    </div>
+
+                </div>
+
+            `;
+
+
+            messagesArea.appendChild(
+                row
+            );
+
+
+            return row;
+        }
+
+
+        /* =====================================================
+           TYPING INDICATOR
+           ===================================================== */
+
+        function showTyping(
+            bubble
+        ) {
+
+            bubble.innerHTML = `
+
+                <span class="typing-indicator">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </span>
+
+            `;
+        }
+
+
+        function removeTyping(
+            bubble
+        ) {
+
+            const indicator =
+                bubble.querySelector(
+                    ".typing-indicator"
+                );
+
+
+            if (indicator) {
+
+                indicator.remove();
+
+            }
+        }
+
+
+        /* =====================================================
+           ADD LUNA IMAGE
+           ===================================================== */
+
+        function addLunaImage(
+            bubble,
+            imageData
+        ) {
+
+            if (
+                !imageData ||
+                !imageData.image_google_id
+            ) {
+
+                return;
+
             }
 
-            bubble.innerHTML =
-                formatMessage(errorText);
 
-            return;
-        }
-
-
-        try {
-
-            /*
-             * Django returns JSON:
-             *
-             * {
-             *     "response": "Hi! 👋 ..."
-             * }
-             *
-             * Parse the JSON first.
-             */
-            const data =
-                await response.json();
+            const imageContainer =
+                document.createElement(
+                    "div"
+                );
 
 
-            /*
-             * Extract only the response text.
-             */
-            const lunaResponse =
-                data.response ||
-                "Luna did not return a response.";
+            imageContainer.className =
+                "chat-image-container";
 
 
-            /*
-             * Display only the actual message.
-             */
-            bubble.innerHTML =
-                data.html ||
-                "Luna did not return a response.";
+            const image =
+                document.createElement(
+                    "img"
+                );
 
 
-            scrollToBottom();
+            image.className =
+                "chat-image";
 
 
-        } catch (error) {
+            image.src =
+                "https://drive.google.com/thumbnail?id=" +
+                encodeURIComponent(
+                    imageData.image_google_id
+                ) +
+                "&sz=w1200";
 
-            console.error(
-                "Error parsing Luna response:",
-                error
+
+            image.alt =
+                imageData.alt ||
+                "Luna";
+
+
+            image.loading =
+                "lazy";
+
+
+            imageContainer.appendChild(
+                image
             );
 
-            bubble.innerHTML =
-                formatMessage(
-                    "Unable to read Luna's response."
-                );
+
+            bubble.appendChild(
+                imageContainer
+            );
         }
-    }
 
 
-    /* =====================================================
-       SEND MESSAGE
-       ===================================================== */
+        /* =====================================================
+           DISPLAY LUNA RESPONSE
+           ===================================================== */
 
-    chatForm.addEventListener(
-        "submit",
-        async function (event) {
+        async function streamResponse(
+            response,
+            bubble
+        ) {
 
-            event.preventDefault();
+            if (!response.ok) {
+
+                let errorText =
+                    "Unable to connect to Luna.";
 
 
-            const message =
-                messageInput.value.trim();
+                try {
+
+                    const data =
+                        await response.json();
 
 
-            /*
-             * Do not send empty messages.
-             */
-            if (!message) {
+                    if (data.error) {
+
+                        errorText =
+                            data.error;
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Error reading error response:",
+                        error
+                    );
+
+                }
+
+
+                bubble.innerHTML =
+                    formatMessage(
+                        errorText
+                    );
+
+
                 return;
             }
 
 
-            /*
-             * Disable input while Luna responds.
-             */
-            sendButton.disabled = true;
-            messageInput.disabled = true;
-
-
-            /*
-             * Display user's message immediately.
-             */
-            createUserMessage(message);
-
-            scrollToBottom();
-
-
-            /*
-             * Clear textarea.
-             */
-            messageInput.value = "";
-
-
-            /*
-             * Create Luna message.
-             */
-            const lunaRow =
-                createLunaMessage();
-
-
-            const lunaBubble =
-                lunaRow.querySelector(
-                    ".message-bubble"
-                );
-
-
-            /*
-             * Show typing animation.
-             */
-            showTyping(lunaBubble);
-
-            scrollToBottom();
-
-
             try {
 
-                /*
-                 * Get CSRF token.
-                 */
-                const csrfToken =
-                    chatForm.querySelector(
-                        "[name=csrfmiddlewaretoken]"
-                    ).value;
+                const data =
+                    await response.json();
 
 
                 /*
-                 * IMPORTANT:
-                 *
-                 * We are using URLSearchParams instead
-                 * of JSON.
-                 *
-                 * This makes Django's:
-                 *
-                 * request.POST.get("message")
-                 *
-                 * work correctly.
+                 * Display Luna text.
                  */
-                const formData =
-                    new URLSearchParams();
 
-
-                formData.append(
-                    "message",
-                    message
-                );
+                bubble.innerHTML =
+                    data.html ||
+                    "Luna did not return a response.";
 
 
                 /*
-                 * POST to Django.
+                 * Display selected image.
                  */
-                const response =
-                    await fetch(
-                        chatUrl,
-                        {
-                            method: "POST",
 
-                            headers: {
+                if (data.image) {
 
-                                "Content-Type":
-                                    "application/x-www-form-urlencoded; charset=UTF-8",
-
-                                "X-CSRFToken":
-                                    csrfToken,
-
-                                "X-Requested-With":
-                                    "XMLHttpRequest"
-                            },
-
-                            body:
-                                formData.toString()
-                        }
+                    addLunaImage(
+                        bubble,
+                        data.image
                     );
 
-
-                /*
-                 * Remove typing indicator.
-                 */
-                removeTyping(lunaBubble);
+                }
 
 
-                /*
-                 * Display Luna response.
-                 */
-                await streamResponse(
-                    response,
-                    lunaBubble
-                );
-
+                scrollToBottom();
 
             } catch (error) {
 
                 console.error(
-                    "Chat error:",
+                    "Error parsing Luna response:",
                     error
                 );
 
 
-                removeTyping(lunaBubble);
-
-
-                lunaBubble.innerHTML =
+                bubble.innerHTML =
                     formatMessage(
-                        "Unable to connect to Luna."
+                        "Unable to read Luna's response."
                     );
             }
-
-
-            /*
-             * Enable input again.
-             */
-            sendButton.disabled = false;
-            messageInput.disabled = false;
-
-            messageInput.focus();
-
-            scrollToBottom();
-
         }
-    );
 
 
-    /* =====================================================
-       ENTER = SEND
-       SHIFT + ENTER = NEW LINE
-       ===================================================== */
+        /* =====================================================
+           SEND MESSAGE
+           ===================================================== */
 
-    messageInput.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
+        chatForm.addEventListener(
+            "submit",
+            async function (event) {
 
                 event.preventDefault();
 
-                chatForm.requestSubmit();
+
+                const message =
+                    messageInput.value.trim();
+
+
+                if (!message) {
+
+                    return;
+
+                }
+
+
+                /*
+                 * Disable input.
+                 */
+
+                sendButton.disabled =
+                    true;
+
+                messageInput.disabled =
+                    true;
+
+
+                /*
+                 * Show user message.
+                 */
+
+                createUserMessage(
+                    message
+                );
+
+
+                scrollToBottom();
+
+
+                /*
+                 * Clear input.
+                 */
+
+                messageInput.value =
+                    "";
+
+
+                /*
+                 * Create Luna message.
+                 */
+
+                const lunaRow =
+                    createLunaMessage();
+
+
+                const lunaBubble =
+                    lunaRow.querySelector(
+                        ".message-bubble"
+                    );
+
+
+                /*
+                 * Show typing.
+                 */
+
+                showTyping(
+                    lunaBubble
+                );
+
+
+                scrollToBottom();
+
+
+                try {
+
+                    /*
+                     * CSRF token.
+                     */
+
+                    const csrfToken =
+                        chatForm.querySelector(
+                            "[name=csrfmiddlewaretoken]"
+                        ).value;
+
+
+                    /*
+                     * Form data.
+                     */
+
+                    const formData =
+                        new URLSearchParams();
+
+
+                    formData.append(
+                        "message",
+                        message
+                    );
+
+
+                    /*
+                     * Django request.
+                     */
+
+                    const response =
+                        await fetch(
+                            chatUrl,
+                            {
+                                method: "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/x-www-form-urlencoded; charset=UTF-8",
+
+                                    "X-CSRFToken":
+                                        csrfToken,
+
+                                    "X-Requested-With":
+                                        "XMLHttpRequest"
+                                },
+
+                                body:
+                                    formData.toString()
+                            }
+                        );
+
+
+                    removeTyping(
+                        lunaBubble
+                    );
+
+
+                    await streamResponse(
+                        response,
+                        lunaBubble
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "Chat error:",
+                        error
+                    );
+
+
+                    removeTyping(
+                        lunaBubble
+                    );
+
+
+                    lunaBubble.innerHTML =
+                        formatMessage(
+                            "Unable to connect to Luna."
+                        );
+                }
+
+
+                /*
+                 * Enable input.
+                 */
+
+                sendButton.disabled =
+                    false;
+
+                messageInput.disabled =
+                    false;
+
+
+                messageInput.focus();
+
+
+                scrollToBottom();
+
             }
-
-        }
-    );
+        );
 
 
-    /* =====================================================
-       INITIAL SCROLL
-       ===================================================== */
+        /* =====================================================
+           ENTER = SEND
+           SHIFT + ENTER = NEW LINE
+           ===================================================== */
 
-    scrollToBottom();
+        messageInput.addEventListener(
+            "keydown",
+            function (event) {
 
-});
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    chatForm.requestSubmit();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           INITIAL SCROLL
+           ===================================================== */
+
+        scrollToBottom();
+
+    }
+);
+
 </script>
-
 
 {% endblock %}
