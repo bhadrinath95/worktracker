@@ -13,7 +13,15 @@ from chat.models import (
 
 
 AI_NAME = "Luna"
+
 GROQ_MODEL = settings.GROQ_MODEL
+
+# Maximum number of conversation messages sent to Groq.
+# System prompt is kept separately.
+MAX_HISTORY_MESSAGES = 15
+
+# Maximum number of API keys supported.
+MAX_GROQ_KEYS = 15
 
 
 class GroqService:
@@ -31,50 +39,64 @@ class GroqService:
 
     def __init__(self):
 
-        # Prevent creating clients multiple times
+        # Prevent creating clients multiple times.
         if hasattr(self, "clients"):
             return
 
-        # -----------------------------------------
-        # GROQ API KEYS
-        # -----------------------------------------
+        # =========================================================
+        # LOAD ALL 15 GROQ API KEYS
+        # =========================================================
 
-        api_keys = [
-            getattr(settings, "GROQ_API_KEY_1", ""),
-            getattr(settings, "GROQ_API_KEY_2", ""),
-            getattr(settings, "GROQ_API_KEY_3", ""),
-            getattr(settings, "GROQ_API_KEY_4", ""),
-            getattr(settings, "GROQ_API_KEY_5", ""),
-            getattr(settings, "GROQ_API_KEY_6", ""),
-            getattr(settings, "GROQ_API_KEY_7", ""),
-            getattr(settings, "GROQ_API_KEY_8", ""),
-            getattr(settings, "GROQ_API_KEY_9", ""),
-            getattr(settings, "GROQ_API_KEY_10", ""),
-        ]
+        self.api_keys = []
 
-        # Remove empty keys
-        self.api_keys = [
-            key for key in api_keys
-            if key
-        ]
+        for number in range(1, MAX_GROQ_KEYS + 1):
+
+            setting_name = f"GROQ_API_KEY_{number}"
+
+            key = getattr(
+                settings,
+                setting_name,
+                ""
+            )
+
+            if key:
+                key = str(key).strip()
+
+            if key:
+                self.api_keys.append(key)
+
+        # =========================================================
+        # VALIDATE KEYS
+        # =========================================================
 
         if not self.api_keys:
             raise ValueError(
                 "No GROQ API keys are configured."
             )
 
-        # -----------------------------------------
-        # CREATE GROQ CLIENTS
-        # -----------------------------------------
+        # =========================================================
+        # CREATE CLIENTS
+        # =========================================================
 
         self.clients = [
             Groq(api_key=key)
             for key in self.api_keys
         ]
 
-    # =============================================
+        print(
+            "===================================="
+        )
+        print(
+            f"Groq API keys configured: "
+            f"{len(self.clients)}/{MAX_GROQ_KEYS}"
+        )
+        print(
+            "===================================="
+        )
+
+    # =============================================================
     # SYSTEM PROMPT
-    # =============================================
+    # =============================================================
 
     def get_system_prompt(
         self,
@@ -95,9 +117,9 @@ class GroqService:
             USER_NAME=user_name
         )
 
-    # =============================================
+    # =============================================================
     # IMAGE CATALOG
-    # =============================================
+    # =============================================================
 
     def get_image_catalog(self):
 
@@ -107,7 +129,7 @@ class GroqService:
             .order_by("id")
         )
 
-        if not image_prompts:
+        if not image_prompts.exists():
             return ""
 
         lines = []
@@ -121,9 +143,116 @@ class GroqService:
 
         return "\n\n".join(lines)
 
-    # =============================================
+    # =============================================================
+    # BUILD GROQ MESSAGES
+    # =============================================================
+
+    def build_groq_messages(
+        self,
+        messages,
+        system_prompt
+    ):
+
+        groq_messages = [
+            {
+                "role": "system",
+                "content": system_prompt
+            }
+        ]
+
+        for message in messages:
+
+            role = message.get(
+                "role",
+                "user"
+            )
+
+            content = str(
+                message.get(
+                    "content",
+                    ""
+                )
+            )
+
+            # Never allow another system message.
+            if role == "system":
+                continue
+
+            if role == "assistant":
+                groq_role = "assistant"
+            else:
+                groq_role = "user"
+
+            groq_messages.append(
+                {
+                    "role": groq_role,
+                    "content": content
+                }
+            )
+
+        # =========================================================
+        # FALLBACK USER MESSAGE
+        # =========================================================
+
+        if not any(
+            message["role"] == "user"
+            for message in groq_messages
+        ):
+
+            groq_messages.append(
+                {
+                    "role": "user",
+                    "content": "Hello"
+                }
+            )
+
+        return groq_messages
+
+    # =============================================================
+    # LIMIT CONVERSATION HISTORY
+    # =============================================================
+
+    def limit_history(
+        self,
+        groq_messages,
+        max_messages=MAX_HISTORY_MESSAGES
+    ):
+
+        # +1 because system prompt is separate.
+        if len(groq_messages) <= max_messages + 1:
+            return groq_messages
+
+        system_message = groq_messages[0]
+
+        recent_messages = groq_messages[
+            -max_messages:
+        ]
+
+        return [
+            system_message
+        ] + recent_messages
+
+    # =============================================================
+    # GROQ REQUEST
+    # =============================================================
+
+    def make_request(
+        self,
+        client,
+        groq_messages
+    ):
+
+        return client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=groq_messages,
+            temperature=0.7,
+            max_completion_tokens=512,
+            reasoning_effort="low",
+        )
+
+    # =============================================================
     # GENERATE
-    # =============================================
+    # =============================================================
 
     def generate(
         self,
@@ -133,17 +262,17 @@ class GroqService:
 
         try:
 
-            # -----------------------------------------
+            # =====================================================
             # SYSTEM PROMPT
-            # -----------------------------------------
+            # =====================================================
 
             system_prompt = self.get_system_prompt(
                 user_name=user_name
             )
 
-            # -----------------------------------------
+            # =====================================================
             # IMAGE CATALOG
-            # -----------------------------------------
+            # =====================================================
 
             image_catalog = self.get_image_catalog()
 
@@ -180,69 +309,51 @@ IMPORTANT:
 AVAILABLE IMAGES:
 
 {image_catalog}
+
 """
 
-            # -----------------------------------------
-            # GROQ MESSAGES
-            # -----------------------------------------
+            # =====================================================
+            # BUILD MESSAGES
+            # =====================================================
 
-            groq_messages = [
-                {
-                    "role": "system",
-                    "content": system_prompt
-                }
-            ]
+            groq_messages = self.build_groq_messages(
+                messages=messages,
+                system_prompt=system_prompt
+            )
 
-            for message in messages:
+            # =====================================================
+            # LIMIT HISTORY
+            # =====================================================
 
-                role = message.get(
-                    "role",
-                    "user"
-                )
+            groq_messages = self.limit_history(
+                groq_messages,
+                MAX_HISTORY_MESSAGES
+            )
 
-                content = str(
-                    message.get(
-                        "content",
-                        ""
-                    )
-                )
+            print(
+                f"Groq message count: "
+                f"{len(groq_messages)}"
+            )
 
-                if role == "system":
-                    continue
-
-                if role == "assistant":
-                    groq_role = "assistant"
-                else:
-                    groq_role = "user"
-
-                groq_messages.append(
-                    {
-                        "role": groq_role,
-                        "content": content
-                    }
-                )
-
-            # -----------------------------------------
-            # FALLBACK
-            # -----------------------------------------
-
-            if not any(
-                message["role"] == "user"
-                for message in groq_messages
-            ):
-
-                groq_messages.append(
-                    {
-                        "role": "user",
-                        "content": "Hello"
-                    }
-                )
-
-            # -----------------------------------------
-            # TRY ALL GROQ KEYS
-            # -----------------------------------------
+            # =====================================================
+            # TRY EVERY CONFIGURED GROQ KEY
+            # =====================================================
 
             response = None
+            last_error = None
+
+            total_keys = len(self.clients)
+
+            print(
+                "===================================="
+            )
+            print(
+                f"Starting Groq request with "
+                f"{total_keys} configured API keys."
+            )
+            print(
+                "===================================="
+            )
 
             for index, client in enumerate(
                 self.clients
@@ -250,24 +361,22 @@ AVAILABLE IMAGES:
 
                 key_number = index + 1
 
+                print(
+                    f"Trying Groq API key "
+                    f"{key_number}/{total_keys}..."
+                )
+
                 try:
 
-                    print(
-                        f"Trying Groq API key "
-                        f"{key_number}..."
+                    response = self.make_request(
+                        client,
+                        groq_messages
                     )
 
-                    response = (
-                        client.chat.completions.create(
-                            model=GROQ_MODEL,
-                            messages=groq_messages,
-                            temperature=0.7,
-                            max_completion_tokens=512,
-                            reasoning_effort="low",
-                        )
-                    )
+                    # =================================================
+                    # SUCCESS
+                    # =================================================
 
-                    # Success
                     print(
                         f"Groq API key "
                         f"{key_number} succeeded."
@@ -276,6 +385,8 @@ AVAILABLE IMAGES:
                     break
 
                 except Exception as e:
+
+                    last_error = e
 
                     status_code = getattr(
                         e,
@@ -298,23 +409,40 @@ AVAILABLE IMAGES:
                         str(e)
                     )
 
-                    # ---------------------------------
-                    # RATE LIMIT
-                    # ---------------------------------
+                    # =================================================
+                    # 429 RATE LIMIT
+                    # =================================================
 
                     if status_code == 429:
 
                         print(
                             f"Key {key_number} "
-                            f"has reached its rate limit."
+                            f"is rate limited."
                         )
 
-                        # Try next key
+                        if key_number < total_keys:
+
+                            print(
+                                f"Immediately switching "
+                                f"to Groq API key "
+                                f"{key_number + 1}..."
+                            )
+
+                        else:
+
+                            print(
+                                "All configured Groq "
+                                "API keys are rate limited."
+                            )
+
+                        # IMPORTANT:
+                        # Do NOT return here.
+                        # Continue to the next key.
                         continue
 
-                    # ---------------------------------
-                    # AUTHENTICATION ERROR
-                    # ---------------------------------
+                    # =================================================
+                    # 401 AUTHENTICATION ERROR
+                    # =================================================
 
                     if status_code == 401:
 
@@ -323,12 +451,15 @@ AVAILABLE IMAGES:
                             f"authentication failed."
                         )
 
-                        # Try next key too
+                        print(
+                            "Trying next API key..."
+                        )
+
                         continue
 
-                    # ---------------------------------
-                    # FORBIDDEN
-                    # ---------------------------------
+                    # =================================================
+                    # 403 FORBIDDEN
+                    # =================================================
 
                     if status_code == 403:
 
@@ -337,20 +468,269 @@ AVAILABLE IMAGES:
                             f"was forbidden."
                         )
 
-                        # Try next key
+                        print(
+                            "Trying next API key..."
+                        )
+
                         continue
 
-                    # ---------------------------------
+                    # =================================================
+                    # 413 PAYLOAD TOO LARGE
+                    # =================================================
+
+                    if status_code == 413:
+
+                        print(
+                            "Payload too large."
+                        )
+
+                        # ---------------------------------------------
+                        # REDUCE HISTORY
+                        # ---------------------------------------------
+
+                        reduced_messages = (
+                            self.limit_history(
+                                groq_messages,
+                                6
+                            )
+                        )
+
+                        print(
+                            f"Retrying key "
+                            f"{key_number} with "
+                            f"{len(reduced_messages)} "
+                            f"messages..."
+                        )
+
+                        try:
+
+                            response = self.make_request(
+                                client,
+                                reduced_messages
+                            )
+
+                            print(
+                                f"Groq API key "
+                                f"{key_number} succeeded "
+                                f"after reducing "
+                                f"conversation history."
+                            )
+
+                            break
+
+                        except Exception as retry_error:
+
+                            retry_status = getattr(
+                                retry_error,
+                                "status_code",
+                                None
+                            )
+
+                            last_error = retry_error
+
+                            print(
+                                "Reduced payload "
+                                "retry failed."
+                            )
+
+                            print(
+                                "Status:",
+                                retry_status
+                            )
+
+                            print(
+                                "Error:",
+                                str(retry_error)
+                            )
+
+                            # -----------------------------------------
+                            # REDUCED REQUEST = 429
+                            # -----------------------------------------
+
+                            if retry_status == 429:
+
+                                print(
+                                    f"Key {key_number} "
+                                    f"is rate limited "
+                                    f"after payload retry."
+                                )
+
+                                print(
+                                    "Trying next API key..."
+                                )
+
+                                continue
+
+                            # -----------------------------------------
+                            # STILL 413
+                            # -----------------------------------------
+
+                            if retry_status == 413:
+
+                                system_message = (
+                                    reduced_messages[0]
+                                )
+
+                                user_messages = [
+                                    message
+                                    for message
+                                    in reduced_messages[1:]
+                                    if message["role"] == "user"
+                                ]
+
+                                if user_messages:
+
+                                    minimal_messages = [
+                                        system_message,
+                                        user_messages[-1]
+                                    ]
+
+                                else:
+
+                                    minimal_messages = [
+                                        system_message,
+                                        {
+                                            "role": "user",
+                                            "content": "Hello"
+                                        }
+                                    ]
+
+                                print(
+                                    "Retrying with minimal "
+                                    "conversation payload..."
+                                )
+
+                                try:
+
+                                    response = self.make_request(
+                                        client,
+                                        minimal_messages
+                                    )
+
+                                    print(
+                                        f"Groq API key "
+                                        f"{key_number} succeeded "
+                                        f"with minimal payload."
+                                    )
+
+                                    break
+
+                                except Exception as final_error:
+
+                                    final_status = getattr(
+                                        final_error,
+                                        "status_code",
+                                        None
+                                    )
+
+                                    last_error = final_error
+
+                                    print(
+                                        "Minimal payload "
+                                        "retry failed."
+                                    )
+
+                                    print(
+                                        "Status:",
+                                        final_status
+                                    )
+
+                                    print(
+                                        "Error:",
+                                        str(final_error)
+                                    )
+
+                                    # ---------------------------------
+                                    # MINIMAL RETRY = 429
+                                    # ---------------------------------
+
+                                    if final_status == 429:
+
+                                        print(
+                                            f"Key {key_number} "
+                                            f"is rate limited "
+                                            f"during minimal retry."
+                                        )
+
+                                        print(
+                                            "Trying next API key..."
+                                        )
+
+                                        continue
+
+                                    # ---------------------------------
+                                    # STILL 413
+                                    # ---------------------------------
+
+                                    if final_status == 413:
+
+                                        return {
+                                            "text": (
+                                                "Sorry, the "
+                                                "conversation is "
+                                                "too large to process. "
+                                                "Please start a new "
+                                                "conversation."
+                                            ),
+                                            "image_id": None,
+                                        }
+
+                                    # ---------------------------------
+                                    # OTHER FINAL ERROR
+                                    # ---------------------------------
+
+                                    continue
+
+                            # -----------------------------------------
+                            # OTHER RETRY ERROR
+                            # -----------------------------------------
+
+                            continue
+
+                    # =================================================
                     # OTHER ERROR
-                    # ---------------------------------
+                    # =================================================
 
-                    raise
+                    print(
+                        f"Unhandled error for "
+                        f"Groq API key {key_number}."
+                    )
 
-            # -----------------------------------------
+                    print(
+                        "Trying next API key..."
+                    )
+
+                    continue
+
+            # =========================================================
             # ALL KEYS FAILED
-            # -----------------------------------------
+            # =========================================================
 
             if response is None:
+
+                print(
+                    "===================================="
+                )
+
+                print(
+                    "ALL CONFIGURED GROQ API KEYS FAILED."
+                )
+
+                print(
+                    f"Total keys attempted: "
+                    f"{total_keys}"
+                )
+
+                if last_error:
+
+                    print(
+                        "Last error:",
+                        str(last_error)
+                    )
+
+                print(
+                    "===================================="
+                )
 
                 return {
                     "text": (
@@ -362,9 +742,9 @@ AVAILABLE IMAGES:
                     "image_id": None,
                 }
 
-            # -----------------------------------------
+            # =========================================================
             # EMPTY RESPONSE
-            # -----------------------------------------
+            # =========================================================
 
             if not response.choices:
 
@@ -395,9 +775,9 @@ AVAILABLE IMAGES:
 
             response_text = response_text.strip()
 
-            # -----------------------------------------
+            # =========================================================
             # EXTRACT IMAGE ID
-            # -----------------------------------------
+            # =========================================================
 
             image_id = None
 
@@ -418,18 +798,18 @@ AVAILABLE IMAGES:
                     response_text
                 ).strip()
 
-            # -----------------------------------------
+            # =========================================================
             # RETURN
-            # -----------------------------------------
+            # =========================================================
 
             return {
                 "text": response_text,
                 "image_id": image_id,
             }
 
-        # =============================================
+        # =============================================================
         # GENERAL ERROR
-        # =============================================
+        # =============================================================
 
         except Exception as e:
 
@@ -461,5 +841,9 @@ AVAILABLE IMAGES:
                 "image_id": None,
             }
 
+
+# =============================================================
+# SINGLETON INSTANCE
+# =============================================================
 
 groq_service = GroqService()
