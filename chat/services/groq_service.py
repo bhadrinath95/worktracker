@@ -44,6 +44,12 @@ class GroqService:
             getattr(settings, "GROQ_API_KEY_2", ""),
             getattr(settings, "GROQ_API_KEY_3", ""),
             getattr(settings, "GROQ_API_KEY_4", ""),
+            getattr(settings, "GROQ_API_KEY_5", ""),
+            getattr(settings, "GROQ_API_KEY_6", ""),
+            getattr(settings, "GROQ_API_KEY_7", ""),
+            getattr(settings, "GROQ_API_KEY_8", ""),
+            getattr(settings, "GROQ_API_KEY_9", ""),
+            getattr(settings, "GROQ_API_KEY_10", ""),
         ]
 
         # Remove empty keys

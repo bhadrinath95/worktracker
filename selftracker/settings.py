@@ -181,6 +181,13 @@ GROQ_API_KEY_1 = env.get("GROQ_API_KEY1")
 GROQ_API_KEY_2 = env.get("GROQ_API_KEY2")
 GROQ_API_KEY_3 = env.get("GROQ_API_KEY3")
 GROQ_API_KEY_4 = env.get("GROQ_API_KEY4")
+GROQ_API_KEY_5 = env.get("GROQ_API_KEY5")
+GROQ_API_KEY_6 = env.get("GROQ_API_KEY6")
+GROQ_API_KEY_7 = env.get("GROQ_API_KEY7")
+GROQ_API_KEY_8 = env.get("GROQ_API_KEY8")
+GROQ_API_KEY_9 = env.get("GROQ_API_KEY9")
+GROQ_API_KEY_10 = env.get("GROQ_API_KEY10")
+
 GROQ_MODEL = "openai/gpt-oss-20b"
 
 # Default primary key field type
