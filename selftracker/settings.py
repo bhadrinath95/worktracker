@@ -177,7 +177,10 @@ env_file = config_dir / ".env"
 env = dotenv_values(env_file)
 
 GEMINI_API_KEY = env.get("GEMINI_API_KEY")
-GROQ_API_KEY = env.get("GROQ_API_KEY")
+GROQ_API_KEY_1 = env.get("GROQ_API_KEY1")
+GROQ_API_KEY_2 = env.get("GROQ_API_KEY2")
+GROQ_API_KEY_3 = env.get("GROQ_API_KEY3")
+GROQ_API_KEY_4 = env.get("GROQ_API_KEY4")
 GROQ_MODEL = "openai/gpt-oss-20b"
 
 # Default primary key field type

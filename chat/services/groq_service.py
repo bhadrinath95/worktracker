@@ -1,7 +1,9 @@
 import re
+
 from threading import Lock
 
 from django.conf import settings
+
 from groq import Groq
 
 from chat.models import (
@@ -11,51 +13,62 @@ from chat.models import (
 
 
 AI_NAME = "Luna"
-
-GROQ_API_KEY = settings.GROQ_API_KEY
-
 GROQ_MODEL = settings.GROQ_MODEL
 
 
 class GroqService:
 
     _instance = None
-
     _lock = Lock()
 
-
     def __new__(cls):
-
         if cls._instance is None:
-
             with cls._lock:
-
                 if cls._instance is None:
-
-                    cls._instance = super().__new__(
-                        cls
-                    )
+                    cls._instance = super().__new__(cls)
 
         return cls._instance
 
-
     def __init__(self):
 
-        # Prevent creating the client multiple times
-        if hasattr(self, "client"):
-
+        # Prevent creating clients multiple times
+        if hasattr(self, "clients"):
             return
 
-        if not GROQ_API_KEY:
+        # -----------------------------------------
+        # GROQ API KEYS
+        # -----------------------------------------
 
+        api_keys = [
+            getattr(settings, "GROQ_API_KEY_1", ""),
+            getattr(settings, "GROQ_API_KEY_2", ""),
+            getattr(settings, "GROQ_API_KEY_3", ""),
+            getattr(settings, "GROQ_API_KEY_4", ""),
+        ]
+
+        # Remove empty keys
+        self.api_keys = [
+            key for key in api_keys
+            if key
+        ]
+
+        if not self.api_keys:
             raise ValueError(
-                "GROQ_API_KEY is not configured."
+                "No GROQ API keys are configured."
             )
 
-        self.client = Groq(
-            api_key=GROQ_API_KEY
-        )
+        # -----------------------------------------
+        # CREATE GROQ CLIENTS
+        # -----------------------------------------
 
+        self.clients = [
+            Groq(api_key=key)
+            for key in self.api_keys
+        ]
+
+    # =============================================
+    # SYSTEM PROMPT
+    # =============================================
 
     def get_system_prompt(
         self,
@@ -76,11 +89,17 @@ class GroqService:
             USER_NAME=user_name
         )
 
+    # =============================================
+    # IMAGE CATALOG
+    # =============================================
 
     def get_image_catalog(self):
-        image_prompts = LunaImagePrompt.objects.filter(
-            is_active=True
-        ).order_by("id")
+
+        image_prompts = (
+            LunaImagePrompt.objects
+            .filter(is_active=True)
+            .order_by("id")
+        )
 
         if not image_prompts:
             return ""
@@ -88,6 +107,7 @@ class GroqService:
         lines = []
 
         for image in image_prompts:
+
             lines.append(
                 f"IMAGE_ID: {image.id}\n"
                 f"DESCRIPTION: {image.prompt}"
@@ -95,6 +115,9 @@ class GroqService:
 
         return "\n\n".join(lines)
 
+    # =============================================
+    # GENERATE
+    # =============================================
 
     def generate(
         self,
@@ -112,13 +135,11 @@ class GroqService:
                 user_name=user_name
             )
 
-
             # -----------------------------------------
             # IMAGE CATALOG
             # -----------------------------------------
 
             image_catalog = self.get_image_catalog()
-
 
             if image_catalog:
 
@@ -155,7 +176,6 @@ AVAILABLE IMAGES:
 {image_catalog}
 """
 
-
             # -----------------------------------------
             # GROQ MESSAGES
             # -----------------------------------------
@@ -166,7 +186,6 @@ AVAILABLE IMAGES:
                     "content": system_prompt
                 }
             ]
-
 
             for message in messages:
 
@@ -182,20 +201,13 @@ AVAILABLE IMAGES:
                     )
                 )
 
-
                 if role == "system":
-
                     continue
 
-
                 if role == "assistant":
-
                     groq_role = "assistant"
-
                 else:
-
                     groq_role = "user"
-
 
                 groq_messages.append(
                     {
@@ -203,7 +215,6 @@ AVAILABLE IMAGES:
                         "content": content
                     }
                 )
-
 
             # -----------------------------------------
             # FALLBACK
@@ -221,32 +232,129 @@ AVAILABLE IMAGES:
                     }
                 )
 
-
             # -----------------------------------------
-            # GROQ REQUEST
+            # TRY ALL GROQ KEYS
             # -----------------------------------------
 
-            try:
+            response = None
 
-                response = (
-                    self.client.chat.completions.create(
-                        model=GROQ_MODEL,
-                        messages=groq_messages,
-                        temperature=0.7,
-                        max_completion_tokens=512,
-                        reasoning_effort="low",
+            for index, client in enumerate(
+                self.clients
+            ):
+
+                key_number = index + 1
+
+                try:
+
+                    print(
+                        f"Trying Groq API key "
+                        f"{key_number}..."
                     )
-                )
 
-            except Exception as e:
+                    response = (
+                        client.chat.completions.create(
+                            model=GROQ_MODEL,
+                            messages=groq_messages,
+                            temperature=0.7,
+                            max_completion_tokens=512,
+                            reasoning_effort="low",
+                        )
+                    )
 
-                print(
-                    "GROQ ERROR:",
-                    repr(e)
-                )
+                    # Success
+                    print(
+                        f"Groq API key "
+                        f"{key_number} succeeded."
+                    )
 
-                raise
+                    break
 
+                except Exception as e:
+
+                    status_code = getattr(
+                        e,
+                        "status_code",
+                        None
+                    )
+
+                    print(
+                        f"Groq API key "
+                        f"{key_number} failed."
+                    )
+
+                    print(
+                        "Status:",
+                        status_code
+                    )
+
+                    print(
+                        "Error:",
+                        str(e)
+                    )
+
+                    # ---------------------------------
+                    # RATE LIMIT
+                    # ---------------------------------
+
+                    if status_code == 429:
+
+                        print(
+                            f"Key {key_number} "
+                            f"has reached its rate limit."
+                        )
+
+                        # Try next key
+                        continue
+
+                    # ---------------------------------
+                    # AUTHENTICATION ERROR
+                    # ---------------------------------
+
+                    if status_code == 401:
+
+                        print(
+                            f"Key {key_number} "
+                            f"authentication failed."
+                        )
+
+                        # Try next key too
+                        continue
+
+                    # ---------------------------------
+                    # FORBIDDEN
+                    # ---------------------------------
+
+                    if status_code == 403:
+
+                        print(
+                            f"Key {key_number} "
+                            f"was forbidden."
+                        )
+
+                        # Try next key
+                        continue
+
+                    # ---------------------------------
+                    # OTHER ERROR
+                    # ---------------------------------
+
+                    raise
+
+            # -----------------------------------------
+            # ALL KEYS FAILED
+            # -----------------------------------------
+
+            if response is None:
+
+                return {
+                    "text": (
+                        "Sorry, Luna is temporarily "
+                        "unable to respond because "
+                        "all available Groq API keys "
+                        "have reached their limits."
+                    ),
+                    "image_id": None,
+                }
 
             # -----------------------------------------
             # EMPTY RESPONSE
@@ -262,12 +370,12 @@ AVAILABLE IMAGES:
                     "image_id": None,
                 }
 
-
             response_text = (
-                response.choices[0]
-                .message.content
+                response
+                .choices[0]
+                .message
+                .content
             )
-
 
             if not response_text:
 
@@ -279,9 +387,7 @@ AVAILABLE IMAGES:
                     "image_id": None,
                 }
 
-
             response_text = response_text.strip()
-
 
             # -----------------------------------------
             # EXTRACT IMAGE ID
@@ -293,7 +399,6 @@ AVAILABLE IMAGES:
                 r"\[IMAGE_ID:(\d+)\]",
                 response_text
             )
-
 
             if match:
 
@@ -307,7 +412,6 @@ AVAILABLE IMAGES:
                     response_text
                 ).strip()
 
-
             # -----------------------------------------
             # RETURN
             # -----------------------------------------
@@ -317,6 +421,9 @@ AVAILABLE IMAGES:
                 "image_id": image_id,
             }
 
+        # =============================================
+        # GENERAL ERROR
+        # =============================================
 
         except Exception as e:
 
@@ -339,53 +446,6 @@ AVAILABLE IMAGES:
             print(
                 "===================================="
             )
-
-
-            if getattr(
-                e,
-                "status_code",
-                None
-            ) == 429:
-
-                return {
-                    "text": (
-                        "Sorry, Luna has temporarily "
-                        "reached the Groq API rate limit. "
-                        "Please try again later."
-                    ),
-                    "image_id": None,
-                }
-
-
-            if getattr(
-                e,
-                "status_code",
-                None
-            ) == 401:
-
-                return {
-                    "text": (
-                        "Sorry, Luna's Groq API "
-                        "authentication failed."
-                    ),
-                    "image_id": None,
-                }
-
-
-            if getattr(
-                e,
-                "status_code",
-                None
-            ) == 403:
-
-                return {
-                    "text": (
-                        "Sorry, Luna's Groq request "
-                        "was forbidden by the API."
-                    ),
-                    "image_id": None,
-                }
-
 
             return {
                 "text": (
