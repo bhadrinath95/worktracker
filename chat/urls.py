@@ -8,6 +8,7 @@ app_name = "chat"
 urlpatterns = [
     path("", views.conversation_list, name="conversation_list"),
     path("create/", views.conversation_create, name="conversation_create",),
+    path("luna/images/", views.luna_images, name="luna_images"),
     path("<slug:slug>/", views.conversation_detail, name="conversation_detail"),
     path("<slug:slug>/delete/confirm/", views.conversation_delete_confirm, name="conversation_delete_confirm"),
     path("<slug:slug>/delete/", views.conversation_delete, name="conversation_delete"),

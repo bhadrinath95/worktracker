@@ -294,3 +294,23 @@ def chat_message(request, slug):
             },
             status=500,
         )
+
+@login_required
+def luna_images(request):
+    # 🔒 Private access required
+    user_profile = getattr(request.user, "userprofile", None)
+
+    if user_profile is None or not user_profile.special_privilege_password:
+        django_messages.error(request, "You do not have access to private images.")
+        return redirect("tracker:task_list")
+
+    if not request.session.get("private_access"):
+        return redirect("private_access", "chat:luna_images")
+
+    images = LunaImagePrompt.objects.filter(
+        is_active=True
+    ).order_by("id")
+
+    return render(request, "chat/luna_images.html", {
+        "images": images,
+    })

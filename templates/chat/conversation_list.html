@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% load static %}
 
 {% block style %}
@@ -12,6 +13,7 @@
 .conversation-page {
     min-height: 100%;
     padding: 50px 20px 70px;
+
     background:
         radial-gradient(
             circle at 10% 10%,
@@ -49,13 +51,11 @@
     margin-bottom: 35px;
 }
 
-
 .header-left {
     display: flex;
     align-items: center;
     gap: 16px;
 }
-
 
 .luna-page-avatar {
     width: 54px;
@@ -81,20 +81,17 @@
         0 10px 25px rgba(49, 46, 129, 0.20);
 }
 
-
 .page-eyebrow {
     display: block;
 
     font-size: 11px;
     font-weight: 700;
-
     letter-spacing: 2px;
 
     color: #6366f1;
 
     margin-bottom: 3px;
 }
-
 
 .page-title {
     margin: 0;
@@ -105,12 +102,22 @@
     color: #111827;
 }
 
-
 .page-subtitle {
     margin: 5px 0 0;
 
     color: #6b7280;
     font-size: 14px;
+}
+
+
+/* =========================================================
+   HEADER BUTTON GROUP
+   ========================================================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 
@@ -121,12 +128,14 @@
 .new-conversation-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+
+    min-height: 46px;
+    padding: 11px 18px;
 
     border: none;
     border-radius: 12px;
-
-    padding: 12px 18px;
 
     background:
         linear-gradient(
@@ -139,6 +148,9 @@
 
     font-size: 14px;
     font-weight: 600;
+    line-height: 1;
+
+    text-decoration: none;
 
     box-shadow:
         0 8px 20px rgba(79, 70, 229, 0.20);
@@ -147,7 +159,6 @@
         transform 0.2s ease,
         box-shadow 0.2s ease;
 }
-
 
 .new-conversation-btn:hover {
     color: white;
@@ -158,9 +169,80 @@
         0 12px 25px rgba(79, 70, 229, 0.28);
 }
 
+.new-conversation-btn:active {
+    transform: translateY(0);
+}
 
 .new-conversation-icon {
     font-size: 19px;
+    line-height: 1;
+}
+
+
+/* =========================================================
+   LUNA IMAGES BUTTON
+   ========================================================= */
+
+.images-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 46px;
+    padding: 11px 16px;
+
+    border: 1px solid #e0e1f5;
+    border-radius: 12px;
+
+    background: #ffffff;
+    color: #4f46e5;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.images-btn:hover {
+    color: #3730a3;
+    background: #f7f7ff;
+    border-color: #c7c5ff;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 22px rgba(79, 70, 229, 0.12);
+}
+
+.images-btn:active {
+    transform: translateY(0);
+}
+
+.images-btn-icon {
+    width: 22px;
+    height: 22px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+
+    background: #f0f0ff;
+
+    font-size: 15px;
     line-height: 1;
 }
 
@@ -190,7 +272,6 @@
     align-items: center;
 
     min-height: 105px;
-
     padding: 20px;
 
     border: 1px solid #e8eaf0;
@@ -207,11 +288,11 @@
         border-color 0.22s ease;
 }
 
-
 .conversation-card:hover {
     transform: translateY(-4px);
 
-    border-color: rgba(99, 102, 241, 0.25);
+    border-color:
+        rgba(99, 102, 241, 0.25);
 
     box-shadow:
         0 15px 35px rgba(15, 23, 42, 0.09);
@@ -237,7 +318,6 @@
     border-radius: 14px;
 
     background: #f0f0ff;
-
     color: #6366f1;
 
     font-size: 21px;
@@ -251,8 +331,9 @@
 .conversation-content {
     min-width: 0;
     flex: 1;
-}
 
+    text-decoration: none;
+}
 
 .conversation-title {
     display: block;
@@ -268,7 +349,6 @@
 
     margin-bottom: 5px;
 }
-
 
 .conversation-date {
     color: #9ca3af;
@@ -288,7 +368,6 @@
     margin-left: 12px;
 }
 
-
 .conversation-action {
     width: 35px;
     height: 35px;
@@ -300,7 +379,6 @@
     border-radius: 10px;
 
     font-size: 14px;
-
     text-decoration: none;
 
     transition:
@@ -309,33 +387,26 @@
         transform 0.2s ease;
 }
 
-
 .conversation-action:hover {
     transform: translateY(-1px);
 }
 
-
 .update-action {
     color: #4f46e5;
-
     background: #f1f0ff;
 }
-
 
 .update-action:hover {
     color: #3730a3;
     background: #e5e4ff;
 }
 
-
 .delete-action {
     border: 0;
 
     color: #ef4444;
-
     background: #fff1f2;
 }
-
 
 .delete-action:hover {
     color: #dc2626;
@@ -354,7 +425,6 @@
     justify-content: center;
 
     min-height: 480px;
-
     padding: 50px 25px;
 
     border: 1px dashed #dfe2ea;
@@ -363,7 +433,6 @@
     background:
         rgba(255, 255, 255, 0.72);
 }
-
 
 .empty-icon-wrapper {
     width: 90px;
@@ -388,11 +457,9 @@
         0 12px 30px rgba(99, 102, 241, 0.10);
 }
 
-
 .empty-icon {
     font-size: 42px;
 }
-
 
 .empty-title {
     margin: 0 0 10px;
@@ -403,7 +470,6 @@
     color: #171923;
 }
 
-
 .empty-description {
     max-width: 450px;
 
@@ -412,7 +478,6 @@
     color: #6b7280;
 
     text-align: center;
-
     line-height: 1.7;
 }
 
@@ -424,13 +489,11 @@
 .luna-modal {
     border: 0;
     border-radius: 20px;
-
     overflow: hidden;
 
     box-shadow:
         0 25px 70px rgba(15, 23, 42, 0.20);
 }
-
 
 .luna-modal .modal-header {
     padding: 22px 24px;
@@ -440,7 +503,6 @@
     background: #fafaff;
 }
 
-
 .modal-eyebrow {
     display: block;
 
@@ -448,12 +510,10 @@
 
     font-size: 10px;
     font-weight: 750;
-
     letter-spacing: 1.8px;
 
     color: #6366f1;
 }
-
 
 .luna-modal .modal-title {
     font-size: 20px;
@@ -462,11 +522,9 @@
     color: #171923;
 }
 
-
 .luna-modal .modal-body {
     padding: 25px 24px;
 }
-
 
 .luna-modal .form-label {
     font-size: 13px;
@@ -474,7 +532,6 @@
 
     color: #374151;
 }
-
 
 .luna-modal .form-control {
     min-height: 48px;
@@ -487,14 +544,12 @@
     padding: 11px 14px;
 }
 
-
 .luna-modal .form-control:focus {
     border-color: #818cf8;
 
     box-shadow:
         0 0 0 4px rgba(99, 102, 241, 0.10);
 }
-
 
 .luna-modal .modal-footer {
     padding: 16px 24px;
@@ -504,11 +559,9 @@
     background: #fafaff;
 }
 
-
 .modal-cancel {
     border-radius: 10px;
 }
-
 
 .modal-create {
     border: 0;
@@ -535,39 +588,36 @@
         padding: 30px 15px 50px;
     }
 
-
     .conversation-header {
         align-items: flex-start;
         flex-direction: column;
     }
 
-
-    .new-conversation-btn {
+    .header-actions {
         width: 100%;
-        justify-content: center;
     }
 
+    .images-btn,
+    .new-conversation-btn {
+        flex: 1;
+    }
 
     .conversation-grid {
         grid-template-columns: 1fr;
     }
 
-
     .conversation-card {
         padding: 16px;
     }
-
 
     .conversation-actions {
         margin-left: 8px;
     }
 
-
     .conversation-action {
         width: 32px;
         height: 32px;
     }
-
 
     .page-title {
         font-size: 24px;
@@ -581,6 +631,20 @@
         align-items: flex-start;
     }
 
+    .header-actions {
+        gap: 8px;
+    }
+
+    .images-btn,
+    .new-conversation-btn {
+        padding: 11px 10px;
+        font-size: 13px;
+    }
+
+    .images-btn-icon {
+        width: 20px;
+        height: 20px;
+    }
 
     .luna-page-avatar {
         width: 46px;
@@ -589,11 +653,9 @@
         font-size: 21px;
     }
 
-
     .page-title {
         font-size: 21px;
     }
-
 
     .conversation-card-icon {
         width: 42px;
@@ -602,57 +664,85 @@
         margin-right: 11px;
     }
 
-
     .conversation-title {
         font-size: 14px;
     }
 
+    .conversation-date {
+        font-size: 11px;
+    }
 }
 
 </style>
 
 {% endblock %}
 
-
 {% block content %}
 
 <div class="conversation-page">
 
-    <div class="conversation-container">
+<div class="conversation-container">
 
+    <!-- =================================================
+         HEADER
+         ================================================= -->
 
-        <!-- =================================================
-             HEADER
-             ================================================= -->
+    <div class="conversation-header">
 
-        <div class="conversation-header">
+        <div class="header-left">
 
-            <div class="header-left">
+            <div class="luna-page-avatar">
+                🌙
+            </div>
 
-                <div class="luna-page-avatar">
-                    🌙
-                </div>
+            <div>
 
-                <div>
+                <span class="page-eyebrow">
+                    LUNA
+                </span>
 
-                    <span class="page-eyebrow">
-                        LUNA
-                    </span>
+                <h1 class="page-title">
+                    Your Conversations
+                </h1>
 
-                    <h1 class="page-title">
-                        Your Conversations
-                    </h1>
-
-                    <p class="page-subtitle">
-                        Continue a conversation or start something new.
-                    </p>
-
-                </div>
+                <p class="page-subtitle">
+                    Continue a conversation or start something new.
+                </p>
 
             </div>
 
+        </div>
+
+
+        <!-- =================================================
+             HEADER ACTIONS
+             ================================================= -->
+
+        <div class="header-actions">
+
+            <!-- Luna Images -->
+
+            <a
+                href="{% url 'chat:luna_images' %}"
+                class="images-btn"
+                title="View Luna images"
+            >
+
+                <span class="images-btn-icon">
+                    🖼️
+                </span>
+
+                <span>
+                    Luna Images
+                </span>
+
+            </a>
+
+
+            <!-- New Conversation -->
 
             <button
+                type="button"
                 class="new-conversation-btn"
                 data-bs-toggle="modal"
                 data-bs-target="#createConversationModal"
@@ -670,133 +760,133 @@
 
         </div>
 
-
-        <!-- =================================================
-             CONVERSATIONS
-             ================================================= -->
-
-        {% if conversations %}
-
-            <div class="conversation-grid">
-
-                {% for conversation in conversations %}
-
-                    <div class="conversation-card">
+    </div>
 
 
-                        <!-- Icon -->
+    <!-- =================================================
+         CONVERSATIONS
+         ================================================= -->
 
-                        <div class="conversation-card-icon">
-                            💬
-                        </div>
+    {% if conversations %}
+
+        <div class="conversation-grid">
+
+            {% for conversation in conversations %}
+
+                <div class="conversation-card">
+
+                    <!-- Icon -->
+
+                    <div class="conversation-card-icon">
+                        💬
+                    </div>
 
 
-                        <!-- Content -->
+                    <!-- Content -->
+
+                    <a
+                        href="{% url 'chat:conversation_detail' conversation.slug %}"
+                        class="conversation-content"
+                    >
+
+                        <span class="conversation-title">
+                            {{ conversation.title }}
+                        </span>
+
+                        <span class="conversation-date">
+                            Updated
+                            {{ conversation.updated_at|date:"M d, Y · h:i A" }}
+                        </span>
+
+                    </a>
+
+
+                    <!-- Actions -->
+
+                    <div class="conversation-actions">
+
+                        <!-- Open -->
 
                         <a
                             href="{% url 'chat:conversation_detail' conversation.slug %}"
-                            class="conversation-content text-decoration-none"
+                            class="conversation-action update-action"
+                            title="Open conversation"
                         >
-
-                            <span class="conversation-title">
-                                {{ conversation.title }}
-                            </span>
-
-                            <span class="conversation-date">
-                                Updated {{ conversation.updated_at|date:"M d, Y · h:i A" }}
-                            </span>
-
+                            ↗
                         </a>
 
 
-                        <!-- Actions -->
+                        <!-- Delete -->
 
-                        <div class="conversation-actions">
-
-
-                            <!-- Open / Update -->
-
-                            <a
-                                href="{% url 'chat:conversation_detail' conversation.slug %}"
-                                class="conversation-action update-action"
-                                title="Open conversation"
-                            >
-                                ↗
-                            </a>
-
-
-                            <!-- Delete -->
-
-                            <a
-                                href="{% url 'chat:conversation_delete_confirm' conversation.slug %}"
-                                class="conversation-action delete-action"
-                                title="Delete conversation"
-                            >
-                                🗑
-                            </a>
-
-                        </div>
+                        <a
+                            href="{% url 'chat:conversation_delete_confirm' conversation.slug %}"
+                            class="conversation-action delete-action"
+                            title="Delete conversation"
+                        >
+                            🗑
+                        </a>
 
                     </div>
 
-                {% endfor %}
-
-            </div>
-
-
-        {% else %}
-
-
-            <!-- =================================================
-                 EMPTY STATE
-                 ================================================= -->
-
-            <div class="empty-state">
-
-                <div class="empty-icon-wrapper">
-
-                    <span class="empty-icon">
-                        🌙
-                    </span>
-
                 </div>
 
+            {% endfor %}
 
-                <h2 class="empty-title">
-                    Your Luna space is empty
-                </h2>
-
-
-                <p class="empty-description">
-                    Start your first conversation with Luna.
-                    Ask questions, explore ideas, learn something new,
-                    or simply have a chat.
-                </p>
+        </div>
 
 
-                <button
-                    class="new-conversation-btn"
-                    data-bs-toggle="modal"
-                    data-bs-target="#createConversationModal"
-                >
+    {% else %}
 
-                    <span class="new-conversation-icon">
-                        +
-                    </span>
 
-                    Create Your First Conversation
+        <!-- =================================================
+             EMPTY STATE
+             ================================================= -->
 
-                </button>
+        <div class="empty-state">
+
+            <div class="empty-icon-wrapper">
+
+                <span class="empty-icon">
+                    🌙
+                </span>
 
             </div>
 
-        {% endif %}
+
+            <h2 class="empty-title">
+                Your Luna space is empty
+            </h2>
 
 
-    </div>
+            <p class="empty-description">
+                Start your first conversation with Luna.
+                Ask questions, explore ideas, learn something new,
+                or simply have a chat.
+            </p>
+
+
+            <button
+                type="button"
+                class="new-conversation-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#createConversationModal"
+            >
+
+                <span class="new-conversation-icon">
+                    +
+                </span>
+
+                Create Your First Conversation
+
+            </button>
+
+        </div>
+
+    {% endif %}
 
 </div>
 
+</div>
 
 <!-- =========================================================
      CREATE CONVERSATION MODAL
@@ -809,97 +899,96 @@
     aria-hidden="true"
 >
 
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal-dialog modal-dialog-centered">
 
-        <div class="modal-content luna-modal">
+    <div class="modal-content luna-modal">
 
+        <form
+            method="post"
+            action="{% url 'chat:conversation_create' %}"
+        >
 
-            <form
-                method="post"
-                action="{% url 'chat:conversation_create' %}"
-            >
-
-                {% csrf_token %}
-
-
-                <!-- Header -->
-
-                <div class="modal-header">
-
-                    <div>
-
-                        <span class="modal-eyebrow">
-                            LUNA
-                        </span>
-
-                        <h5 class="modal-title mb-0">
-                            Create Conversation
-                        </h5>
-
-                    </div>
+            {% csrf_token %}
 
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                    ></button>
+            <!-- Header -->
 
-                </div>
+            <div class="modal-header">
 
+                <div>
 
-                <!-- Body -->
+                    <span class="modal-eyebrow">
+                        LUNA
+                    </span>
 
-                <div class="modal-body">
-
-                    <label
-                        for="conversationTitle"
-                        class="form-label"
-                    >
-                        Conversation name
-                    </label>
-
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="conversationTitle"
-                        name="title"
-                        placeholder="e.g. Python Learning"
-                        maxlength="200"
-                        autocomplete="off"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- Footer -->
-
-                <div class="modal-footer">
-
-                    <button
-                        type="button"
-                        class="btn btn-light modal-cancel"
-                        data-bs-dismiss="modal"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary modal-create"
-                    >
+                    <h5 class="modal-title mb-0">
                         Create Conversation
-                    </button>
+                    </h5>
 
                 </div>
 
-            </form>
 
-        </div>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <!-- Body -->
+
+            <div class="modal-body">
+
+                <label
+                    for="conversationTitle"
+                    class="form-label"
+                >
+                    Conversation name
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    id="conversationTitle"
+                    name="title"
+                    placeholder="e.g. Python Learning"
+                    maxlength="200"
+                    autocomplete="off"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Footer -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-light modal-cancel"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary modal-create"
+                >
+                    Create Conversation
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
+
+</div>
 
 </div>
 
