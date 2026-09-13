@@ -22,6 +22,7 @@ def conversation_list(request):
     If there are no conversations, the template can show:
     'Create your conversation'
     """
+    request.session['private_access'] = False 
     conversations = Conversation.objects.all()
     return render(
         request,
