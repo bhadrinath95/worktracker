@@ -14,10 +14,6 @@ from .models import Statement, DecisionTree
 from .forms import StatementForm, DecisionTreeForm
 
 
-# =========================================================
-# PRIVATE DECISION TREE ACCESS
-# =========================================================
-
 class PrivateDecisionTreeMixin:
 
     def dispatch(self, request, *args, **kwargs):
@@ -28,22 +24,16 @@ class PrivateDecisionTreeMixin:
             None
         )
 
-        # User does not have private access privilege
         if (
             user_profile is None
             or not user_profile.special_privilege_password
         ):
-            request.session["private_access"] = False
-
             messages.error(
                 request,
                 "You do not have access to Decision Trees."
             )
-
             return redirect("home")
 
-        # User has the privilege but has not entered
-        # the private access password/session
         if not request.session.get("private_access"):
             return redirect(
                 "private_access",
@@ -57,16 +47,11 @@ class PrivateDecisionTreeMixin:
         )
 
 
-# =========================================================
-# TREE VIEW
-# =========================================================
-
 class TreeView(
     LoginRequiredMixin,
     PrivateDecisionTreeMixin,
     TemplateView
 ):
-
     template_name = "statements/tree.html"
 
     def get_context_data(self, **kwargs):
@@ -88,16 +73,11 @@ class TreeView(
         return context
 
 
-# =========================================================
-# STATEMENT CREATE
-# =========================================================
-
 class StatementCreateView(
     LoginRequiredMixin,
     PrivateDecisionTreeMixin,
     CreateView
 ):
-
     model = Statement
     form_class = StatementForm
     template_name = "statements/form.html"
@@ -168,16 +148,11 @@ class StatementCreateView(
         )
 
 
-# =========================================================
-# STATEMENT UPDATE
-# =========================================================
-
 class StatementUpdateView(
     LoginRequiredMixin,
     PrivateDecisionTreeMixin,
     UpdateView
 ):
-
     model = Statement
     form_class = StatementForm
     template_name = "statements/form.html"
@@ -199,18 +174,13 @@ class StatementUpdateView(
                 "tree_id": self.object.tree.id
             }
         )
-
-
-# =========================================================
-# STATEMENT DELETE
-# =========================================================
+ 
 
 class StatementDeleteView(
     LoginRequiredMixin,
     PrivateDecisionTreeMixin,
     DeleteView
 ):
-
     model = Statement
     template_name = "statements/delete.html"
 
@@ -233,16 +203,11 @@ class StatementDeleteView(
         return context
 
 
-# =========================================================
-# DECISION TREE LIST
-# =========================================================
-
 class DecisionTreeListView(
     LoginRequiredMixin,
     PrivateDecisionTreeMixin,
     ListView
 ):
-
     model = DecisionTree
     template_name = "statements/decision_tree_list.html"
     context_object_name = "trees"
@@ -275,20 +240,14 @@ class DecisionTreeListView(
         return context
 
 
-# =========================================================
-# DECISION TREE CREATE
-# =========================================================
-
 class DecisionTreeCreateView(
     LoginRequiredMixin,
     PrivateDecisionTreeMixin,
     CreateView
 ):
-
     model = DecisionTree
     form_class = DecisionTreeForm
     template_name = "statements/decision_tree_form.html"
-
     success_url = reverse_lazy(
         "statements:decision_tree_list"
     )
@@ -302,20 +261,14 @@ class DecisionTreeCreateView(
         return context
 
 
-# =========================================================
-# DECISION TREE UPDATE
-# =========================================================
-
 class DecisionTreeUpdateView(
     LoginRequiredMixin,
     PrivateDecisionTreeMixin,
     UpdateView
 ):
-
     model = DecisionTree
     form_class = DecisionTreeForm
     template_name = "statements/decision_tree_form.html"
-
     success_url = reverse_lazy(
         "statements:decision_tree_list"
     )
@@ -329,19 +282,13 @@ class DecisionTreeUpdateView(
         return context
 
 
-# =========================================================
-# DECISION TREE DELETE
-# =========================================================
-
 class DecisionTreeDeleteView(
     LoginRequiredMixin,
     PrivateDecisionTreeMixin,
     DeleteView
 ):
-
     model = DecisionTree
     template_name = "statements/decision_tree_delete.html"
-
     success_url = reverse_lazy(
         "statements:decision_tree_list"
     )
