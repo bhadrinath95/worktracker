@@ -233,7 +233,7 @@ def chat_message(request, slug):
                 LunaImagePrompt.objects.filter(
                     id=image_id,
                     is_active=True
-                ).first()
+                ).order_by("?").first()
             )
 
 
@@ -310,7 +310,7 @@ def luna_images(request):
 
     images = LunaImagePrompt.objects.filter(
         is_active=True
-    ).order_by("id")
+    ).order_by("?")
 
     return render(request, "chat/luna_images.html", {
         "images": images,
