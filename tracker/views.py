@@ -21,6 +21,7 @@ from copy import copy
 from django.utils.dateparse import parse_date
 from django.http import HttpResponse
 import markdown
+from django.views.decorators.http import require_POST
 
 
 class HomeView(LoginRequiredMixin, View):
