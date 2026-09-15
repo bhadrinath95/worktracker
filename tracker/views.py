@@ -790,9 +790,12 @@ def start_update(request, update_id):
     if update.status == 'Opened':
         update.start_time = timezone.localtime().time()
         update.status = 'InProgress'
-        update.save(update_fields=['start_time', 'status'])
+        update.save()
 
-    return redirect(request.META.get('HTTP_REFERER', 'task_list'))
+    return redirect(
+            'tracker:update_list',
+            task_id=update.task.id
+        )
 
 
 @login_required
@@ -803,6 +806,9 @@ def complete_update(request, update_id):
     if update.status == 'InProgress':
         update.end_time = timezone.localtime().time()
         update.status = 'Completed'
-        update.save(update_fields=['end_time', 'status'])
+        update.save()
 
-    return redirect(request.META.get('HTTP_REFERER', 'task_list'))
+    return redirect(
+            'tracker:update_list',
+            task_id=update.task.id
+        )
