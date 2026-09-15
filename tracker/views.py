@@ -515,6 +515,8 @@ def update_status(update, status, on_day=False):
             year += 1
 
         day = update.date_to_remind
+        update.start_time = None
+        update.status = 'Opened'
 
         try:
             update.date = date(year, month, day)
@@ -531,6 +533,8 @@ def update_status(update, status, on_day=False):
         day = update.date_to_remind or update.date.day
 
         update.date_to_remind = day
+        update.start_time = None
+        update.status = 'Opened'
 
         try:
             update.date = date(year, month, day)
@@ -550,6 +554,9 @@ def update_status(update, status, on_day=False):
         if days_ahead <= 0:
             days_ahead += 7
 
+        update.start_time = None
+        update.status = 'Opened'
+
         update.date += timedelta(days=days_ahead)
 
     elif update.reminder_type == 'Workweek':
@@ -560,10 +567,14 @@ def update_status(update, status, on_day=False):
         elif next_date.weekday() == 6:
             next_date += timedelta(days=1)
 
+        update.start_time = None
+        update.status = 'Opened'
         update.date = next_date
 
     elif update.reminder_type == 'Days':
         update.date += timedelta(days=update.date_to_remind)
+        update.start_time = None
+        update.status = 'Opened'
 
     else:
         if not on_day:
