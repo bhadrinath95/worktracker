@@ -478,61 +478,106 @@ class UpdateListView(LoginRequiredMixin, View):
 def update_status(update, status, on_day=False):
     today = timezone.localdate()
 
-    # ---- store completed copy ----
+    current_time = timezone.localtime().time().replace(
+        second=0,
+        microsecond=0
+    )
+
+    # -------------------------------------------------
+    # Store completed copy
+    # -------------------------------------------------
     if update.can_store_reminder:
         update_copy = copy(update)
         update_copy.pk = None
+
         if not on_day:
             update_copy.date = today
+
+            if update.status == 'InProgress':
+                update_copy.end_time = current_time
+
+            elif update.status == 'Opened':
+                update_copy.start_time = current_time
+
+        update.status = 'Completed'
+        update.save(update_fields=['end_time', 'status'])
+
         update_copy.is_check_box = False
         update_copy.status = status
         update_copy.save()
 
-    # ---- calculate next reminder date ----
+    # -------------------------------------------------
+    # Calculate next reminder date
+    # -------------------------------------------------
     if update.reminder_type == 'Monthly':
         year = update.date.year
         month = update.date.month + 1
+
         if month == 13:
             month = 1
             year += 1
+
         day = update.date_to_remind
+
         try:
             update.date = date(year, month, day)
         except ValueError:
-            update.date = date(year, month, monthrange(year, month)[1])
+            update.date = date(
+                year,
+                month,
+                monthrange(year, month)[1]
+            )
 
     elif update.reminder_type == 'Yearly':
         year = update.date.year + 1
         month = update.date.month
         day = update.date_to_remind or update.date.day
+
         update.date_to_remind = day
+
         try:
             update.date = date(year, month, day)
         except ValueError:
-            update.date = date(year, month, monthrange(year, month)[1])
+            update.date = date(
+                year,
+                month,
+                monthrange(year, month)[1]
+            )
 
     elif update.reminder_type == 'Weekly':
         current_weekday = (update.date.weekday() + 1) % 7
         target_weekday = update.date_to_remind
+
         days_ahead = target_weekday - current_weekday
+
         if days_ahead <= 0:
             days_ahead += 7
+
         update.date += timedelta(days=days_ahead)
 
     elif update.reminder_type == 'Workweek':
         next_date = update.date + timedelta(days=1)
-        if next_date.weekday() == 5:   
+
+        if next_date.weekday() == 5:
             next_date += timedelta(days=2)
         elif next_date.weekday() == 6:
             next_date += timedelta(days=1)
+
         update.date = next_date
-        
+
     elif update.reminder_type == 'Days':
         update.date += timedelta(days=update.date_to_remind)
 
     else:
         if not on_day:
             update.date = today
+
+            if update.status == 'InProgress':
+                update.end_time = current_time
+
+            elif update.status == 'Opened':
+                update.start_time = current_time
+
         update.status = status
 
     update.save()
@@ -572,6 +617,25 @@ class UpdateCompleteView(LoginRequiredMixin, View):
             'tracker:update_list',
             task_id=update.task.id
         )
+
+@login_required(login_url='login')
+@require_POST
+def start_update(request, update_id):
+    update = get_object_or_404(Update, id=update_id)
+    if update.status == 'Opened':
+        update_status(update, 'InProgress')
+        update.refresh_from_db()
+        if request.headers.get("HX-Request"):
+            return render(
+                request,
+                "tracker/partials/update_row.html",
+                {"u": update}
+            )
+    return redirect(
+        'tracker:update_list',
+        task_id=update.task.id
+    )
+
 
 class UpdateOnDayCompleteView(LoginRequiredMixin, View):
     def post(self, request, update_id):
@@ -802,23 +866,3 @@ def start_update(request, update_id):
         task_id=update.task.id
     )
 
-
-@login_required(login_url='login')
-@require_POST
-def complete_update(request, update_id):
-    update = get_object_or_404(Update, id=update_id)
-
-    if update.status == 'InProgress':
-        current_time = timezone.localtime().time().replace(
-            second=0,
-            microsecond=0
-        )
-
-        update.end_time = current_time
-        update.status = 'Completed'
-        update.save(update_fields=['end_time', 'status'])
-
-    return redirect(
-        'tracker:update_list',
-        task_id=update.task.id
-    )
