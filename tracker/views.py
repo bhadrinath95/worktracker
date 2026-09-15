@@ -499,9 +499,6 @@ def update_status(update, status, on_day=False):
             elif update.status == 'Opened':
                 update_copy.start_time = current_time
 
-        update.status = 'Completed'
-        update.save(update_fields=['end_time', 'status'])
-
         update_copy.is_check_box = False
         update_copy.status = status
         update_copy.save()
