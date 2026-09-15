@@ -780,3 +780,28 @@ def save_note(request):
     return HttpResponse(
         '<span class="text-success">✓ Saved</span>'
     )
+
+@login_required
+@require_POST
+def start_update(request, update_id):
+    update = get_object_or_404(Update, id=update_id)
+
+    if update.status == 'Opened':
+        update.start_time = timezone.localtime().time()
+        update.status = 'InProgress'
+        update.save(update_fields=['start_time', 'status'])
+
+    return redirect(request.META.get('HTTP_REFERER', 'task_list'))
+
+
+@login_required
+@require_POST
+def complete_update(request, update_id):
+    update = get_object_or_404(Update, id=update_id)
+
+    if update.status == 'InProgress':
+        update.end_time = timezone.localtime().time()
+        update.status = 'Completed'
+        update.save(update_fields=['end_time', 'status'])
+
+    return redirect(request.META.get('HTTP_REFERER', 'task_list'))
