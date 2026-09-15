@@ -93,18 +93,6 @@
         </form>
     {% endif %}
 
-    {% if u.status == 'InProgress' %}
-        <form method="post"
-              action="{% url 'tracker:complete_update' u.id %}"
-              class="d-inline m-0">
-            {% csrf_token %}
-            <button type="submit"
-                    class="btn btn-sm btn-outline-success">
-                Complete
-            </button>
-        </form>
-    {% endif %}
-
             <button
                 hx-post="{% url 'tracker:update_delete' u.id %}"
                 hx-target="#update-row-{{ u.id }}"
