@@ -782,33 +782,43 @@ def save_note(request):
         '<span class="text-success">✓ Saved</span>'
     )
 
-@login_required
+@login_required(login_url='login')
 @require_POST
 def start_update(request, update_id):
     update = get_object_or_404(Update, id=update_id)
 
     if update.status == 'Opened':
-        update.start_time = timezone.localtime().time()
-        update.status = 'InProgress'
-        update.save()
-
-    return redirect(
-            'tracker:update_list',
-            task_id=update.task.id
+        current_time = timezone.localtime().time().replace(
+            second=0,
+            microsecond=0
         )
 
+        update.start_time = current_time
+        update.status = 'InProgress'
+        update.save(update_fields=['start_time', 'status'])
 
-@login_required
+    return redirect(
+        'tracker:update_list',
+        task_id=update.task.id
+    )
+
+
+@login_required(login_url='login')
 @require_POST
 def complete_update(request, update_id):
     update = get_object_or_404(Update, id=update_id)
 
     if update.status == 'InProgress':
-        update.end_time = timezone.localtime().time()
+        current_time = timezone.localtime().time().replace(
+            second=0,
+            microsecond=0
+        )
+
+        update.end_time = current_time
         update.status = 'Completed'
-        update.save()
+        update.save(update_fields=['end_time', 'status'])
 
     return redirect(
-            'tracker:update_list',
-            task_id=update.task.id
-        )
+        'tracker:update_list',
+        task_id=update.task.id
+    )
