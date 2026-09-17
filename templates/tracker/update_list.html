@@ -352,6 +352,19 @@
             Edit
         </a>
 
+                {% if u.status == 'Opened' %}
+            <form method="post"
+                  action="{% url 'tracker:start_update' u.id %}"
+                  class="d-inline m-0">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn btn-sm"
+                        style="border: 1px solid #20c997; color: #20c997;">
+                    Start
+                </button>
+            </form>
+        {% endif %}
+
         {% if u.status != 'Completed' and u.status != 'Cancelled' %}
 
         <a href="{{ u.get_google_calendar_url }}"

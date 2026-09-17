@@ -59,6 +59,19 @@
                 On Day Complete
             </button>
 
+            {% if u.status == 'Opened' %}
+                <form method="post"
+                    action="{% url 'tracker:start_update' u.id %}"
+                    class="d-inline m-0">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn btn-sm"
+                            style="border: 1px solid #20c997; color: #20c997;">
+                        Start
+                    </button>
+                </form>
+            {% endif %}
+
             <button
                 hx-post="{% url 'tracker:update_cancelled' u.id %}"
                 hx-target="#update-row-{{ u.id }}"
@@ -80,6 +93,7 @@
             style="border:1px solid #6610f2; color:#6610f2;">
                 Add to Calendar
             </a>
+
 
             <button
                 hx-post="{% url 'tracker:update_delete' u.id %}"
