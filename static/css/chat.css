@@ -3,7 +3,7 @@
    ========================================================= */
 
 .chat-container {
-    height: calc(100vh - 50px);
+    height: calc(93vh - 50px);
     min-height: 500px;
     overflow: hidden;
     background: #f5f7fb;
@@ -460,27 +460,6 @@
 
 
 /* =========================================================
-   LUNA IMAGE
-   ========================================================= */
-
-.chat-image-container {
-    margin-top: 12px;
-    max-width: 100%;
-    overflow: hidden;
-    border-radius: 12px;
-}
-
-.chat-image {
-    display: block;
-    width: 100%;
-    max-width: 500px;
-    height: auto;
-    border-radius: 12px;
-    object-fit: cover;
-}
-
-
-/* =========================================================
    TYPING INDICATOR
    ========================================================= */
 
@@ -720,7 +699,7 @@
     }
 
     .chat-container {
-        height: calc(100dvh - 50px);
+        height: calc(95dvh - 50px);
         min-height: 0;
         overflow: hidden;
     }
@@ -843,7 +822,4 @@
         padding: 8px 11px;
     }
 
-    .chat-image {
-        max-width: 100%;
-    }
 }

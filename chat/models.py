@@ -41,17 +41,6 @@ class Message(models.Model):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    image_google_id = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True
-    )
-
-    image_alt = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True
-    )
 
     class Meta:
         ordering = ["created_at"]

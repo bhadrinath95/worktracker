@@ -1,16 +1,11 @@
-from django.contrib import messages as django_messages
-from django.core.serializers import python
-from django.http import JsonResponse, StreamingHttpResponse, request
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
-from .services.groq_service import groq_service
-from .models import (
-    Conversation,
-    Message,
-    LunaImagePrompt,
-)
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages as django_messages
+from .services.groq_service import groq_service
+from .models import Conversation, Message, LunaImagePrompt
+
 from tracker.templatetags.markdown_extras import markdown_filter
 
 
@@ -22,8 +17,10 @@ def conversation_list(request):
     If there are no conversations, the template can show:
     'Create your conversation'
     """
-    request.session['private_access'] = False 
+    request.session["private_access"] = False
+
     conversations = Conversation.objects.all()
+
     return render(
         request,
         "chat/conversation_list.html",
@@ -39,12 +36,18 @@ def conversation_create(request):
     """
     Create a new conversation using a custom title.
     """
-    title = request.POST.get("title", "").strip()
+    title = request.POST.get(
+        "title",
+        ""
+    ).strip()
+
     if not title:
         title = "New Chat"
+
     conversation = Conversation.objects.create(
         title=title
     )
+
     return redirect(
         "chat:conversation_detail",
         slug=conversation.slug,
@@ -60,7 +63,9 @@ def conversation_detail(request, slug):
         Conversation,
         slug=slug,
     )
+
     conversations = Conversation.objects.all()
+
     return render(
         request,
         "chat/chat.html",
@@ -82,10 +87,16 @@ def conversation_update(request, slug):
         Conversation,
         slug=slug,
     )
-    title = request.POST.get("title", "").strip()
+
+    title = request.POST.get(
+        "title",
+        ""
+    ).strip()
+
     if title:
         conversation.title = title
         conversation.save()
+
     return redirect(
         "chat:conversation_detail",
         slug=conversation.slug,
@@ -124,7 +135,10 @@ def conversation_delete(request, slug):
 
     conversation.delete()
 
-    return redirect("chat:conversation_list")
+    return redirect(
+        "chat:conversation_list"
+    )
+
 
 @require_POST
 @login_required
@@ -187,7 +201,6 @@ def chat_message(request, slug):
 
     db_messages = conversation.messages.all()
 
-
     messages = [
         {
             "role": message.role,
@@ -205,7 +218,7 @@ def chat_message(request, slug):
 
         result = groq_service.generate(
             messages,
-            user_name=user_name
+            user_name=user_name,
         )
 
 
@@ -213,28 +226,6 @@ def chat_message(request, slug):
             "text",
             ""
         )
-
-
-        image_id = result.get(
-            "image_id"
-        )
-
-
-        # -----------------------------------------
-        # FIND SELECTED IMAGE
-        # -----------------------------------------
-
-        image_prompt = None
-
-
-        if image_id:
-
-            image_prompt = (
-                LunaImagePrompt.objects.filter(
-                    id=image_id,
-                    is_active=True
-                ).order_by("?").first()
-            )
 
 
         # -----------------------------------------
@@ -247,11 +238,6 @@ def chat_message(request, slug):
                 conversation=conversation,
                 role="assistant",
                 content=assistant_content,
-                image_google_id=(
-                    image_prompt.image_google_id
-                    if image_prompt
-                    else None
-                ),
             )
 
             conversation.save()
@@ -268,16 +254,6 @@ def chat_message(request, slug):
                 "html": markdown_filter(
                     assistant_content
                 ),
-
-                "image": (
-                    {
-                        "image_google_id": (
-                            image_prompt.image_google_id
-                        ),
-                    }
-                    if image_prompt
-                    else None
-                ),
             }
         )
 
@@ -288,14 +264,13 @@ def chat_message(request, slug):
             f"Groq generation error: {exc}"
         )
 
-
         return JsonResponse(
             {
                 "error": "Error generating response."
             },
             status=500,
         )
-
+    
 @login_required
 def luna_images(request):
     # 🔒 Private access required
