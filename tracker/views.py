@@ -504,10 +504,10 @@ def update_status(update, status, on_day=False):
         if not on_day:
             update_copy.date = today
 
-            if update.status == 'InProgress':
+            if status == 'Completed' and update.status == 'InProgress':
                 update_copy.end_time = current_time
 
-            elif update.status == 'Opened':
+            elif status == 'InProgress' and update.status == 'Opened':
                 update_copy.start_time = current_time
 
         update_copy.is_check_box = False
@@ -526,7 +526,9 @@ def update_status(update, status, on_day=False):
             year += 1
 
         day = update.date_to_remind
-        update.start_time = None
+        if update.clear_time_on_reminder:
+            update.start_time = None
+            update.end_time = None
         update.status = 'Opened'
 
         try:
@@ -544,7 +546,9 @@ def update_status(update, status, on_day=False):
         day = update.date_to_remind or update.date.day
 
         update.date_to_remind = day
-        update.start_time = None
+        if update.clear_time_on_reminder:
+            update.start_time = None
+            update.end_time = None
         update.status = 'Opened'
 
         try:
@@ -565,7 +569,9 @@ def update_status(update, status, on_day=False):
         if days_ahead <= 0:
             days_ahead += 7
 
-        update.start_time = None
+        if update.clear_time_on_reminder:
+            update.start_time = None
+            update.end_time = None
         update.status = 'Opened'
 
         update.date += timedelta(days=days_ahead)
@@ -578,13 +584,17 @@ def update_status(update, status, on_day=False):
         elif next_date.weekday() == 6:
             next_date += timedelta(days=1)
 
-        update.start_time = None
+        if update.clear_time_on_reminder:
+            update.start_time = None
+            update.end_time = None
         update.status = 'Opened'
         update.date = next_date
 
     elif update.reminder_type == 'Days':
         update.date += timedelta(days=update.date_to_remind)
-        update.start_time = None
+        if update.clear_time_on_reminder:
+            update.start_time = None
+            update.end_time = None
         update.status = 'Opened'
 
     else:

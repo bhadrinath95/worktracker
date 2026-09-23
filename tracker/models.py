@@ -97,6 +97,7 @@ class Update(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Opened')
     reminder_type = models.CharField(max_length=20, choices=REMINDER_CHOICE, null=True, blank=True)
     can_store_reminder = models.BooleanField(default=False)
+    clear_time_on_reminder = models.BooleanField(default=False)
     date_to_remind = models.IntegerField(null=True, blank=True)
     auto_reminder_handle = models.BooleanField(default=True)
 
