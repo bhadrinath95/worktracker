@@ -211,6 +211,82 @@
         <small id="copy-message" class="text-success"></small>
     </details>
 
+
+    <details class="mb-3">
+        <summary class="text-primary" style="cursor:pointer;">
+            <i class="bi bi-table"></i> Markdown Table Helper
+        </summary>
+
+        <div class="mt-3">
+
+            <div class="mb-2 small text-muted">
+                Click any cell to select its row and column.
+            </div>
+
+            <!-- Row Controls -->
+            <div class="d-flex flex-wrap gap-2 mb-2">
+                <button type="button" class="btn btn-sm btn-outline-primary"
+                        onclick="addSelectedRow('above')">
+                    <i class="bi bi-arrow-up"></i> Add Row Above
+                </button>
+
+                <button type="button" class="btn btn-sm btn-outline-primary"
+                        onclick="addSelectedRow('below')">
+                    <i class="bi bi-arrow-down"></i> Add Row Below
+                </button>
+
+                <button type="button" class="btn btn-sm btn-outline-danger"
+                        onclick="removeSelectedRow()">
+                    <i class="bi bi-trash"></i> Remove Row
+                </button>
+            </div>
+
+            <!-- Column Controls -->
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <button type="button" class="btn btn-sm btn-outline-primary"
+                        onclick="addSelectedColumn('left')">
+                    <i class="bi bi-arrow-left"></i> Add Column Left
+                </button>
+
+                <button type="button" class="btn btn-sm btn-outline-primary"
+                        onclick="addSelectedColumn('right')">
+                    <i class="bi bi-arrow-right"></i> Add Column Right
+                </button>
+
+                <button type="button" class="btn btn-sm btn-outline-danger"
+                        onclick="removeSelectedColumn()">
+                    <i class="bi bi-trash"></i> Remove Column
+                </button>
+            </div>
+
+            <!-- Editable Table -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm text-center"
+                      id="markdown-table">
+                    <tbody id="markdown-table-body"></tbody>
+                </table>
+            </div>
+
+            <button type="button" class="btn btn-sm btn-success"
+                    onclick="copyMarkdownTable()">
+                <i class="bi bi-clipboard"></i> Copy Markdown
+            </button>
+
+            <small id="markdown-copy-message"
+                  class="text-success ms-2"></small><br />
+
+            <label class="form-label fw-bold small mt-3">
+                Markdown Output
+            </label>
+
+            <textarea id="markdown-output"
+                      class="form-control form-control-sm"
+                      rows="8" readonly></textarea>
+
+        </div>
+    </details>
+
+
   <h4>Attach Documents</h4>
   <div id="formset">
     {{ formset.management_form }}
@@ -446,4 +522,5 @@
 <script src="{% static 'js/update_date.js' %}"></script>
 <script src="{% static 'js/template.js' %}"></script>
 <script src="{% static 'js/symbols.js' %}"></script>
+<script src="{% static 'js/markdown-table.js' %}"></script>
 {% endblock %}
