@@ -29,6 +29,35 @@
             background-image: url('{{ story.mobile_background_url|escape }}');
         }
     }
+    .journal-story-page {
+        min-height: 100vh;
+        background-color: white;
+        background-size: auto;
+        background-position: top left;
+        background-repeat: repeat;
+        background-image: url('{{ story.desktop_background_url|escape }}');
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    @media print {
+        body {
+            margin: 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .journal-story-page {
+            background-image: url('{{ story.desktop_background_url|escape }}') !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .no-print {
+            display: none !important;
+        }
+    }
     </style>
 </head>
 <body>
