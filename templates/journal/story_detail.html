@@ -37,7 +37,7 @@
       </form>
     </div>
   </div>
-  <div class="journal-topic-label">{{ story.topic.name }}</div>
+  <center><div class="journal-topic-label">{{ story.topic.name }}</div></center>
   {% include "journal/journal_content.html" %}
   <div class="journal-detail-footer">
     <a href="{% url 'journal:view_story' story.topic_id %}"><i class="bi bi-arrow-left"></i> Back to {{ story.topic.name }}</a>
