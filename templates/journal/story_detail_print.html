@@ -9,23 +9,41 @@
     <link rel="stylesheet" href="{% static 'css/journal.css' %}">
 
     <style>
-        .journal-story-page {
-            min-height: 100vh;
-            background-color: white;
-            background-size: auto;
-            background-position: top left;
-            background-repeat: repeat;
-            background-image: url('{{ story.desktop_background_url|escape }}');
-
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
 
         body {
-            font-family: Arial, sans-serif;
             margin: 20px;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+        }
+
+        .journal-story-page {
+            position: relative;
+            min-height: 100vh;
+            background-color: white;
+            overflow: hidden;
+        }
+
+        /* Background image */
+        .journal-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top left;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Journal content */
+        .journal-story-content {
+            position: relative;
+            z-index: 1;
         }
 
         .no-print {
@@ -37,12 +55,14 @@
             break-after: page;
         }
 
-        @media (max-width: 767.98px) {
-            .journal-story-page {
-                background-image: url('{{ story.mobile_background_url|escape }}');
+        /* Mobile background */
+        @media screen and (max-width: 767.98px) {
+            .journal-background {
+                content: url('https://raw.githubusercontent.com/tenctech10c/Images/main/friendship.png');
             }
         }
 
+        /* Print settings */
         @media print {
 
             @page {
@@ -53,20 +73,31 @@
             body {
                 margin: 0 !important;
                 padding: 0 !important;
-                background-color: white;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+                background: white !important;
             }
 
             .journal-story-page {
+                position: relative;
                 min-height: 100vh;
-                background-image: url('{{ story.desktop_background_url|escape }}') !important;
-                background-position: top left !important;
-                background-repeat: repeat !important;
-                background-size: auto !important;
+                overflow: visible;
+            }
 
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+            .journal-background {
+                display: block !important;
+                content: url('https://raw.githubusercontent.com/tenctech10c/Images/main/friendshipdesktop.png') !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+                object-position: top left !important;
+                z-index: 0 !important;
+            }
+
+            .journal-story-content {
+                position: relative;
+                z-index: 1;
             }
 
             .no-print {
@@ -76,6 +107,11 @@
             .page-break {
                 page-break-after: always;
                 break-after: page;
+                   }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
         }
     </style>
@@ -83,11 +119,42 @@
 
 <body>
 
-    {% include "journal/journal_content.html" %}
+    <div class="journal-story-page">
+
+        <img
+            class="journal-background"
+            src="https://raw.githubusercontent.com/tenctech10c/Images/main/friendshipdesktop.png"
+            alt=""
+        >
+
+        <div class="journal-story-content">
+
+            {% include "journal/journal_content.html" %}
+
+        </div>
+
+    </div>
 
     <script>
         window.onload = function () {
-            window.print();
+
+            const images = document.querySelectorAll('img');
+
+            Promise.all(
+                Array.from(images).map(function (img) {
+                    if (img.complete) {
+                        return Promise.resolve();
+                    }
+
+                    return new Promise(function (resolve) {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                })
+            ).then(function () {
+                window.print();
+            });
+
         };
     </script>
 
