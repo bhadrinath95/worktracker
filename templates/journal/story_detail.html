@@ -11,17 +11,12 @@
     background-size: auto;
     background-position: top left;
     background-repeat: repeat;
-
-    {% if story.desktop_background_url %}
     background-image: url('{{ story.desktop_background_url|escape }}');
-    {% endif %}
 }
 
 @media (max-width: 767.98px) {
     .journal-story-page {
-        {% if story.mobile_background_url %}
         background-image: url('{{ story.mobile_background_url|escape }}');
-        {% endif %}
     }
 }
 </style>
