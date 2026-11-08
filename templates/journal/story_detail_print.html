@@ -3,20 +3,32 @@
 <head>
     <meta charset="utf-8">
     <title>{{ blog.title }}</title>
-
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/journal.css' %}">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+    .journal-story-page {
+        min-height: 100vh;
+        background-color: white;
+        background-size: auto;
+        background-position: top left;
+        background-repeat: repeat;
+        background-image: url('{{ story.desktop_background_url|escape }}');
+    }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+    .no-print {
+        display: none;
+    }
+    .page-break {
+        page-break-after: always;
+    }
+    @media (max-width: 767.98px) {
+        .journal-story-page {
+            background-image: url('{{ story.mobile_background_url|escape }}');
         }
-
-        .no-print {
-            display: none;
-        }
-
-        .page-break {
-            page-break-after: always;
-        }
+    }
     </style>
 </head>
 <body>
