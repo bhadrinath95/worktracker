@@ -36,8 +36,7 @@
         {% csrf_token %}<button class="btn btn-sm btn-danger" type="submit"><i class="bi bi-trash"></i> Delete</button>
       </form>
     </div>
-  </div>
-  <center><div class="journal-topic-label">{{ story.topic.name }}</div></center>
+  </div> 
   {% include "journal/journal_content.html" %}
   <div class="journal-detail-footer">
     <a href="{% url 'journal:view_story' story.topic_id %}"><i class="bi bi-arrow-left"></i> Back to {{ story.topic.name }}</a>
