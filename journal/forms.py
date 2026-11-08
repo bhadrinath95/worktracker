@@ -1,3 +1,25 @@
+from django import forms
+from .models import Topic, Story
+
+
+class TopicForm(forms.ModelForm):
+    class Meta:
+        model = Topic
+        fields = ["name", "order_no"]
+        widgets = {
+            "name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter topic name",
+                "maxlength": 150,
+            }),
+            "order_no": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter order number",
+                "min": 1,
+            }),
+        }
+
+
 class StoryForm(forms.ModelForm):
     class Meta:
         model = Story
