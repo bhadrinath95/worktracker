@@ -21,7 +21,7 @@
 .journal-rendered-content video { display:block; width:100%; max-width:700px; max-height:70vh; margin:1.25rem auto; border-radius:10px; background:#000; }
 .journal-rendered-content table { display:block; max-width:100%; overflow-x:auto; border-collapse:collapse; }
 .journal-rendered-content th, .journal-rendered-content td { border:1px solid #dee2e6; padding:.5rem .75rem; }
-.journal-rendered-content blockquote { border-left:4px solid #cbd5e1; padding:.25rem 1rem; color:#64748b; margin:1.25rem 0; }
+.journal-rendered-content blockquote { border-left:4px solid #777777; padding:.25rem 1rem; color:#3a3a3a; margin:1.25rem 0; }
 .journal-rendered-content pre { overflow-x:auto; padding:1rem; background:#f8fafc; border-radius:8px; }
 .journal-rendered-content a { overflow-wrap:anywhere; }
 .journal-detail-footer { max-width:900px; margin:2.5rem auto 0; padding-top:1rem; border-top:1px solid #e5e7eb; }

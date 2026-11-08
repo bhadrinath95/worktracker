@@ -8,15 +8,19 @@
 .journal-story-page {
     min-height: 100vh;
     background-color: white;
-    background-size: auto;
-    background-position: top left;
+    background-size: 16 / 9;
+    background-position: center;
     background-repeat: repeat;
     background-image: url('{{ story.desktop_background_url|escape }}');
 }
 
+/* Mobile: 9:16 background */
 @media (max-width: 767.98px) {
     .journal-story-page {
         background-image: url('{{ story.mobile_background_url|escape }}');
+        background-size: 9 / 16;
+        background-position: center;
+        background-repeat: repeat;
     }
 }
 </style>

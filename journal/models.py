@@ -8,7 +8,7 @@ class Topic(models.Model):
     order_no = models.PositiveIntegerField(default=1)
 
     class Meta:
-        ordering = ["order_no"]
+        ordering = ["-order_no"]
 
     def __str__(self):
         return self.name
@@ -42,7 +42,7 @@ class Story(models.Model):
     order_no = models.PositiveIntegerField(default=1)
 
     class Meta:
-        ordering = ["order_no"]
+        ordering = ["-order_no"]
 
     def __str__(self):
         return self.heading
