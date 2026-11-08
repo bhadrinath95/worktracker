@@ -1,6 +1,6 @@
   <header class="journal-story-header">
-    <h1>{{ story.heading }}</h1>
     <div class="journal-topic-label">{{ story.topic.name }}</div>
+    <h1>{{ story.heading }}</h1>
     <div class="text-muted"><i class="bi bi-calendar3"></i> {{ story.story_datetime|date:"l, F d, Y · h:i A" }}</div>
   </header>
   <div class="journal-rendered-content">{{ rendered_description|safe }}</div>
