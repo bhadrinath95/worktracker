@@ -13,6 +13,7 @@ urlpatterns = [
     path("stories/create/", views.create_story, name="create_story"),
     path("topics/<int:topic_id>/stories/create/", views.create_story, name="create_story_for_topic"),
     path("stories/<int:story_id>/", views.detail_story, name="detail_story"),
+    path("stories/<int:story_id>/print/", views.detail_story_print, name="detail_story_print"),
     path("stories/<int:story_id>/edit/", views.modify_story, name="modify_story"),
     path("stories/<int:story_id>/delete/", views.delete_story, name="delete_story"),
 ]

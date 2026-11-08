@@ -102,3 +102,11 @@ def detail_story(request, story_id):
         "story": story,
         "rendered_description": render_story_markdown(story.description),
     })
+
+@login_required
+def detail_story_print(request, story_id):
+    story = get_object_or_404(Story.objects.select_related("topic"), pk=story_id)
+    return render(request, "journal/story_detail_print.html", {
+            "story": story,
+            "rendered_description": render_story_markdown(story.description),
+        })

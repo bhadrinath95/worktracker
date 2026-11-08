@@ -29,6 +29,9 @@
     <a class="btn btn-sm btn-secondary" href="{% url 'journal:view_story' story.topic_id %}"><i class="bi bi-arrow-left"></i> {{ story.topic.name }}</a>
     <div class="d-flex gap-2">
       <a class="btn btn-sm btn-primary" href="{% url 'journal:modify_story' story.pk %}"><i class="bi bi-pencil"></i> Edit</a>
+      <a class="btn btn-sm btn-success" href="{% url 'journal:detail_story_print' story.pk %}" target="_blank">
+          <i class="bi bi-printer"></i> Print
+      </a>
       <form method="post" action="{% url 'journal:delete_story' story.pk %}" onsubmit="return confirm('Delete this story?');">
         {% csrf_token %}<button class="btn btn-sm btn-danger" type="submit"><i class="bi bi-trash"></i> Delete</button>
       </form>
