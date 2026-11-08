@@ -1,3 +1,4 @@
+
 {% extends "journal/base_journal.html" %}
 {% block journal_content %}
 <div class="journal-form-card journal-story-editor">
@@ -17,6 +18,18 @@
             Markdown is supported. Inline HTML <code>&lt;img&gt;</code>, <code>&lt;video&gt;</code>, and <code>&lt;source&gt;</code> tags are allowed for media.
             Use HTTPS image/video URLs. Preview the saved story to check media layout.
           </div>
+
+          <div class="mt-3">
+            <strong>Image Reference:</strong>
+            <pre><code>&lt;img src="https://raw.githubusercontent.com/tenctech10c/Images/main/AnjuMugamThondrinIcon.png" alt="image" style="width:600px; max-width:90%; height:400px; object-fit:contain; border-radius:10px; border:1px solid #ccc;"&gt;</code></pre>
+
+            <strong>Video Reference:</strong>
+            <pre><code>&lt;video controls preload="metadata" style="width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 14px; display: block; object-fit: contain;">
+    &lt;source src="https://raw.githubusercontent.com/tenctech10c/Videos/main/timehealseverything.mp4" type="video/mp4"&gt;
+    Your browser does not support the video tag.
+&lt;/video&gt;</code></pre>
+          </div>
+
         {% elif field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
         {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
       </div>

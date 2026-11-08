@@ -26,7 +26,16 @@
 .journal-rendered-content a { overflow-wrap:anywhere; }
 .journal-detail-footer { max-width:900px; margin:2.5rem auto 0; padding-top:1rem; border-top:1px solid #e5e7eb; }
 .journal-story-editor textarea { min-height:360px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.92rem; }
-table, th, td { border: 1px solid black;}
+table {
+    width: 100%;
+    border-collapse: collapse !important;
+}
+
+table th,
+table td {
+    border: 1px solid black !important;
+    padding: 8px;
+}
 @media (max-width:576px) {
   .journal-shell { padding-top:1rem; }
   .journal-story-page { border-radius:10px; }

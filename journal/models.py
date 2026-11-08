@@ -5,9 +5,10 @@ from django.utils import timezone
 
 class Topic(models.Model):
     name = models.CharField(max_length=150, unique=True)
+    order_no = models.PositiveIntegerField(default=1)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["order_no"]
 
     def __str__(self):
         return self.name
@@ -38,9 +39,10 @@ class Story(models.Model):
         help_text="Mobile background image URL (9:16)"
     )
     story_datetime = models.DateTimeField(default=timezone.now, verbose_name="Date and time")
+    order_no = models.PositiveIntegerField(default=1)
 
     class Meta:
-        ordering = ["-story_datetime", "-pk"]
+        ordering = ["order_no"]
 
     def __str__(self):
         return self.heading

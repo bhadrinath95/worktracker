@@ -15,17 +15,31 @@ ALLOWED_ATTRIBUTES = {
     "*": ["class"],
     "a": ["href", "title", "target", "rel"],
     "img": ["src", "alt", "title", "width", "height", "style", "loading"],
-    "video": ["controls", "width", "height", "poster", "style", "preload"],
+    "video": [
+        "controls", "autoplay", "muted", "loop",
+        "width", "height", "poster", "style", "preload"
+    ],
     "source": ["src", "type"],
     "th": ["align"],
     "td": ["align"],
 }
 
-CSS_SANITIZER = CSSSanitizer(allowed_css_properties=[
-    "width", "max-width", "height", "max-height", "object-fit",
-    "border-radius", "border", "display", "margin", "margin-left",
-    "margin-right",
-])
+CSS_SANITIZER = CSSSanitizer(
+    allowed_css_properties=[
+        "width",
+        "max-width",
+        "height",
+        "max-height",
+        "aspect-ratio",
+        "object-fit",
+        "border-radius",
+        "border",
+        "display",
+        "margin",
+        "margin-left",
+        "margin-right",
+    ]
+)
 
 def render_story_markdown(source):
     """Convert Markdown + permitted inline media HTML into safe HTML."""
