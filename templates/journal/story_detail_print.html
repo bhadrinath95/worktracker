@@ -3,72 +3,93 @@
 <head>
     <meta charset="utf-8">
     <title>{{ blog.title }}</title>
+
     {% load static %}
+
     <link rel="stylesheet" href="{% static 'css/journal.css' %}">
+
     <style>
-    .journal-story-page {
-        min-height: 100vh;
-        background-color: white;
-        background-size: auto;
-        background-position: top left;
-        background-repeat: repeat;
-        background-image: url('{{ story.desktop_background_url|escape }}');
-    }
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-    }
-    .no-print {
-        display: none;
-    }
-    .page-break {
-        page-break-after: always;
-    }
-    @media (max-width: 767.98px) {
         .journal-story-page {
-            background-image: url('{{ story.mobile_background_url|escape }}');
-        }
-    }
-    .journal-story-page {
-        min-height: 100vh;
-        background-color: white;
-        background-size: auto;
-        background-position: top left;
-        background-repeat: repeat;
-        background-image: url('{{ story.desktop_background_url|escape }}');
+            min-height: 100vh;
+            background-color: white;
+            background-size: auto;
+            background-position: top left;
+            background-repeat: repeat;
+            background-image: url('{{ story.desktop_background_url|escape }}');
 
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    @media print {
-        body {
-            margin: 0;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
         }
 
-        .journal-story-page {
-            background-image: url('{{ story.desktop_background_url|escape }}') !important;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
         }
 
         .no-print {
-            display: none !important;
+            display: none;
         }
-    }
+
+        .page-break {
+            page-break-after: always;
+            break-after: page;
+        }
+
+        @media (max-width: 767.98px) {
+            .journal-story-page {
+                background-image: url('{{ story.mobile_background_url|escape }}');
+            }
+        }
+
+        @media print {
+
+            @page {
+                margin: 10mm;
+            }
+
+            html,
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background-color: white;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .journal-story-page {
+                min-height: 100vh;
+                background-image: url('{{ story.desktop_background_url|escape }}') !important;
+                background-position: top left !important;
+                background-repeat: repeat !important;
+                background-size: auto !important;
+
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .page-break {
+                page-break-after: always;
+                break-after: page;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-{% include "journal/journal_content.html" %}
+    {% include "journal/journal_content.html" %}
 
-<script>
-    window.onload = function() {
-        window.print();
-    };
-</script>
+    <script>
+        window.onload = function () {
+            window.print();
+        };
+    </script>
 
 </body>
 </html>
