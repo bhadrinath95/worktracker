@@ -1,0 +1,9 @@
+  <header class="journal-story-header">
+    <div class="journal-topic-label">{{ story.topic.name }}</div>
+    <h1>{{ story.heading }}</h1>
+    <div class="text-muted"><i class="bi bi-calendar3"></i> {{ story.story_datetime|date:"l, F d, Y · h:i A" }}</div>
+  </header>
+  <div class="journal-rendered-content">{{ rendered_description|safe }}</div>
+  <div class="journal-detail-footer">
+    <a href="{% url 'journal:view_story' story.topic_id %}"><i class="bi bi-arrow-left"></i> Back to {{ story.topic.name }}</a>
+  </div>
