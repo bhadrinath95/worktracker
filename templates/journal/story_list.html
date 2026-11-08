@@ -1,0 +1,38 @@
+{% extends "journal/base_journal.html" %}
+{% block journal_content %}
+<div class="journal-heading-row">
+  <div>
+    <a href="{% url 'journal:view_topic' %}" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> All Topics</a>
+    <h2 class="mt-2 mb-1">{{ topic.name }}</h2>
+    <p class="text-muted mb-0">{{ stories|length }} stor{{ stories|length|pluralize:"y,ies" }}</p>
+  </div>
+  <a class="btn btn-primary" href="{% url 'journal:create_story_for_topic' topic.pk %}"><i class="bi bi-plus-lg"></i> New Story</a>
+</div>
+<div class="journal-story-list mt-3">
+  {% for story in stories %}
+  <article class="card journal-story-card mb-3">
+    <div class="card-body">
+      <div class="d-flex justify-content-between flex-wrap gap-2">
+        <div>
+          <h5 class="mb-1"><a class="journal-story-link" href="{% url 'journal:detail_story' story.pk %}">{{ story.heading }}</a></h5>
+          <div class="small text-muted"><i class="bi bi-calendar3"></i> {{ story.story_datetime|date:"M d, Y · h:i A" }}</div>
+        </div>
+        <div class="d-flex gap-2 align-items-start">
+          <a class="btn btn-sm btn-outline-secondary" href="{% url 'journal:modify_story' story.pk %}">Edit</a>
+          <form method="post" action="{% url 'journal:delete_story' story.pk %}" onsubmit="return confirm('Delete this story?');">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+          </form>
+        </div>
+      </div>
+      {% if story.background_url %}<div class="small text-muted mt-2"><i class="bi bi-image"></i> Custom background enabled</div>{% endif %}
+    </div>
+  </article>
+  {% empty %}
+  <div class="journal-empty"><i class="bi bi-book"></i><h5>No stories in this topic</h5>
+    <p>Add the first story to this topic.</p>
+    <a class="btn btn-primary" href="{% url 'journal:create_story_for_topic' topic.pk %}">Create Story</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

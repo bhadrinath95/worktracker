@@ -1,0 +1,39 @@
+{% extends "journal/base_journal.html" %}
+{% block title %}Journal Topics{% endblock %}
+{% block journal_content %}
+<div class="journal-heading-row">
+  <div><h2><i class="bi bi-journal-richtext"></i> Journal</h2>
+    <p class="text-muted mb-0">Your topics and stories</p></div>
+  <a class="btn btn-primary" href="{% url 'journal:create_topic' %}"><i class="bi bi-plus-lg"></i> New Topic</a>
+</div>
+<div class="row g-3 mt-1">
+  {% for topic in topics %}
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card journal-topic-card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start gap-2">
+          <h5 class="card-title mb-1">{{ topic.name }}</h5>
+          <span class="badge text-bg-secondary">{{ topic.stories.count }} stories</span>
+        </div>
+        <p class="text-muted small mt-2">Open this topic to browse its stories.</p>
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'journal:view_story' topic.pk %}">View Stories</a>
+          <a class="btn btn-sm btn-outline-secondary" href="{% url 'journal:modify_topic' topic.pk %}">Edit</a>
+          <form method="post" action="{% url 'journal:delete_topic' topic.pk %}"
+                onsubmit="return confirm('Delete this topic and all its stories?');">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12"><div class="journal-empty">
+    <i class="bi bi-journal-plus"></i><h5>No topics yet</h5>
+    <p>Create your first journal topic to get started.</p>
+    <a class="btn btn-primary" href="{% url 'journal:create_topic' %}">Create Topic</a>
+  </div></div>
+  {% endfor %}
+</div>
+{% endblock %}

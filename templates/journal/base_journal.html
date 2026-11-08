@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block style %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/journal.css' %}">
+{% endblock %}
+{% block content %}
+<div class="journal-shell">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+  {% block journal_content %}{% endblock %}
+</div>
+{% endblock %}

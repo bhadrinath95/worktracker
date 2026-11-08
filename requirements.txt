@@ -4,3 +4,4 @@ Markdown
 bleach
 python-dotenv 
 groq
+tinycss2

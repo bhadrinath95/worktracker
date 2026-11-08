@@ -1,0 +1,31 @@
+{% extends "journal/base_journal.html" %}
+{% block journal_content %}
+<div class="journal-form-card journal-story-editor">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">{{ page_title }}</h2>
+    {% if story %}<a href="{% url 'journal:detail_story' story.pk %}" class="btn btn-sm btn-outline-secondary">Back to Story</a>
+    {% else %}<a href="{% url 'journal:view_topic' %}" class="btn btn-sm btn-outline-secondary">Cancel</a>{% endif %}
+  </div>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.name == "description" %}
+          <div class="form-text">
+            Markdown is supported. Inline HTML <code>&lt;img&gt;</code>, <code>&lt;video&gt;</code>, and <code>&lt;source&gt;</code> tags are allowed for media.
+            Use HTTPS image/video URLs. Preview the saved story to check media layout.
+          </div>
+        {% elif field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+    <div class="d-flex flex-wrap gap-2">
+      <button class="btn btn-primary" type="submit">Save Story</button>
+      {% if story %}<a class="btn btn-light" href="{% url 'journal:detail_story' story.pk %}">Cancel</a>
+      {% else %}<a class="btn btn-light" href="{% url 'journal:view_topic' %}">Cancel</a>{% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}
