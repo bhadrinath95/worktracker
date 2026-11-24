@@ -5,12 +5,25 @@ from .models import Topic, Story
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ["name", "order_no"]
+        fields = [
+            "name", 
+            "order_no",
+            "desktop_background_url",
+            "mobile_background_url",
+        ]
         widgets = {
             "name": forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "Enter topic name",
                 "maxlength": 150,
+            }),
+            "desktop_background_url": forms.URLInput(attrs={
+                "class": "form-control",
+                "placeholder": "https://raw.githubusercontent.com/tenctech10c/Images/main/{image}.{ext}",
+            }),
+            "mobile_background_url": forms.URLInput(attrs={
+                "class": "form-control",
+                "placeholder": "https://raw.githubusercontent.com/tenctech10c/Images/main/{image}.{ext}",
             }),
             "order_no": forms.NumberInput(attrs={
                 "class": "form-control",
@@ -18,6 +31,16 @@ class TopicForm(forms.ModelForm):
                 "min": 1,
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields["desktop_background_url"].initial = (
+                "https://raw.githubusercontent.com/tenctech10c/Images/main/{image}.{ext}"
+            )
+    
+            self.fields["mobile_background_url"].initial = (
+                "https://raw.githubusercontent.com/tenctech10c/Images/main/{image}.{ext}"
+            )
 
 
 class StoryForm(forms.ModelForm):
@@ -28,8 +51,6 @@ class StoryForm(forms.ModelForm):
             "order_no",
             "heading",
             "description",
-            "desktop_background_url",
-            "mobile_background_url",
             "story_datetime",
         ]
         widgets = {
@@ -53,16 +74,6 @@ class StoryForm(forms.ModelForm):
                 "spellcheck": "true",
             }),
 
-            "desktop_background_url": forms.URLInput(attrs={
-                "class": "form-control",
-                "placeholder": "https://raw.githubusercontent.com/tenctech10c/Images/main/{image}.{ext}",
-            }),
-
-            "mobile_background_url": forms.URLInput(attrs={
-                "class": "form-control",
-                "placeholder": "https://raw.githubusercontent.com/tenctech10c/Images/main/{image}.{ext}",
-            }),
-
             "story_datetime": forms.DateTimeInput(
                 attrs={"class": "form-control", "type": "datetime-local"},
                 format="%Y-%m-%dT%H:%M",
@@ -72,11 +83,3 @@ class StoryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["story_datetime"].input_formats = ["%Y-%m-%dT%H:%M"]
-
-        self.fields["desktop_background_url"].initial = (
-            "https://raw.githubusercontent.com/tenctech10c/Images/main/{image}.{ext}"
-        )
-
-        self.fields["mobile_background_url"].initial = (
-            "https://raw.githubusercontent.com/tenctech10c/Images/main/{image}.{ext}"
-        )

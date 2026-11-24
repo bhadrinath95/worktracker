@@ -58,7 +58,7 @@
         /* Mobile background */
         @media screen and (max-width: 767.98px) {
             .journal-background {
-                content: url('https://raw.githubusercontent.com/tenctech10c/Images/main/friendship.png');
+                content: url('{{ story.topic.mobile_background_url|escape }}');
             }
         }
 
@@ -84,7 +84,7 @@
 
             .journal-background {
                 display: block !important;
-                content: url('https://raw.githubusercontent.com/tenctech10c/Images/main/friendshipdesktop.png') !important;
+                content: url('{{ story.topic.desktop_background_url|escape }}') !important;
                 position: absolute !important;
                 top: 0 !important;
                 left: 0 !important;
@@ -123,7 +123,7 @@
 
         <img
             class="journal-background"
-            src="https://raw.githubusercontent.com/tenctech10c/Images/main/friendshipdesktop.png"
+            src="{{ story.topic.desktop_background_url|escape }}"
             alt=""
         >
 

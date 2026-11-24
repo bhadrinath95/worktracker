@@ -6,6 +6,18 @@ from django.utils import timezone
 class Topic(models.Model):
     name = models.CharField(max_length=150, unique=True)
     order_no = models.PositiveIntegerField(default=1)
+    
+    desktop_background_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="Desktop background image URL (16:9)"
+    )
+
+    mobile_background_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="Mobile background image URL (9:16)"
+    )
 
     class Meta:
         ordering = ["-order_no"]
@@ -26,17 +38,6 @@ class Story(models.Model):
     heading = models.CharField(max_length=250)
     description = models.TextField(
         help_text="Write in Markdown. You may insert HTML img/video/source tags where needed."
-    )
-    desktop_background_url = models.URLField(
-        blank=True,
-        null=True,
-        help_text="Desktop background image URL (16:9)"
-    )
-
-    mobile_background_url = models.URLField(
-        blank=True,
-        null=True,
-        help_text="Mobile background image URL (9:16)"
     )
     story_datetime = models.DateTimeField(default=timezone.now, verbose_name="Date and time")
     order_no = models.PositiveIntegerField(default=1)
